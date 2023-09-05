@@ -4,6 +4,7 @@
     <NoWarn>CS0168,CS1998,BL9993,CS0649,CS0436,0436</NoWarn>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
