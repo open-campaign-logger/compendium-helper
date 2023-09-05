@@ -78,11 +78,11 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the tag value prefix for this game component.
         /// </summary>
-        public string? TagValuePrefix { get; set; } = string.Empty;
+        public string TagValuePrefix { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the XPath of the starting element in the data set.
         /// </summary>
-        public string? XPath { get; set; } = string.Empty;
+        public string XPath { get; set; } = string.Empty;
     }
 }
