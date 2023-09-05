@@ -34,7 +34,8 @@
         <RadzenCard Style="margin-top:10px;">
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
             <RadzenTree Data="@PublicCompendiums">
-                <RadzenTreeLevel TextProperty="Title" />
+                <RadzenTreeLevel TextProperty="Title" ChildrenProperty="SourceDataSets" />
+                <RadzenTreeLevel TextProperty="SourceDataSetName" HasChildren="@((SourceDataSet) => false)" />
             </RadzenTree>
         </RadzenCard>
     </RadzenColumn>
