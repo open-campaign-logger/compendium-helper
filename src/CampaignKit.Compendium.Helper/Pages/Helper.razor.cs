@@ -24,6 +24,8 @@ namespace CampaignKit.Compendium.Helper.Pages
 
     using Radzen;
 
+    using System;
+
     /// <summary>
     /// Code behind class for Helper.razor.
     /// </summary>
@@ -57,6 +59,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets a dictionary to store events and their associated timestamps.
         /// </summary>
         protected Dictionary<DateTime, string> Events { get; set; } = new Dictionary<DateTime, string>();
+
+        /// <summary>
+        /// Gets or sets the name of the uploaded file.
+        /// </summary>
+        protected string FileName { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the source HTML for the current data set.
@@ -158,7 +165,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>
         /// A tree created from the uploaded compendium.
         /// </returns>
-        protected async Task UploadComplete(Radzen.UploadCompleteEventArgs args)
+        protected async Task UploadComplete(UploadCompleteEventArgs args)
         {
             this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);
             var json = args.RawResponse;
