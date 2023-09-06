@@ -16,6 +16,10 @@
 
 namespace CampaignKit.Compendium.Core.Configuration
 {
+    using System.Data;
+
+    using CampaignKit.Compendium.Helper.Configuration;
+
     /// <summary>
     /// Represents the configuration of an open-source compendium within the application.
     /// These should be defined and shared in the appsettings.json file.
@@ -49,7 +53,36 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <inheritdoc/>
         public string Title { get; set; } = string.Empty;
 
-        // Create a property to hold the list of source data sets grouped into SourceDataSetGrouping objects.
+        /// <summary>
+        /// Gets a list of unique labels from all source datasets.
+        /// </summary>
+        /// <returns>A list of unique labels.</returns>
+        public List<string> UniqueLabels
+        {
+            get
+            {
+                return this.SourceDataSets.SelectMany(ds => ds.Labels).Distinct().ToList();
+            }
+        }
 
+        /// <summary>
+        /// Gets a list of SourceDataSetGroupings from the SourceDataSets.
+        /// </summary>
+        /// <returns>A list of SourceDataSetGroupings.</returns>
+        public List<SourceDataSetGrouping> SourceDataSetGroupings
+        {
+            get
+            {
+                return this.SourceDataSets
+                    .SelectMany(ds => ds.Labels.Select(label => new { Label = label, DataSet = ds }))
+                    .GroupBy(pair => pair.Label)
+                    .Select(group => new SourceDataSetGrouping
+                    {
+                        LabelName = group.Key,
+                        SourceDataSets = group.Select(pair => pair.DataSet).ToList(),
+                    })
+                    .ToList();
+            }
+        }
     }
 }
