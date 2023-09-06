@@ -48,5 +48,8 @@ namespace CampaignKit.Compendium.Core.Configuration
 
         /// <inheritdoc/>
         public string Title { get; set; } = string.Empty;
+
+        // Create a property to hold the list of source data sets grouped into SourceDataSetGrouping objects.
+
     }
 }

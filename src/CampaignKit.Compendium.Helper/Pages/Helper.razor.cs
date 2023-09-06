@@ -16,6 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
+    using System;
+
     using CampaignKit.Compendium.Core.Configuration;
     using CampaignKit.Compendium.Helper.Services;
 
@@ -23,8 +25,6 @@ namespace CampaignKit.Compendium.Helper.Pages
     using Microsoft.JSInterop;
 
     using Radzen;
-
-    using System;
 
     /// <summary>
     /// Code behind class for Helper.razor.
