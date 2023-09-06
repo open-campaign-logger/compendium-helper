@@ -61,7 +61,11 @@ namespace CampaignKit.Compendium.Core.Configuration
         {
             get
             {
-                return this.SourceDataSets.SelectMany(ds => ds.Labels).Distinct().ToList();
+                return this.SourceDataSets
+                    .SelectMany(ds => ds.Labels)
+                    .Distinct()
+                    .OrderBy(label => label)
+                    .ToList();
             }
         }
 
@@ -79,8 +83,9 @@ namespace CampaignKit.Compendium.Core.Configuration
                     .Select(group => new SourceDataSetGrouping
                     {
                         LabelName = group.Key,
-                        SourceDataSets = group.Select(pair => pair.DataSet).ToList(),
+                        SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                     })
+                    .OrderBy(group => group.LabelName)
                     .ToList();
             }
         }
