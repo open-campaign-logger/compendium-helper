@@ -32,6 +32,11 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Helper
     {
         /// <summary>
+        /// Gets or sets the EventCallback for requesting a refresh of the Compendium NavTree.
+        /// </summary>
+        public EventCallback CompendiumNavTreeRefreshRequested { get; set; }
+
+        /// <summary>
         /// Gets or sets the CompendiumService.
         /// </summary>
         [Inject]
@@ -151,11 +156,6 @@ namespace CampaignKit.Compendium.Helper.Pages
             {
                 this.Log("Expand", $"Item Text: {text}");
             }
-        }
-
-        /// <inheritdoc/>
-        protected override async Task OnInitializedAsync()
-        {
         }
 
         /// <summary>

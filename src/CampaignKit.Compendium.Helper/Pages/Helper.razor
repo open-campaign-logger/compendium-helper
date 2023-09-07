@@ -20,24 +20,20 @@
         <RadzenCard>
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Configuration</RadzenText>
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
-                <RadzenButton Text="Create New"
+                <RadzenButton Text="New"
                               ButtonStyle="ButtonStyle.Light" />
                 <RadzenText Text="- or -" />
                 <RadzenUpload Accept=".json"
                               Url="upload/single"
                               Complete="@UploadComplete"
-                              ChooseText="Upload Existing"
+                              ChooseText="Upload"
                               Multiple=false />
             </RadzenStack>
             
         </RadzenCard>
         <RadzenCard Style="margin-top:10px;">
             <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
-            <RadzenTree Data="@PublicCompendiums">
-                <RadzenTreeLevel TextProperty="Title" ChildrenProperty="SourceDataSetGroupings" />
-                <RadzenTreeLevel TextProperty="LabelName" ChildrenProperty="SourceDataSets" />
-                <RadzenTreeLevel TextProperty="SourceDataSetName" HasChildren="@((args) => false)" />
-            </RadzenTree>
+            <CompendiumNavTree PublicCompendiums="@PublicCompendiums" />
         </RadzenCard>
     </RadzenColumn>
     <RadzenColumn>
