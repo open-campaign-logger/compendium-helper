@@ -1,10 +1,11 @@
 ﻿<RadzenRow>
-    <RadzenTextBox @bind-Value="SearchTerm" Change="FilterTree" Placeholder="Search..." />
+    <RadzenTextBox Placeholder="Search..." @oninput="OnSearchChanged" />
+
 </RadzenRow>
 <RadzenRow>
     <RadzenTree Data="@FilteredCompendiums" >
-        <RadzenTreeLevel TextProperty="Title" ChildrenProperty="SourceDataSetGroupings" />
-        <RadzenTreeLevel TextProperty="LabelName" ChildrenProperty="SourceDataSets" />
+        <RadzenTreeLevel TextProperty="Title" ChildrenProperty="SourceDataSetGroupings" Expanded="@(node => true)"/>
+        <RadzenTreeLevel TextProperty="LabelName" ChildrenProperty="SourceDataSets" Expanded="@(node => IsNodeExpanded(node))" />
         <RadzenTreeLevel TextProperty="SourceDataSetName" HasChildren="@((args) => false)" />
     </RadzenTree>
 </RadzenRow>

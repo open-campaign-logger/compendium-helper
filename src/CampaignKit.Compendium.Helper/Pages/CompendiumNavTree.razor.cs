@@ -17,8 +17,11 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Core.Configuration;
+    using CampaignKit.Compendium.Helper.Configuration;
 
     using Microsoft.AspNetCore.Components;
+
+    using Radzen;
 
     /// <summary>
     /// Represents a partial class for the CompendiumNavTree component.
@@ -32,6 +35,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         public List<PublicCompendium> PublicCompendiums { get; set; }
 
         /// <summary>
+        /// Gets or sets the set of expanded nodes.
+        /// </summary>
+        private HashSet<string> ExpandedNodes { get; set; } = new HashSet<string>();
+
+        /// <summary>
         /// Gets or sets the filtered compendiums.
         /// </summary>
         /// <value>
@@ -39,15 +47,10 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </value>
         private IEnumerable<PublicCompendium> FilteredCompendiums { get; set; }
 
-        /// <summary>
-        /// Gets or sets the property to store the search term.
-        /// </summary>
-        private string SearchTerm { get; set; } = string.Empty;
-
         /// <inheritdoc/>
         protected override void OnInitialized()
         {
-            this.FilterTree();
+            this.FilterTree(string.Empty);
         }
 
         /// <summary>
@@ -57,27 +60,26 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         protected override void OnParametersSet()
         {
-            this.FilterTree();
+            this.ExpandedNodes.Clear();
+            this.FilterTree(string.Empty);
         }
 
         /// <summary>
         /// Filters the tree based on the search term.
         /// </summary>
-        private void FilterTree()
+        /// <param name="searchTerm">The search term.</param>
+        private void FilterTree(string searchTerm)
         {
-            if (string.IsNullOrWhiteSpace(this.SearchTerm))
+            if (string.IsNullOrWhiteSpace(searchTerm))
             {
                 this.FilteredCompendiums = this.PublicCompendiums;
             }
             else
             {
                 this.FilteredCompendiums = this.PublicCompendiums
-                    .Where(pc => pc.SourceDataSets.Any(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)))
+                    .Where(pc => pc.SourceDataSets.Any(sds => sds.SourceDataSetName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
                     .Select(pc => new PublicCompendium
                     {
-                        // Clone or copy other properties if needed
-                        // Example:
-                        // CompendiumService = pc.CompendiumService,
                         CompendiumService = pc.CompendiumService,
                         Description = pc.Description,
                         GameSystem = pc.GameSystem,
@@ -87,13 +89,52 @@ namespace CampaignKit.Compendium.Helper.Pages
                         Prompts = pc.Prompts,
                         Title = pc.Title,
                         SourceDataSets = pc.SourceDataSets
-                            .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase))
+                            .Where(sds => sds.SourceDataSetName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                             .ToList(),
                     })
                     .ToList();
             }
 
             this.StateHasChanged();
+        }
+
+        /// <summary>
+        /// Checks if the given node is expanded.
+        /// </summary>
+        /// <param name="node">The node to check.</param>
+        /// <returns>True if the node is expanded, false otherwise.</returns>
+        private bool IsNodeExpanded(object node)
+        {
+            if (node != null && node is SourceDataSetGrouping sourceDataSetGrouping)
+            {
+                return this.ExpandedNodes.Contains(sourceDataSetGrouping.LabelName);
+            }
+
+            return false;
+        }
+
+        private void NodeCollapsed(TreeEventArgs args, object node)
+        {
+            if (node != null && node is SourceDataSetGrouping sourceDataSetGrouping)
+            {
+                this.ExpandedNodes.Remove(sourceDataSetGrouping.LabelName);
+            }
+        }
+
+        private void NodeExpanded(TreeEventArgs args, object node)
+        {
+            if (node != null && node is SourceDataSetGrouping sourceDataSetGrouping)
+            {
+                this.ExpandedNodes.Add(sourceDataSetGrouping.LabelName);
+            }
+        }
+
+        /// <summary>
+        /// Handles the search input change event and filters the tree accordingly.
+        /// </summary>
+        private void OnSearchChanged(ChangeEventArgs e)
+        {
+            this.FilterTree(e.Value.ToString());
         }
     }
 }
