@@ -2,7 +2,7 @@
     <RadzenTextBox @bind-Value="SearchTerm" Change="FilterTree" Placeholder="Search..." />
 </RadzenRow>
 <RadzenRow>
-    <RadzenTree Data="@FilteredCompendiums">
+    <RadzenTree Data="@FilteredCompendiums" >
         <RadzenTreeLevel TextProperty="Title" ChildrenProperty="SourceDataSetGroupings" />
         <RadzenTreeLevel TextProperty="LabelName" ChildrenProperty="SourceDataSets" />
         <RadzenTreeLevel TextProperty="SourceDataSetName" HasChildren="@((args) => false)" />
