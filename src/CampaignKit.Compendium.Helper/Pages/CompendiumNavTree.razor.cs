@@ -113,19 +113,20 @@ namespace CampaignKit.Compendium.Helper.Pages
             return false;
         }
 
-        private void NodeCollapsed(TreeEventArgs args, object node)
+
+        private void OnExpand(TreeExpandEventArgs args)
         {
-            if (node != null && node is SourceDataSetGrouping sourceDataSetGrouping)
+            if (args.Value is SourceDataSetGrouping sourceDataSetGrouping)
             {
-                this.ExpandedNodes.Remove(sourceDataSetGrouping.LabelName);
+                this.ExpandedNodes.Add(sourceDataSetGrouping.LabelName);
             }
         }
 
-        private void NodeExpanded(TreeEventArgs args, object node)
+        private void OnCollapse(TreeEventArgs args)
         {
-            if (node != null && node is SourceDataSetGrouping sourceDataSetGrouping)
+            if (args.Value is SourceDataSetGrouping sourceDataSetGrouping)
             {
-                this.ExpandedNodes.Add(sourceDataSetGrouping.LabelName);
+                this.ExpandedNodes.Remove(sourceDataSetGrouping.LabelName);
             }
         }
 

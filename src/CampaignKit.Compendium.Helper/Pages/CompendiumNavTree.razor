@@ -6,6 +6,6 @@
     <RadzenTree Data="@FilteredCompendiums" >
         <RadzenTreeLevel TextProperty="Title" ChildrenProperty="SourceDataSetGroupings" Expanded="@(node => true)"/>
         <RadzenTreeLevel TextProperty="LabelName" ChildrenProperty="SourceDataSets" Expanded="@(node => IsNodeExpanded(node))" />
-        <RadzenTreeLevel TextProperty="SourceDataSetName" HasChildren="@((args) => false)" />
+        <RadzenTreeLevel TextProperty="SourceDataSetName" HasChildren="@((node) => false)" />
     </RadzenTree>
 </RadzenRow>
