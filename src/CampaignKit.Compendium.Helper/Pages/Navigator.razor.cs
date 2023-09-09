@@ -1,4 +1,4 @@
-﻿// <copyright file="CompendiumNavTree.razor.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="Navigator.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,16 +17,15 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Core.Configuration;
-    using CampaignKit.Compendium.Helper.Configuration;
 
     using Microsoft.AspNetCore.Components;
 
     using Radzen;
 
     /// <summary>
-    /// Represents a partial class for the CompendiumNavTree component.
+    /// Represents a partial class for the Navigator component.
     /// </summary>
-    public partial class CompendiumNavTree
+    public partial class Navigator
     {
         /// <summary>
         /// Gets or sets the list of PublicCompendium objects.
@@ -35,9 +34,25 @@ namespace CampaignKit.Compendium.Helper.Pages
         public List<PublicCompendium> PublicCompendiums { get; set; }
 
         /// <summary>
-        /// Gets or sets the set of expanded nodes.
+        /// Gets or sets the search term.
         /// </summary>
-        private HashSet<string> ExpandedNodes { get; set; } = new HashSet<string>();
+        public string SearchTerm { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets a list of distinct source data set names from the public compendiums.
+        /// </summary>
+        /// <returns>A list of distinct source data set names.</returns>
+        private IEnumerable<string> AutoCompleteData
+        {
+            get
+            {
+                return this.PublicCompendiums
+                        .SelectMany(c => c.SourceDataSetGroupings)
+                        .SelectMany(s => s.SourceDataSets)
+                        .Select(ds => ds.SourceDataSetName)
+                        .Distinct();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the filtered compendiums.
@@ -47,37 +62,29 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </value>
         private IEnumerable<PublicCompendium> FilteredCompendiums { get; set; }
 
-        /// <inheritdoc/>
-        protected override void OnInitialized()
-        {
-            this.FilterTree(string.Empty);
-        }
-
         /// <summary>
         /// This method is called when the component receives new parameters. Any initialization or
         /// data fetching logic should be placed here. The StateHasChanged() method is called to
-        /// cause the CompendiumNavTree to re-render.
+        /// cause the Navigator to re-render.
         /// </summary>
         protected override void OnParametersSet()
         {
-            this.ExpandedNodes.Clear();
-            this.FilterTree(string.Empty);
+            this.FilterTree();
         }
 
         /// <summary>
         /// Filters the tree based on the search term.
         /// </summary>
-        /// <param name="searchTerm">The search term.</param>
-        private void FilterTree(string searchTerm)
+        private void FilterTree()
         {
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            if (string.IsNullOrWhiteSpace(this.SearchTerm))
             {
                 this.FilteredCompendiums = this.PublicCompendiums;
             }
             else
             {
                 this.FilteredCompendiums = this.PublicCompendiums
-                    .Where(pc => pc.SourceDataSets.Any(sds => sds.SourceDataSetName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+                    .Where(pc => pc.SourceDataSets.Any(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)))
                     .Select(pc => new PublicCompendium
                     {
                         CompendiumService = pc.CompendiumService,
@@ -89,7 +96,7 @@ namespace CampaignKit.Compendium.Helper.Pages
                         Prompts = pc.Prompts,
                         Title = pc.Title,
                         SourceDataSets = pc.SourceDataSets
-                            .Where(sds => sds.SourceDataSetName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                            .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase))
                             .ToList(),
                     })
                     .ToList();
@@ -99,43 +106,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
-        /// Checks if the given node is expanded.
-        /// </summary>
-        /// <param name="node">The node to check.</param>
-        /// <returns>True if the node is expanded, false otherwise.</returns>
-        private bool IsNodeExpanded(object node)
-        {
-            if (node != null && node is SourceDataSetGrouping sourceDataSetGrouping)
-            {
-                return this.ExpandedNodes.Contains(sourceDataSetGrouping.LabelName);
-            }
-
-            return false;
-        }
-
-
-        private void OnExpand(TreeExpandEventArgs args)
-        {
-            if (args.Value is SourceDataSetGrouping sourceDataSetGrouping)
-            {
-                this.ExpandedNodes.Add(sourceDataSetGrouping.LabelName);
-            }
-        }
-
-        private void OnCollapse(TreeEventArgs args)
-        {
-            if (args.Value is SourceDataSetGrouping sourceDataSetGrouping)
-            {
-                this.ExpandedNodes.Remove(sourceDataSetGrouping.LabelName);
-            }
-        }
-
-        /// <summary>
         /// Handles the search input change event and filters the tree accordingly.
         /// </summary>
-        private void OnSearchChanged(ChangeEventArgs e)
+        private void OnSearchChanged(object value)
         {
-            this.FilterTree(e.Value.ToString());
+            this.FilterTree();
         }
     }
 }
