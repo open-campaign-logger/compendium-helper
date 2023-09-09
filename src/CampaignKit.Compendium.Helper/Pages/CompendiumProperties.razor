@@ -1,0 +1,13 @@
+﻿@if(Compendium != null)
+{
+    <RadzenCard>
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Compendium Properties</RadzenText>
+        <RadzenTextBox Value="Compendium.CompendiumService" Placeholder="Compendium Service" Style="width:100%; margin-bottom:10px;" />
+        <RadzenTextArea Value="Compendium.Description" Placeholder="Description" Style="width:100%; margin-bottom:10px;" />
+        <RadzenTextBox Value="Compendium.GameSystem" Placeholder="Game System" Style="width:100%; margin-bottom:10px;" />
+        <RadzenTextBox Value="Compendium.ImageUrl" Placeholder="Image URL" Style="width:100%; margin-bottom:10px;" />
+        <RadzenCheckBox Value="Compendium.IsActive" Text="Is Active?" Style="margin-bottom:10px;" />
+        <RadzenCheckBox Value="Compendium.OverwriteExisting" Text="Overwrite Existing?" Style="margin-bottom:10px;" />
+        <RadzenTextBox Value="Compendium.Title" Placeholder="Title" Style="width:100%; margin-bottom:10px;" />
+    </RadzenCard>
+}

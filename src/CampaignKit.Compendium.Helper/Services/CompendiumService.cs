@@ -41,10 +41,11 @@ namespace CampaignKit.Compendium.Helper.Services
 
         /// <summary>
         /// Loads a PublicCompendium object from a JSON string.
+        /// If multiple compendiums are found only the first one is returned.
         /// </summary>
         /// <param name="json">The JSON string to deserialize.</param>
         /// <returns>A PublicCompendium object.</returns>
-        public List<PublicCompendium> LoadCompendiums(string json)
+        public ICompendium LoadCompendiums(string json)
         {
             // Validate parameters
             if (json == null)
@@ -78,7 +79,7 @@ namespace CampaignKit.Compendium.Helper.Services
                 ?? throw new Exception("Unable to deserialize JSON into list of PublicCompendium objects.");
 
             // Return the PublicCompendium object.
-            return compendiumList;
+            return compendiumList.FirstOrDefault(new PublicCompendium());
         }
     }
 }

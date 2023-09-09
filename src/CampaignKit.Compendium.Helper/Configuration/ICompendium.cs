@@ -14,6 +14,8 @@
 // limitations under the License.
 // </copyright>
 
+using CampaignKit.Compendium.Helper.Configuration;
+
 namespace CampaignKit.Compendium.Core.Configuration
 {
     /// <summary>
@@ -74,5 +76,17 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// This property is typically used to provide a succinct name for the Compendium.
         /// </summary>
         string Title { get; set; }
+
+        /// <summary>
+        /// Gets a list of unique labels from all source datasets.
+        /// </summary>
+        /// <returns>A list of unique labels.</returns>
+        public List<string> UniqueLabels { get; }
+
+        /// <summary>
+        /// Gets a list of SourceDataSetGroupings from the SourceDataSets.
+        /// </summary>
+        /// <returns>A list of SourceDataSetGroupings.</returns>
+        public List<SourceDataSetGrouping> SourceDataSetGroupings { get; }
     }
 }

@@ -1,14 +1,14 @@
-﻿<RadzenRow>
-    <RadzenAutoComplete @bind-Value="SearchTerm" Data="@AutoCompleteData" Placeholder="Search..." Change="@OnSearchChanged" />
-</RadzenRow>
-<RadzenRow>
-    <RadzenPanelMenu>
-        @foreach (var compendium in FilteredCompendiums)
-        {
-            <RadzenPanelMenuItem Text="@compendium.Title" Expanded="true" Icon="book">
-                @foreach (var grouping in compendium.SourceDataSetGroupings)
+﻿@if(Compendium != null)
+{
+    <RadzenRow>
+        <RadzenAutoComplete @bind-Value="SearchTerm" Data="@AutoCompleteData" Placeholder="Search..." Change="@OnSearchChanged" />
+    </RadzenRow>
+    <RadzenRow>
+            <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="@Compendium.Title" Expanded="true" Icon="book">
+                @foreach (var grouping in Compendium.SourceDataSetGroupings)
                 {
-                    if(grouping.SourceDataSets != null && grouping.SourceDataSets.Count > 0)
+                    if (grouping.SourceDataSets != null && grouping.SourceDataSets.Count > 0)
                     {
                         <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark">
                             @foreach (var dataSet in grouping.SourceDataSets)
@@ -19,6 +19,6 @@
                     }
                 }
             </RadzenPanelMenuItem>
-        }
-    </RadzenPanelMenu>
-</RadzenRow>
+        </RadzenPanelMenu>
+    </RadzenRow>
+}

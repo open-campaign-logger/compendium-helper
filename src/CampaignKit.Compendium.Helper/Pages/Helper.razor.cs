@@ -32,131 +32,55 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Helper
     {
         /// <summary>
-        /// Gets or sets the EventCallback for requesting a refresh of the Compendium NavTree.
+        /// Gets or sets a list of compendiums to store uploaded data.
         /// </summary>
-        public EventCallback CompendiumNavTreeRefreshRequested { get; set; }
+        private ICompendium Compendium { get; set; }
 
         /// <summary>
         /// Gets or sets the CompendiumService.
         /// </summary>
         [Inject]
-        protected CompendiumService CompendiumService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ContextMenuService.
-        /// </summary>
-        [Inject]
-        protected ContextMenuService ContextMenuService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the DialogService.
-        /// </summary>
-        [Inject]
-        protected DialogService DialogService { get; set; }
+        private CompendiumService CompendiumService { get; set; }
 
         /// <summary>
         /// Gets or sets the DownloadService.
         /// </summary>
         [Inject]
-        protected DownloadService DownloadService { get; set; }
-
-        /// <summary>
-        /// Gets or sets a dictionary to store events and their associated timestamps.
-        /// </summary>
-        protected Dictionary<DateTime, string> Events { get; set; } = new Dictionary<DateTime, string>();
-
-        /// <summary>
-        /// Gets or sets the name of the uploaded file.
-        /// </summary>
-        protected string FileName { get; set; } = string.Empty;
+        private DownloadService DownloadService { get; set; }
 
         /// <summary>
         /// Gets or sets the source HTML for the current data set.
         /// </summary>
-        protected string Html { get; set; } = string.Empty;
+        private string Html { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the HtmlService.
         /// </summary>
         [Inject]
-        protected HtmlService HtmlService { get; set; }
+        private HtmlService HtmlService { get; set; }
 
         /// <summary>
         /// Gets or sets the JSRuntime for JS interop.
         /// </summary>
         [Inject]
-        protected IJSRuntime JSRuntime { get; set; }
+        private IJSRuntime JSRuntime { get; set; }
 
         /// <summary>
         /// Gets or sets the Logger.
         /// </summary>
         [Inject]
-        protected ILogger<Helper> Logger { get; set; }
+        private ILogger<Helper> Logger { get; set; }
 
         /// <summary>
         /// Gets or sets the Markdown conversion of the extracted HTML.
         /// </summary>
-        protected string Markdown { get; set; } = string.Empty;
+        private string Markdown { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the MarkdownService.
         /// </summary>
         [Inject]
-        protected MarkdownService MarkdownService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the NavigationManager.
-        /// </summary>
-        [Inject]
-        protected NavigationManager NavigationManager { get; set; }
-
-        /// <summary>
-        /// Gets or sets the NotificationService.
-        /// </summary>
-        [Inject]
-        protected NotificationService NotificationService { get; set; }
-
-        /// <summary>
-        /// Gets or sets a list of compendiums to store uploaded data.
-        /// </summary>
-        protected List<PublicCompendium> PublicCompendiums { get; set; } = new List<PublicCompendium>();
-
-        /// <summary>
-        /// Gets or sets the TooltipService.
-        /// </summary>
-        [Inject]
-        protected TooltipService TooltipService { get; set; }
-
-        /// <summary>
-        /// Logs an event with a given name and value.
-        /// </summary>
-        /// <param name="eventName">The name of the event.</param>
-        /// <param name="value">The value of the event.</param>
-        protected void Log(string eventName, string value)
-        {
-            this.Events.Add(DateTime.Now, $"{eventName}: {value}");
-        }
-
-        /// <summary>
-        /// Logs a change event with the item text from the TreeEventArgs.
-        /// </summary>
-        /// <param name="args">The TreeEventArgs containing the item text.</param>
-        protected void LogChange(TreeEventArgs args)
-        {
-            this.Log("Change", $"Item Text: {args.Text}");
-        }
-
-        /// <summary>
-        /// Logs the expand event of a tree item.
-        /// </summary>
-        /// <param name="args">The tree expand event arguments.</param>
-        protected void LogExpand(TreeExpandEventArgs args)
-        {
-            if (args.Text is string text)
-            {
-                this.Log("Expand", $"Item Text: {text}");
-            }
-        }
+        private MarkdownService MarkdownService { get; set; }
 
         /// <summary>
         /// Uploads a compendium and creates a tree from it.
@@ -165,11 +89,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>
         /// A tree created from the uploaded compendium.
         /// </returns>
-        protected async Task UploadComplete(UploadCompleteEventArgs args)
+        private async Task UploadComplete(UploadCompleteEventArgs args)
         {
             this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);
             var json = args.RawResponse;
-            this.PublicCompendiums = this.CompendiumService.LoadCompendiums(json);
+            this.Compendium = this.CompendiumService.LoadCompendiums(json);
         }
     }
 }

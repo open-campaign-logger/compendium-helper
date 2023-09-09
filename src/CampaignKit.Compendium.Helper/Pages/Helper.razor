@@ -34,23 +34,20 @@
             </RadzenCard>
             <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
-                <Navigator PublicCompendiums="@PublicCompendiums" />
+                <Navigator Compendium="@Compendium" />
             </RadzenCard>
         </RadzenStack>
     </RadzenColumn>
     <RadzenColumn Size="8">
         <RadzenTabs>
             <Tabs>
-                <RadzenTabsItem Text="Properties">
-                    <!-- Content for Properties tab -->
-                    <RadzenCard>
-                        <RadzenText>Properties</RadzenText>
-                    </RadzenCard>
+                <RadzenTabsItem Text="Compendium">
+                    <CompendiumProperties Compendium="@Compendium" />
                 </RadzenTabsItem>
-                <RadzenTabsItem Text="Source">
+                <RadzenTabsItem Text="Data Source">
                     <!-- Content for Source tab -->
                     <RadzenCard>
-                        <RadzenText>Source</RadzenText>
+                        <RadzenText>Data Source</RadzenText>
                     </RadzenCard>
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Preview">

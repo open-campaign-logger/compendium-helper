@@ -30,26 +30,20 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Navigator
     {
         /// <summary>
-        /// Gets or sets the list of PublicCompendium objects.
+        /// Gets or sets the ICompendium object.
         /// </summary>
         [Parameter]
-        public List<PublicCompendium> PublicCompendiums { get; set; }
+        public ICompendium Compendium { get; set; }
 
         /// <summary>
-        /// Gets or sets the search term.
-        /// </summary>
-        public string SearchTerm { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets a list of distinct source data set names from the public compendiums.
+        /// Gets a list of distinct source data set names from the compendium.
         /// </summary>
         /// <returns>A list of distinct source data set names.</returns>
         private IEnumerable<string> AutoCompleteData
         {
             get
             {
-                return this.PublicCompendiums
-                        .SelectMany(c => c.SourceDataSetGroupings)
+                return this.Compendium.SourceDataSetGroupings
                         .SelectMany(s => s.SourceDataSets)
                         .Select(ds => ds.SourceDataSetName)
                         .Distinct();
@@ -57,12 +51,17 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
-        /// Gets or sets the filtered compendiums.
+        /// Gets or sets the filtered compendium.
         /// </summary>
         /// <value>
-        /// The filtered compendiums.
+        /// The filtered compendium.
         /// </value>
-        private IEnumerable<PublicCompendium> FilteredCompendiums { get; set; }
+        private ICompendium FilteredCompendium { get; set; }
+
+        /// <summary>
+        /// Gets or sets the search term.
+        /// </summary>
+        private string SearchTerm { get; set; } = string.Empty;
 
         /// <summary>
         /// This method is called when the component receives new parameters. Any initialization or
@@ -82,27 +81,13 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             if (string.IsNullOrWhiteSpace(this.SearchTerm))
             {
-                this.FilteredCompendiums = this.PublicCompendiums;
+                this.FilteredCompendium = this.Compendium;
             }
             else
             {
-                this.FilteredCompendiums = this.PublicCompendiums
-                    .Where(pc => pc.SourceDataSets.Any(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)))
-                    .Select(pc => new PublicCompendium
-                    {
-                        CompendiumService = pc.CompendiumService,
-                        Description = pc.Description,
-                        GameSystem = pc.GameSystem,
-                        ImageUrl = pc.ImageUrl,
-                        IsActive = pc.IsActive,
-                        OverwriteExisting = pc.OverwriteExisting,
-                        Prompts = pc.Prompts,
-                        Title = pc.Title,
-                        SourceDataSets = pc.SourceDataSets
-                            .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase))
-                            .ToList(),
-                    })
-                    .ToList();
+                this.FilteredCompendium.SourceDataSets =
+                    this.Compendium.SourceDataSets
+                    .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             this.StateHasChanged();
