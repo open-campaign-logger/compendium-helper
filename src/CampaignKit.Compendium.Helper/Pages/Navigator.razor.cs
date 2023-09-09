@@ -17,10 +17,15 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Core.Configuration;
-
     using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.Components.Web;
 
     using Radzen;
+    using Radzen.Blazor;
+
+    using System;
+
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// Represents a partial class for the Navigator component.
@@ -53,6 +58,37 @@ namespace CampaignKit.Compendium.Helper.Pages
                         .Distinct();
             }
         }
+
+        /// <summary>
+        /// Gets or sets the RadzenContextMenu object.
+        /// </summary>
+        private RadzenContextMenu ContextMenu { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ContextMenuService.
+        /// </summary>
+        [Inject]
+        protected ContextMenuService ContextMenuService { get; set; }
+
+        void ShowContextMenuWithItems(MouseEventArgs args)
+        {
+            ContextMenuService.Open(args,
+                new List<ContextMenuItem> {
+                new ContextMenuItem(){ Text = "Context menu item 1", Value = 1, Icon = "home" },
+                new ContextMenuItem(){ Text = "Context menu item 2", Value = 2, Icon = "search" },
+                new ContextMenuItem(){ Text = "Context menu item 3", Value = 3, Icon = "info" },
+             }, OnMenuItemClick);
+        }
+
+        void OnMenuItemClick(MenuItemEventArgs args)
+        {
+            // console.Log($"Menu item with Value={args.Value} clicked");
+            if (!args.Value.Equals(3) && !args.Value.Equals(4))
+            {
+                ContextMenuService.Close();
+            }
+        }
+
 
         /// <summary>
         /// Gets or sets the filtered compendiums.

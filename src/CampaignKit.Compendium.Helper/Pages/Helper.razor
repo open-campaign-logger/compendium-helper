@@ -17,24 +17,26 @@
 <PageTitle>Helper</PageTitle>
 <RadzenRow>
     <RadzenColumn>
-        <RadzenCard>
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Configuration</RadzenText>
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
-                <RadzenButton Text="New"
-                              ButtonStyle="ButtonStyle.Light" />
-                <RadzenText Text="- or -" />
-                <RadzenUpload Accept=".json"
-                              Url="upload/single"
-                              Complete="@UploadComplete"
-                              ChooseText="Upload"
-                              Multiple=false />
-            </RadzenStack>
-            
-        </RadzenCard>
-        <RadzenCard Style="margin-top:10px;">
-            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
-            <Navigator PublicCompendiums="@PublicCompendiums" />
-        </RadzenCard>
+        <RadzenStack Gap="1rem">
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Configuration</RadzenText>
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
+                    <RadzenButton Text="New"
+                                  ButtonStyle="ButtonStyle.Light" />
+                    <RadzenText Text="- or -" />
+                    <RadzenUpload Accept=".json"
+                                  Url="upload/single"
+                                  Complete="@UploadComplete"
+                                  ChooseText="Upload"
+                                  Multiple=false />
+                </RadzenStack>
+
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
+                <Navigator PublicCompendiums="@PublicCompendiums" />
+            </RadzenCard>
+        </RadzenStack>
     </RadzenColumn>
     <RadzenColumn>
     </RadzenColumn>
