@@ -2,9 +2,23 @@
     <RadzenAutoComplete @bind-Value="SearchTerm" Data="@AutoCompleteData" Placeholder="Search..." Change="@OnSearchChanged" />
 </RadzenRow>
 <RadzenRow>
-    <RadzenTree Data="@FilteredCompendiums">
-        <RadzenTreeLevel TextProperty="Title" ChildrenProperty="SourceDataSetGroupings" Expanded="@(node => true)" />
-        <RadzenTreeLevel TextProperty="LabelName" ChildrenProperty="SourceDataSets" />
-        <RadzenTreeLevel TextProperty="SourceDataSetName" HasChildren="@((node) => false)" />
-    </RadzenTree>
+    <RadzenPanelMenu>
+        @foreach (var compendium in FilteredCompendiums)
+        {
+            <RadzenPanelMenuItem Text="@compendium.Title" Expanded="true" Icon="book">
+                @foreach (var grouping in compendium.SourceDataSetGroupings)
+                {
+                    if(grouping.SourceDataSets != null && grouping.SourceDataSets.Count > 0)
+                    {
+                        <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark">
+                            @foreach (var dataSet in grouping.SourceDataSets)
+                            {
+                                <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" />
+                            }
+                        </RadzenPanelMenuItem>
+                    }
+                }
+            </RadzenPanelMenuItem>
+        }
+    </RadzenPanelMenu>
 </RadzenRow>
