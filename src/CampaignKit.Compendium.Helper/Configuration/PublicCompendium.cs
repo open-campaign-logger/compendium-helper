@@ -77,14 +77,29 @@ namespace CampaignKit.Compendium.Core.Configuration
         {
             get
             {
-                return this.SourceDataSets
-                    .SelectMany(ds => ds.Labels.Select(label => new { Label = label, DataSet = ds }))
+                // Grouping for SourceDataSets with labels
+                var labeledGroupings = this.SourceDataSets
+                    .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
                     .GroupBy(pair => pair.Label)
+                    .Where(group => !string.IsNullOrEmpty(group.Key))
                     .Select(group => new SourceDataSetGrouping
                     {
                         LabelName = group.Key,
                         SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
-                    })
+                    });
+
+                // Grouping for SourceDataSets without labels
+                var noLabelGrouping = new SourceDataSetGrouping
+                {
+                    LabelName = "No Label",
+                    SourceDataSets = this.SourceDataSets
+                        .Where(ds => !ds.Labels.Any())
+                        .OrderBy(sds => sds.SourceDataSetName)
+                        .ToList(),
+                };
+
+                // Merge the two groupings and order them by LabelName
+                return labeledGroupings.Concat(new[] { noLabelGrouping })
                     .OrderBy(group => group.LabelName)
                     .ToList();
             }
