@@ -36,6 +36,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         public ICompendium Compendium { get; set; }
 
         /// <summary>
+        /// Gets or sets the EventCallback for when a SourceDataSet is clicked.
+        /// </summary>
+        [Parameter]
+        public EventCallback<string> SourceDataSetClicked { get; set; }
+
+        /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
         /// </summary>
         /// <returns>A list of distinct source data set names.</returns>
@@ -91,6 +97,16 @@ namespace CampaignKit.Compendium.Helper.Pages
             }
 
             this.StateHasChanged();
+        }
+
+        /// <summary>
+        /// Event handler for when a data set is clicked in the menu.
+        /// </summary>
+        /// <param name="args">The menu item event arguments.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        private async Task OnDataSetClick(MenuItemEventArgs args)
+        {
+            await this.SourceDataSetClicked.InvokeAsync(args.Text);
         }
 
         /// <summary>

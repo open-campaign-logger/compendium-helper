@@ -13,7 +13,7 @@
                         <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark">
                             @foreach (var dataSet in grouping.SourceDataSets)
                             {
-                                <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" />
+                                <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="@((args) => OnDataSetClick(args))" />
                             }
                         </RadzenPanelMenuItem>
                     }

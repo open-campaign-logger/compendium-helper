@@ -1,0 +1,17 @@
+﻿@if(SourceData != null)
+{
+    <RadzenNumeric Value="@SourceData.ImportLimit" Placeholder="Import Limit" Style="width:100%; margin-bottom:10px;" />
+    <!-- You might want to use a multi-select dropdown for labels -->
+    <!-- Just showcasing a textbox for now -->
+    <RadzenTextBox Value="@string.Join(',', SourceData.Labels)" Placeholder="Labels (comma-separated)" Style="width:100%; margin-bottom:10px;" />
+    <RadzenTextBox Value="@SourceData.LicenseDataParser" Placeholder="License Data Parser" Style="width:100%; margin-bottom:10px;" />
+    <RadzenTextBox Value="@SourceData.LicenseDataURI" Placeholder="License Data URI" Style="width:100%; margin-bottom:10px;" />
+    <RadzenCheckBox Value="@SourceData.OverwriteExisting" Text="Overwrite Existing?" Style="margin-bottom:10px;" />
+    <RadzenTextBox Value="@SourceData.SourceDataSetName" Placeholder="Source Data Set Name" Style="width:100%; margin-bottom:10px;" />
+    <RadzenTextBox Value="@SourceData.SourceDataSetParser" Placeholder="Source Data Set Parser" Style="width:100%; margin-bottom:10px;" />
+    <RadzenTextBox Value="@SourceData.SourceDataSetURI" Placeholder="Source Data Set URI" Style="width:100%; margin-bottom:10px;" />
+    <!-- Substitutions might need a more complex UI component to capture pairs or lists of items -->
+    <RadzenTextBox Value="@SourceData.TagSymbol" Placeholder="Tag Symbol" Style="width:100%; margin-bottom:10px;" />
+    <RadzenTextBox Value="@SourceData.TagValuePrefix" Placeholder="Tag Value Prefix" Style="width:100%; margin-bottom:10px;" />
+    <RadzenTextBox Value="@SourceData.XPath" Placeholder="XPath" Style="width:100%; margin-bottom:10px;" />
+}

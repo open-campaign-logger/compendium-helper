@@ -32,11 +32,6 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Helper
     {
         /// <summary>
-        /// Gets or sets a list of compendiums to store uploaded data.
-        /// </summary>
-        private ICompendium Compendium { get; set; }
-
-        /// <summary>
         /// Gets or sets the CompendiumService.
         /// </summary>
         [Inject]
@@ -83,6 +78,27 @@ namespace CampaignKit.Compendium.Helper.Pages
         private MarkdownService MarkdownService { get; set; }
 
         /// <summary>
+        /// Gets or sets the selected compendium.
+        /// </summary>
+        private ICompendium SelectedCompendium { get; set; }
+
+        /// <summary>
+        /// Gets or sets the selected source data set.
+        /// </summary>
+        private SourceDataSet SelectedSourceDataSet { get; set; }
+
+        /// <summary>
+        /// Handles the SourceDataSet clicked event by logging the selected SourceDataSet name.
+        /// </summary>
+        /// <param name="sourceDataSetName">Name of the SourceDataSet.</param>
+        private void HandleSourceDataSetClicked(string sourceDataSetName)
+        {
+            this.Logger.LogInformation("Selected SourceDataSet: {SourceDataSetName}", sourceDataSetName);
+            this.SelectedSourceDataSet
+                = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(sourceDataSetName), null);
+        }
+
+        /// <summary>
         /// Uploads a compendium and creates a tree from it.
         /// </summary>
         /// <param name="args">The upload event arguments.</param>
@@ -93,7 +109,8 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);
             var json = args.RawResponse;
-            this.Compendium = this.CompendiumService.LoadCompendiums(json);
+            this.SelectedCompendium = this.CompendiumService.LoadCompendiums(json);
+            this.SelectedSourceDataSet = null;
         }
     }
 }

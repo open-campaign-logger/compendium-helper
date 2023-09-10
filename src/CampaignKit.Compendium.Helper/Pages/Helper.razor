@@ -34,7 +34,7 @@
             </RadzenCard>
             <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
-                <Navigator Compendium="@Compendium" />
+                <Navigator Compendium="@SelectedCompendium" SourceDataSetClicked="HandleSourceDataSetClicked" />
             </RadzenCard>
         </RadzenStack>
     </RadzenColumn>
@@ -42,13 +42,11 @@
         <RadzenTabs>
             <Tabs>
                 <RadzenTabsItem Text="Compendium">
-                    <CompendiumProperties Compendium="@Compendium" />
+                    <CompendiumProperties Compendium="@SelectedCompendium" />
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Data Source">
                     <!-- Content for Source tab -->
-                    <RadzenCard>
-                        <RadzenText>Data Source</RadzenText>
-                    </RadzenCard>
+                    <SourceDataSetProperties SourceData="@SelectedSourceDataSet" />
                 </RadzenTabsItem>
                 <RadzenTabsItem Text="Preview">
                     <!-- Content for Preview tab -->

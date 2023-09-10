@@ -26,11 +26,10 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class CompendiumProperties
     {
         /// <summary>
-        /// Gets or sets the Compendium object. 
+        /// Gets or sets the SelectedCompendium object. 
         /// </summary>
-        /// <returns>The Compendium object.</returns>
+        /// <returns>The SelectedCompendium object.</returns>
         [Parameter]
         public ICompendium Compendium { get; set; }
-
     }
 }
