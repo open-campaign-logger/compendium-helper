@@ -10,61 +10,61 @@
                 <RadzenStack>
 
                     <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenFormField Text="Compendium Title" Variant="@variant" Style="width: 100%">
+                        <RadzenFormField Text="@labels["title"]" Variant="@variant" Style="width: 100%">
                             <RadzenTextBox @bind-Value="@Compendium.Title" id="title" />
                         </RadzenFormField>
                         <RadzenIcon Icon="help"
-                                    MouseEnter="@(args => ShowTooltip(args, "Provide a title for the compendium."))" />
+                                    MouseEnter="@(args => ShowTooltip(args, tooltips["title"]))" />
                     </RadzenStack>
 
 
 
                     <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenFormField Text="Description" Variant="@variant" Style="width: 100%">
+                        <RadzenFormField Text="@labels["description"]" Variant="@variant" Style="width: 100%">
                             <RadzenTextArea @bind-Value="@Compendium.Description" id="description" />
 
                         </RadzenFormField>
                         <RadzenIcon Icon="help"
-                                    MouseEnter="@(args => ShowTooltip(args, "Provide a brief description of this compendium."))" />
+                                    MouseEnter="@(args => ShowTooltip(args, tooltips["description"]))" />
                     </RadzenStack>
 
                     <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenFormField Text="Game System" Variant="@variant" Style="width: 100%">
+                        <RadzenFormField Text="@labels["gameSystem"]" Variant="@variant" Style="width: 100%">
                             <RadzenTextBox @bind-Value="@Compendium.GameSystem" id="gameSystem" />
                         </RadzenFormField>
                         <RadzenIcon Icon="help"
-                                    MouseEnter="@(args => ShowTooltip(args, "Which game system does this compendium belong to?"))" />
+                                    MouseEnter="@(args => ShowTooltip(args, tooltips["gameSystem"]))" />
                     </RadzenStack>
 
                     <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenFormField Text="Compendium Service" Variant="@variant" Style="width: 100%">
+                        <RadzenFormField Text="@labels["compendiumService"]" Variant="@variant" Style="width: 100%">
                             <RadzenTextBox @bind-Value="@Compendium.CompendiumService"
                                            id="compendiumService"
                                            ReadOnly="true" />
                         </RadzenFormField>
                         <RadzenIcon Icon="help"
-                                    MouseEnter="@(args => ShowTooltip(args, "Provide the name of the compendium service processing here."))" />
+                                    MouseEnter="@(args => ShowTooltip(args, tooltips["compendiumService"]))" />
                     </RadzenStack>
 
                     <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenFormField Text="Image URL" Variant="@variant" Style="width: 100%">
+                        <RadzenFormField Text="@labels["imageUrl"]" Variant="@variant" Style="width: 100%">
                             <RadzenTextBox @bind-Value="@Compendium.ImageUrl" id="imageUrl" />
                         </RadzenFormField>
                         <RadzenIcon Icon="help"
-                                    MouseEnter="@(args => ShowTooltip(args, "Provide a URL to an image for this compendium."))" />
+                                    MouseEnter="@(args => ShowTooltip(args, tooltips["imageUrl"]))" />
                     </RadzenStack>
 
                     <RadzenStack Orientation="Orientation.Horizontal">
-                        <RadzenFormField Text="Is Active?" Variant="@variant" Style="width: 150px">
-                            <RadzenCheckBox @bind-Value="@Compendium.IsActive" id="isActive" class="m-3" Style="flex: none;"/>
+                        <RadzenFormField Text="@labels["isActive"]" Variant="@variant" Style="width: 150px">
+                            <RadzenCheckBox @bind-Value="@Compendium.IsActive" id="isActive" class="m-3" Style="flex: none;" />
                         </RadzenFormField>
                         <RadzenIcon Icon="help"
-                                    MouseEnter="@(args => ShowTooltip(args, "Should the compendium generator consider this configuration active during processing?"))" />
-                        <RadzenFormField Text="Overwrite Existing?" Variant="@variant" Style="width: 150px" >
+                                    MouseEnter="@(args => ShowTooltip(args,  tooltips["isActive"]))" />
+                        <RadzenFormField Text="@labels["overwriteExisting"]" Variant="@variant" Style="width: 150px">
                             <RadzenCheckBox @bind-Value="@Compendium.OverwriteExisting" id="overwriteExisting" class="m-3" Style="flex: none;" />
                         </RadzenFormField>
                         <RadzenIcon Icon="help"
-                                    MouseEnter="@(args => ShowTooltip(args, "Should files downloaded during a previous compendium generation run be overwritten?"))" />
+                                    MouseEnter="@(args => ShowTooltip(args,  tooltips["overwriteExisting"]))" />
                     </RadzenStack>
                 </RadzenStack>
             </RadzenColumn>
@@ -73,5 +73,36 @@
 }
 
 @code {
-    Variant variant = Variant.Outlined;
+    /// <summary>
+    /// Sets the variant of the object to Outlined.
+    /// </summary>
+    private Variant variant = Variant.Outlined;
+
+    /// <summary>
+    /// Dictionary containing labels for form fields.
+    /// </summary>
+    private Dictionary<string, string> labels = new Dictionary<string, string>
+    {
+        {"title", "Title"},
+        {"description", "Description"},
+        {"gameSystem", "Game System"},
+        {"compendiumService", "Compendium Service."},
+        {"imageUrl", "Image URL."},
+        {"isActive", "Is Active?"},
+        {"overwriteExisting", "Overwrite Existing?"}
+    };
+
+    /// <summary>
+    /// Dictionary containing tooltips for form fields.
+    /// </summary>
+    private Dictionary<string, string> tooltips = new Dictionary<string, string>
+    {
+        {"title", "Provide a title for the compendium."},
+        {"description", "Provide a brief description of this compendium."},
+        {"gameSystem", "Which game system does this compendium belong to?"},
+        {"compendiumService", "Provide the name of the compendium service processing here."},
+        {"imageUrl", "Provide a URL to an image for this compendium."},
+        {"isActive", "Should the compendium generator consider this configuration active during processing?"},
+        {"overwriteExisting", "Should files downloaded during a previous compendium generation run be overwritten?"}
+    };
 }
