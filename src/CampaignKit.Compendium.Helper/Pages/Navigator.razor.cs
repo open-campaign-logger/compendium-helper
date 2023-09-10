@@ -36,10 +36,34 @@ namespace CampaignKit.Compendium.Helper.Pages
         public ICompendium Compendium { get; set; }
 
         /// <summary>
-        /// Gets or sets the EventCallback for when a SourceDataSet is clicked.
+        /// Gets or sets the EventCallback for the compendium collapsed event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> SourceDataSetClicked { get; set; }
+        public EventCallback<string> CompendiumCollapsed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the EventCallback for the compendium expansion event.
+        /// </summary>
+        [Parameter]
+        public EventCallback<string> CompendiumExpanded { get; set; }
+
+        /// <summary>
+        /// Gets or sets the EventCallback for the label collapsed event.
+        /// </summary>
+        [Parameter]
+        public EventCallback<string> LabelCollapsed { get; set; }
+
+        /// <summary>
+        /// Gets or sets the EventCallback for the label expansion event.
+        /// </summary>
+        [Parameter]
+        public EventCallback<string> LabelExpanded { get; set; }
+
+        /// <summary>
+        /// Gets or sets the EventCallback for DataSet selection.
+        /// </summary>
+        [Parameter]
+        public EventCallback<string> SourceDataSetSelected { get; set; }
 
         /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
@@ -100,13 +124,39 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
-        /// Event handler for when a data set is clicked in the menu.
+        /// Invokes the CompendiumExpanded event when the compendium is expanded or collapsed.
         /// </summary>
-        /// <param name="args">The menu item event arguments.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        private async Task OnDataSetClick(MenuItemEventArgs args)
+        /// <param name="isExpanded">A boolean value indicating whether the compendium is expanded or collapsed.</param>
+        /// <param name="compendiumName">The name of the compendium.</param>
+        /// <returns>A Task that represents the asynchronous operation.</returns>
+        private async Task OnCompendiumExpandedChanged(bool isExpanded, string compendiumName)
         {
-            await this.SourceDataSetClicked.InvokeAsync(args.Text);
+            if (isExpanded)
+            {
+                await this.CompendiumExpanded.InvokeAsync(compendiumName);
+            }
+            else
+            {
+                await this.CompendiumCollapsed.InvokeAsync(compendiumName);
+            }
+        }
+
+        /// <summary>
+        /// Invokes the LabelExpanded event when the label is expanded or collapsed.
+        /// </summary>
+        /// <param name="isExpanded">A boolean value indicating whether the label is expanded or collapsed.</param>
+        /// <param name="labelName">The name of the label.</param>
+        /// <returns>A Task that represents the asynchronous operation.</returns>
+        private async Task OnLabelExpandedChanged(bool isExpanded, string labelName)
+        {
+            if (isExpanded)
+            {
+                await this.LabelExpanded.InvokeAsync(labelName);
+            }
+            else
+            {
+                await this.LabelCollapsed.InvokeAsync(labelName);
+            }
         }
 
         /// <summary>
@@ -115,6 +165,16 @@ namespace CampaignKit.Compendium.Helper.Pages
         private void OnSearchChanged(object value)
         {
             this.FilterTree();
+        }
+
+        /// <summary>
+        /// Event handler for when a data set is selected in the menu.
+        /// </summary>
+        /// <param name="args">The menu item event arguments.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        private async Task OnSourceDataSetSelected(MenuItemEventArgs args)
+        {
+            await this.SourceDataSetSelected.InvokeAsync(args.Text);
         }
     }
 }

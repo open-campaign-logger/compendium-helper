@@ -34,26 +34,36 @@
             </RadzenCard>
             <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
-                <Navigator Compendium="@SelectedCompendium" SourceDataSetClicked="HandleSourceDataSetClicked" />
+                <Navigator Compendium="@SelectedCompendium"
+                           CompendiumExpanded="OnCompendiumExpanded"
+                           CompendiumCollapsed="OnCompendiumCollapsed"
+                           LabelExpanded="OnLabelExpanded"
+                           LabelCollapsed="OnLabelCollapsed"
+                           SourceDataSetSelected="OnSourceDataSetSelected" />
             </RadzenCard>
         </RadzenStack>
     </RadzenColumn>
     <RadzenColumn Size="8">
         <RadzenTabs>
             <Tabs>
-                <RadzenTabsItem Text="Compendium">
-                    <CompendiumProperties Compendium="@SelectedCompendium" />
-                </RadzenTabsItem>
-                <RadzenTabsItem Text="Data Source">
-                    <!-- Content for Source tab -->
-                    <SourceDataSetProperties SourceDataSet="@SelectedSourceDataSet" />
-                </RadzenTabsItem>
-                <RadzenTabsItem Text="Preview">
-                    <!-- Content for Preview tab -->
-                    <RadzenCard>
-                        <RadzenText>Preview</RadzenText>
-                    </RadzenCard>
-                </RadzenTabsItem>
+                @if (SelectedSourceDataSet != null)
+                {
+                    <RadzenTabsItem Text="Source Data Set">
+                        <SourceDataSetProperties DataSet="@SelectedSourceDataSet" />
+                    </RadzenTabsItem>
+                }
+                else if (SelectedLabel != null)
+                {
+                    <RadzenTabsItem Text="Label">
+                        <!-- <LabelProperties Label="@SelectedLabel" /> -->
+                    </RadzenTabsItem>
+                }
+                else if (SelectedCompendium != null)
+                {
+                    <RadzenTabsItem Text="Compendium">
+                        <CompendiumProperties Compendium="@SelectedCompendium" />
+                    </RadzenTabsItem>
+                }
             </Tabs>
         </RadzenTabs>
     </RadzenColumn>

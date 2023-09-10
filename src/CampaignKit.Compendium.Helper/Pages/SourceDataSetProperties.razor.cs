@@ -28,12 +28,11 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class SourceDataSetProperties
     {
         /// <summary>
-        /// Gets or sets the SourceDataSet property.
+        /// Gets or sets the DataSet property.
         /// </summary>
-        /// <returns>The SourceDataSet object.</returns>
+        /// <returns>The DataSet object.</returns>
         [Parameter]
-        public SourceDataSet SourceDataSet { get; set; } = new SourceDataSet();
-
+        public SourceDataSet DataSet { get; set; } = new SourceDataSet();
 
         /// <summary>
         /// Gets or sets the TooltipService.
