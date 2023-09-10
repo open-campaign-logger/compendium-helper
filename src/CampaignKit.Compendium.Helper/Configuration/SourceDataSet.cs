@@ -89,5 +89,28 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// Gets or sets a value indicating whether the data set should be rendered as a public campaign entry or a private one.
         /// </summary>
         public bool IsPublic { get; set; } = false;
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return this.SourceDataSetName;
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            if (obj is SourceDataSet other)
+            {
+                return this.SourceDataSetName.Equals(other.SourceDataSetName);
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return this.SourceDataSetName.GetHashCode();
+        }
     }
 }

@@ -52,10 +52,11 @@
                         <SourceDataSetProperties DataSet="@SelectedSourceDataSet" />
                     </RadzenTabsItem>
                 }
-                else if (SelectedLabel != null)
+                else if (SelectedSourceDataSetGrouping != null)
                 {
                     <RadzenTabsItem Text="Label">
-                        <!-- <LabelProperties Label="@SelectedLabel" /> -->
+                        <LabelProperties SourceDataSetGrouping="@SelectedSourceDataSetGrouping" 
+                            AllSourceDataSetGroupings="@SelectedCompendium.SourceDataSets"/>
                     </RadzenTabsItem>
                 }
                 else if (SelectedCompendium != null)

@@ -1,0 +1,46 @@
+﻿<RadzenCard class="rz-card">
+    <RadzenRow Gap="1rem">
+        <RadzenText class="rz-text-subtitle2" TagName="TagName.H3">Label Properties</RadzenText>
+    </RadzenRow>
+
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="12">
+            <RadzenStack>
+                <!-- Source Data Set Name -->
+                <RadzenStack>
+                    <RadzenFormField Text="@labels["labelName"]" Variant="@variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["labelName"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SourceDataSetGrouping.LabelName" id="labelName" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+@code {
+    /// <summary>
+    /// Sets the variant of the object to Outlined.
+    /// </summary>
+    Variant variant = Variant.Outlined;
+
+    /// <summary>
+    /// Dictionary containing labels for form fields.
+    /// </summary>
+    Dictionary<string, string> tooltips = new Dictionary<string, string>
+    {
+        {"labelName", "The source data set's unique name."},
+    };
+
+    /// <summary>
+    /// Dictionary containing tooltips for form fields.
+    /// </summary>
+    Dictionary<string, string> labels = new Dictionary<string, string>
+    {
+        {"labelName", "Source Data Set Name"},
+    };
+}

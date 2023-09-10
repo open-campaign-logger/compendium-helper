@@ -17,6 +17,7 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Core.Configuration;
+    using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
@@ -83,7 +84,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <summary>
         /// Gets or sets the property to store the selected label.
         /// </summary>
-        private string SelectedLabel { get; set; }
+        private SourceDataSetGrouping SelectedSourceDataSetGrouping { get; set; }
 
         /// <summary>
         /// Gets or sets the selected source data set.
@@ -99,7 +100,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Compendium expanded: {CompendiumName}", compendiumName);
 
             // Update user selections
-            this.SelectedLabel = null;
+            this.SelectedSourceDataSetGrouping = null;
             this.SelectedSourceDataSet = null;
         }
 
@@ -112,7 +113,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Compendium collapsed: {CompendiumName}", compendiumName);
 
             // Update user selections
-            this.SelectedLabel = null;
+            this.SelectedSourceDataSetGrouping = null;
             this.SelectedSourceDataSet = null;
         }
 
@@ -125,7 +126,8 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Label expanded: {LabelName}", labelName);
 
             // Update user selections
-            this.SelectedLabel = labelName;
+            this.SelectedSourceDataSetGrouping
+                = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
             this.SelectedSourceDataSet = null;
         }
 
@@ -138,7 +140,8 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Label collapsed: {LabelName}", labelName);
 
             // Update user selections
-            this.SelectedLabel = labelName;
+            this.SelectedSourceDataSetGrouping
+                = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
             this.SelectedSourceDataSet = null;
         }
 
@@ -151,7 +154,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Selected DataSet: {SourceDataSetName}", sourceDataSetName);
 
             // Update user selections
-            this.SelectedLabel = null;
+            this.SelectedSourceDataSetGrouping = null;
             this.SelectedSourceDataSet
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(sourceDataSetName), null);
         }

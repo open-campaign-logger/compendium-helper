@@ -71,7 +71,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         {
             get
             {
-                // Grouping for SourceDataSets with labels
+                // SourceDataSetGrouping for SourceDataSets with labels
                 var labeledGroupings = this.SourceDataSets
                     .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
                     .GroupBy(pair => pair.Label)
@@ -82,7 +82,7 @@ namespace CampaignKit.Compendium.Core.Configuration
                         SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                     });
 
-                // Grouping for SourceDataSets without labels
+                // SourceDataSetGrouping for SourceDataSets without labels
                 var noLabelGrouping = new SourceDataSetGrouping
                 {
                     LabelName = "No Label",
