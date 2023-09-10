@@ -20,6 +20,8 @@ namespace CampaignKit.Compendium.Helper.Pages
 
     using Microsoft.AspNetCore.Components;
 
+    using Radzen;
+
     /// <summary>
     /// Partial class for the CompendiumProperties component. 
     /// </summary>
@@ -31,5 +33,22 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>The SelectedCompendium object.</returns>
         [Parameter]
         public ICompendium Compendium { get; set; }
+
+        /// <summary>
+        /// Gets or sets the TooltipService.
+        /// </summary>
+        [Inject]
+        public TooltipService TooltipService { get; set; }
+
+        /// <summary>
+        /// Opens a tooltip with the specified content for the given element.
+        /// </summary>
+        /// <param name="elementReference">The element to open the tooltip for.</param>
+        /// <param name="tooltip">The tooltip content.</param>
+        /// <param name="options">Optional options for the tooltip.</param>
+        private void ShowTooltip(ElementReference elementReference, string tooltip, TooltipOptions options = null)
+        {
+            this.TooltipService.Open(elementReference, tooltip, options);
+        }
     }
 }

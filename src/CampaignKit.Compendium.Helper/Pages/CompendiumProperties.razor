@@ -1,13 +1,77 @@
-﻿@if(Compendium != null)
+﻿@if (Compendium != null)
 {
-    <RadzenCard>
-        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Compendium Properties</RadzenText>
-        <RadzenTextBox Value="@Compendium.CompendiumService" Placeholder="Compendium Service" Style="width:100%; margin-bottom:10px;" />
-        <RadzenTextArea Value="@Compendium.Description" Placeholder="Description" Style="width:100%; margin-bottom:10px;" />
-        <RadzenTextBox Value="@Compendium.GameSystem" Placeholder="Game System" Style="width:100%; margin-bottom:10px;" />
-        <RadzenTextBox Value="@Compendium.ImageUrl" Placeholder="Image URL" Style="width:100%; margin-bottom:10px;" />
-        <RadzenCheckBox Value="@Compendium.IsActive" Text="Is Active?" Style="margin-bottom:10px;" />
-        <RadzenCheckBox Value="@Compendium.OverwriteExisting" Text="Overwrite Existing?" Style="margin-bottom:10px;" />
-        <RadzenTextBox Value="@Compendium.Title" Placeholder="Title" Style="width:100%; margin-bottom:10px;" />
+    <RadzenCard class="rz-card">
+        <RadzenRow Gap="1rem">
+            <RadzenText class="rz-text-subtitle2" TagName="TagName.H3">Compendium Properties</RadzenText>
+        </RadzenRow>
+
+        <RadzenRow Gap="1rem">
+            <RadzenColumn Size="12">
+                <RadzenStack>
+
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="Compendium Title" Variant="@variant" Style="width: 100%">
+                            <RadzenTextBox @bind-Value="@Compendium.Title" id="title" />
+                        </RadzenFormField>
+                        <RadzenIcon Icon="help"
+                                    MouseEnter="@(args => ShowTooltip(args, "Provide a title for the compendium."))" />
+                    </RadzenStack>
+
+
+
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="Description" Variant="@variant" Style="width: 100%">
+                            <RadzenTextArea @bind-Value="@Compendium.Description" id="description" />
+
+                        </RadzenFormField>
+                        <RadzenIcon Icon="help"
+                                    MouseEnter="@(args => ShowTooltip(args, "Provide a brief description of this compendium."))" />
+                    </RadzenStack>
+
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="Game System" Variant="@variant" Style="width: 100%">
+                            <RadzenTextBox @bind-Value="@Compendium.GameSystem" id="gameSystem" />
+                        </RadzenFormField>
+                        <RadzenIcon Icon="help"
+                                    MouseEnter="@(args => ShowTooltip(args, "Which game system does this compendium belong to?"))" />
+                    </RadzenStack>
+
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="Compendium Service" Variant="@variant" Style="width: 100%">
+                            <RadzenTextBox @bind-Value="@Compendium.CompendiumService"
+                                           id="compendiumService"
+                                           ReadOnly="true" />
+                        </RadzenFormField>
+                        <RadzenIcon Icon="help"
+                                    MouseEnter="@(args => ShowTooltip(args, "Provide the name of the compendium service processing here."))" />
+                    </RadzenStack>
+
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="Image URL" Variant="@variant" Style="width: 100%">
+                            <RadzenTextBox @bind-Value="@Compendium.ImageUrl" id="imageUrl" />
+                        </RadzenFormField>
+                        <RadzenIcon Icon="help"
+                                    MouseEnter="@(args => ShowTooltip(args, "Provide a URL to an image for this compendium."))" />
+                    </RadzenStack>
+
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="Is Active?" Variant="@variant" Style="width: 150px">
+                            <RadzenCheckBox @bind-Value="@Compendium.IsActive" id="isActive" class="m-3" Style="flex: none;"/>
+                        </RadzenFormField>
+                        <RadzenIcon Icon="help"
+                                    MouseEnter="@(args => ShowTooltip(args, "Should the compendium generator consider this configuration active during processing?"))" />
+                        <RadzenFormField Text="Overwrite Existing?" Variant="@variant" Style="width: 150px" >
+                            <RadzenCheckBox @bind-Value="@Compendium.OverwriteExisting" id="overwriteExisting" class="m-3" Style="flex: none;" />
+                        </RadzenFormField>
+                        <RadzenIcon Icon="help"
+                                    MouseEnter="@(args => ShowTooltip(args, "Should files downloaded during a previous compendium generation run be overwritten?"))" />
+                    </RadzenStack>
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
     </RadzenCard>
+}
+
+@code {
+    Variant variant = Variant.Outlined;
 }
