@@ -1,17 +1,132 @@
-﻿@if(SourceData != null)
+﻿@if (SourceDataSet != null)
 {
-    <RadzenNumeric Value="@SourceData.ImportLimit" Placeholder="Import Limit" Style="width:100%; margin-bottom:10px;" />
-    <!-- You might want to use a multi-select dropdown for labels -->
-    <!-- Just showcasing a textbox for now -->
-    <RadzenTextBox Value="@string.Join(',', SourceData.Labels)" Placeholder="Labels (comma-separated)" Style="width:100%; margin-bottom:10px;" />
-    <RadzenTextBox Value="@SourceData.LicenseDataParser" Placeholder="License Data Parser" Style="width:100%; margin-bottom:10px;" />
-    <RadzenTextBox Value="@SourceData.LicenseDataURI" Placeholder="License Data URI" Style="width:100%; margin-bottom:10px;" />
-    <RadzenCheckBox Value="@SourceData.OverwriteExisting" Text="Overwrite Existing?" Style="margin-bottom:10px;" />
-    <RadzenTextBox Value="@SourceData.SourceDataSetName" Placeholder="Source Data Set Name" Style="width:100%; margin-bottom:10px;" />
-    <RadzenTextBox Value="@SourceData.SourceDataSetParser" Placeholder="Source Data Set Parser" Style="width:100%; margin-bottom:10px;" />
-    <RadzenTextBox Value="@SourceData.SourceDataSetURI" Placeholder="Source Data Set URI" Style="width:100%; margin-bottom:10px;" />
-    <!-- Substitutions might need a more complex UI component to capture pairs or lists of items -->
-    <RadzenTextBox Value="@SourceData.TagSymbol" Placeholder="Tag Symbol" Style="width:100%; margin-bottom:10px;" />
-    <RadzenTextBox Value="@SourceData.TagValuePrefix" Placeholder="Tag Value Prefix" Style="width:100%; margin-bottom:10px;" />
-    <RadzenTextBox Value="@SourceData.XPath" Placeholder="XPath" Style="width:100%; margin-bottom:10px;" />
+    <RadzenCard class="rz-card">
+        <RadzenRow Gap="1rem">
+            <RadzenText class="rz-text-subtitle2" TagName="TagName.H3">Source Data Set Properties</RadzenText>
+        </RadzenRow>
+
+        <RadzenRow Gap="1rem">
+            <RadzenColumn Size="12">
+                <RadzenStack>
+                    <!-- Source Data Set Name -->
+                    <RadzenStack>
+                        <RadzenFormField Text="@labels["sourceDataSetName"]" Variant="@variant" Style="width: 100%">
+                            <End>
+                                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["sourceDataSetName"]))" />
+                            </End>
+                            <ChildContent>
+                                <RadzenTextBox @bind-Value="@SourceDataSet.SourceDataSetName" id="sourceDataSetName" />
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenStack>
+
+                    <!-- Labels -->
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="@labels["labels"]" Variant="@variant" Style="width: 100%">
+                            <End>
+                                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["labels"]))" />
+                            </End>
+                            <ChildContent>
+                                <RadzenTextBox Value="@string.Join(',', SourceDataSet.Labels)" id="labels" ReadOnly="true" />
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenStack>
+
+                    <!-- Source Data Set URI -->
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="@labels["sourceDataSetURI"]" Variant="@variant" Style="width: 100%">
+                            <End>
+                                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["sourceDataSetURI"]))" />
+                            </End>
+                            <ChildContent>
+                                <RadzenTextBox @bind-Value="@SourceDataSet.SourceDataSetURI" id="sourceDataSetURI" />
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenStack>
+
+                    <!-- XPath -->
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="@labels["xPath"]" Variant="@variant" Style="width: 100%">
+                            <End>
+                                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["xPath"]))" />
+                            </End>
+                            <ChildContent>
+                                <RadzenTextBox @bind-Value="@SourceDataSet.XPath" id="xPath" />
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenStack>
+
+                    <!-- Tag Symbol -->
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="@labels["tagSymbol"]" Variant="@variant" Style="width: 100%">
+                            <End>
+                                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["tagSymbol"]))" />
+                            </End>
+                            <ChildContent>
+                                <RadzenTextBox @bind-Value="@SourceDataSet.TagSymbol" id="tagSymbol" />
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenStack>
+
+                    <!-- Tag Value Prefix -->
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="@labels["tagValuePrefix"]" Variant="@variant" Style="width: 100%">
+                            <End>
+                                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["tagValuePrefix"]))" />
+                            </End>
+                            <ChildContent>
+                                <RadzenTextBox @bind-Value="@SourceDataSet.TagValuePrefix" id="tagValuePrefix" />
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenStack>
+
+                    <!-- Overwrite Existing -->
+                    <RadzenStack Orientation="Orientation.Horizontal">
+                        <RadzenFormField Text="@labels["overwriteExisting"]" Variant="@variant" Style="width: 150px">
+                            <End>
+                                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["overwriteExisting"]))" />
+                            </End>
+                            <ChildContent>
+                                <RadzenCheckBox @bind-Value="@SourceDataSet.OverwriteExisting" id="overwriteExisting" class="m-3" Style="flex: none;" />
+                            </ChildContent>
+                        </RadzenFormField>
+                    </RadzenStack>
+
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+}
+
+@code {
+    Variant variant = Variant.Outlined;
+    Dictionary<string, string> tooltips = new Dictionary<string, string>
+    {
+        {"importLimit", "Provide the import limit."},
+        {"labels", "Provide labels (comma-separated)."},
+        {"licenseDataParser", "Specify the license data parser."},
+        {"licenseDataURI", "Provide the license data URI."},
+        {"overwriteExisting", "Should files downloaded during a previous run be overwritten?"},
+        {"sourceDataSetName", "Provide the source data set name."},
+        {"sourceDataSetParser", "Specify the source data set parser."},
+        {"sourceDataSetURI", "Provide the source data set URI."},
+        {"tagSymbol", "Specify the tag symbol."},
+        {"tagValuePrefix", "Provide the tag value prefix."},
+        {"xPath", "Provide the XPath."}
+    };
+
+    Dictionary<string, string> labels = new Dictionary<string, string>
+    {
+        {"importLimit", "Import Limit"},
+        {"labels", "Labels"},
+        {"licenseDataParser", "License Data Parser"},
+        {"licenseDataURI", "License Data URI"},
+        {"overwriteExisting", "Overwrite Existing?"},
+        {"sourceDataSetName", "Source Data Set Name"},
+        {"sourceDataSetParser", "Source Data Set Parser"},
+        {"sourceDataSetURI", "Source Data Set URI"},
+        {"tagSymbol", "Tag Symbol"},
+        {"tagValuePrefix", "Tag Value Prefix"},
+        {"xPath", "Starting XPath"}
+    };
 }
