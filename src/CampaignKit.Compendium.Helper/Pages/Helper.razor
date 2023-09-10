@@ -26,7 +26,7 @@
                     <RadzenText Text="- or -" />
                     <RadzenUpload Accept=".json"
                                   Url="upload/single"
-                                  Complete="@UploadComplete"
+                                  Complete="UploadComplete"
                                   ChooseText="Upload"
                                   Multiple=false />
                 </RadzenStack>
@@ -34,7 +34,7 @@
             </RadzenCard>
             <RadzenCard>
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
-                <Navigator Compendium="@SelectedCompendium"
+                <Navigator Compendium="SelectedCompendium"
                            CompendiumExpanded="OnCompendiumExpanded"
                            CompendiumCollapsed="OnCompendiumCollapsed"
                            LabelExpanded="OnLabelExpanded"
@@ -49,20 +49,20 @@
                 @if (SelectedSourceDataSet != null)
                 {
                     <RadzenTabsItem Text="Source Data Set">
-                        <SourceDataSetProperties DataSet="@SelectedSourceDataSet" />
+                        <SourceDataSetProperties DataSet="SelectedSourceDataSet" />
                     </RadzenTabsItem>
                 }
                 else if (SelectedSourceDataSetGrouping != null)
                 {
                     <RadzenTabsItem Text="Label">
-                        <LabelProperties SourceDataSetGrouping="@SelectedSourceDataSetGrouping" 
-                            AllSourceDataSetGroupings="@SelectedCompendium.SourceDataSets"/>
+                        <LabelProperties SourceDataSetGrouping="SelectedSourceDataSetGrouping" 
+                            AllSourceDataSets="SelectedCompendium.SourceDataSets"/>
                     </RadzenTabsItem>
                 }
                 else if (SelectedCompendium != null)
                 {
                     <RadzenTabsItem Text="Compendium">
-                        <CompendiumProperties Compendium="@SelectedCompendium" />
+                        <CompendiumProperties Compendium="SelectedCompendium" />
                     </RadzenTabsItem>
                 }
             </Tabs>

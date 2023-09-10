@@ -82,27 +82,14 @@ namespace CampaignKit.Compendium.Helper.Pages
         private ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
-        /// Gets or sets the property to store the selected label.
-        /// </summary>
-        private SourceDataSetGrouping SelectedSourceDataSetGrouping { get; set; }
-
-        /// <summary>
         /// Gets or sets the selected source data set.
         /// </summary>
         private SourceDataSet SelectedSourceDataSet { get; set; }
 
         /// <summary>
-        /// Handles the compendium expansion event from the navigator component.
+        /// Gets or sets the property to store the selected label.
         /// </summary>
-        /// <param name="compendiumName">The name of the selected compendium.</param>
-        private void OnCompendiumExpanded(string compendiumName)
-        {
-            this.Logger.LogInformation("Compendium expanded: {CompendiumName}", compendiumName);
-
-            // Update user selections
-            this.SelectedSourceDataSetGrouping = null;
-            this.SelectedSourceDataSet = null;
-        }
+        private SourceDataSetGrouping SelectedSourceDataSetGrouping { get; set; }
 
         /// <summary>
         /// Handles the compendium collapsed event from the navigator component.
@@ -118,16 +105,15 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
-        /// Handles the label expansion event from the navigator component.
+        /// Handles the compendium expansion event from the navigator component.
         /// </summary>
-        /// <param name="labelName">The name of the label that was selected.</param>
-        private void OnLabelExpanded(string labelName)
+        /// <param name="compendiumName">The name of the selected compendium.</param>
+        private void OnCompendiumExpanded(string compendiumName)
         {
-            this.Logger.LogInformation("Label expanded: {LabelName}", labelName);
+            this.Logger.LogInformation("Compendium expanded: {CompendiumName}", compendiumName);
 
             // Update user selections
-            this.SelectedSourceDataSetGrouping
-                = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
+            this.SelectedSourceDataSetGrouping = null;
             this.SelectedSourceDataSet = null;
         }
 
@@ -138,6 +124,20 @@ namespace CampaignKit.Compendium.Helper.Pages
         private void OnLabelCollapsed(string labelName)
         {
             this.Logger.LogInformation("Label collapsed: {LabelName}", labelName);
+
+            // Update user selections
+            this.SelectedSourceDataSetGrouping
+                = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
+            this.SelectedSourceDataSet = null;
+        }
+
+        /// <summary>
+        /// Handles the label expansion event from the navigator component.
+        /// </summary>
+        /// <param name="labelName">The name of the label that was selected.</param>
+        private void OnLabelExpanded(string labelName)
+        {
+            this.Logger.LogInformation("Label expanded: {LabelName}", labelName);
 
             // Update user selections
             this.SelectedSourceDataSetGrouping
