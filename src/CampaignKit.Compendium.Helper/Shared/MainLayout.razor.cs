@@ -22,59 +22,53 @@ namespace CampaignKit.Compendium.Helper.Shared
     using Radzen;
 
     /// <summary>
-    /// Codebehind for MainLayout.razor.
+    /// Code behind class for MainLayou.razor.
     /// </summary>
     public partial class MainLayout
     {
         /// <summary>
-        /// Gets or sets the IJSRuntime interface for JavaScript interop.
-        /// </summary>
-        [Inject]
-        protected IJSRuntime JSRuntime { get; set; }
-
-        /// <summary>
-        /// Gets or sets the property for the DI injected NavigationManager.
-        /// </summary>
-        [Inject]
-        protected NavigationManager NavigationManager { get; set; }
-
-        /// <summary>
-        /// Gets or sets the property for the DI injected DialogService.
-        /// </summary>
-        [Inject]
-        protected DialogService DialogService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the property for the DI injected ToolTipService.
-        /// </summary>
-        [Inject]
-        protected TooltipService TooltipService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the property for the DI injected ContextMenuService.
+        /// Gets or sets the ContextMenuService.
         /// </summary>
         [Inject]
         protected ContextMenuService ContextMenuService { get; set; }
 
         /// <summary>
-        /// Gets or sets the property for the DI injected NotificationService.
+        /// Gets or sets the DialogService.
+        /// </summary>
+        [Inject]
+        protected DialogService DialogService { get; set; }
+
+        /// <summary>
+        /// Gets or sets the JSRuntime for JS interop.
+        /// </summary>
+        [Inject]
+        protected IJSRuntime JSRuntime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the NavigationManager.
+        /// </summary>
+        [Inject]
+        protected NavigationManager NavigationManager { get; set; }
+
+        /// <summary>
+        /// Gets or sets the NotificationService.
         /// </summary>
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
         /// <summary>
-        /// Gets or sets the property for the DI injected Logger.
+        /// Gets or sets the TooltipService.
         /// </summary>
         [Inject]
-        protected ILogger<MainLayout> Logger { get; set; }
+        protected TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the sidebar is expanded or not.
+        /// Gets or sets a value indicating whether the sidebar is expanded.
         /// </summary>
-        private bool SidebarExpanded { get; set; } = true;
+        protected bool SidebarExpanded { get; set; } = true;
 
         /// <summary>
-        /// Toggles the SidebarExpanded boolean when called.
+        /// Toggle the sidebarExpanded flag.
         /// </summary>
         protected void SidebarToggleClick()
         {

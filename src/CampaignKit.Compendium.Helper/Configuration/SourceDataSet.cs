@@ -1,4 +1,4 @@
-﻿// <copyright file="SourceDataSet.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="DataSet.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -84,5 +84,33 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// Gets or sets the XPath of the starting element in the data set.
         /// </summary>
         public string XPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the data set should be rendered as a public campaign entry or a private one.
+        /// </summary>
+        public bool IsPublic { get; set; } = false;
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return this.SourceDataSetName;
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            if (obj is SourceDataSet other)
+            {
+                return this.SourceDataSetName.Equals(other.SourceDataSetName);
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return this.SourceDataSetName.GetHashCode();
+        }
     }
 }

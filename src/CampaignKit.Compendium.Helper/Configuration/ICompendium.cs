@@ -14,6 +14,8 @@
 // limitations under the License.
 // </copyright>
 
+using CampaignKit.Compendium.Helper.Configuration;
+
 namespace CampaignKit.Compendium.Core.Configuration
 {
     /// <summary>
@@ -28,8 +30,8 @@ namespace CampaignKit.Compendium.Core.Configuration
         string CompendiumService { get; set; }
 
         /// <summary>
-        /// Gets or sets the description of the Compendium.
-        /// This property is typically used to provide a brief explanation of the Compendium's content.
+        /// Gets or sets the description of the SelectedCompendium.
+        /// This property is typically used to provide a brief explanation of the SelectedCompendium's content.
         /// </summary>
         string Description { get; set; }
 
@@ -41,8 +43,8 @@ namespace CampaignKit.Compendium.Core.Configuration
         string GameSystem { get; set; }
 
         /// <summary>
-        /// Gets or sets the URL of the image associated with the Compendium.
-        /// This property is typically used to provide a visual representation of the Compendium's content.
+        /// Gets or sets the URL of the image associated with the SelectedCompendium.
+        /// This property is typically used to provide a visual representation of the SelectedCompendium's content.
         /// </summary>
         string ImageUrl { get; set; }
 
@@ -58,21 +60,33 @@ namespace CampaignKit.Compendium.Core.Configuration
         bool OverwriteExisting { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of source data sets associated with the Compendium.
-        /// Each item in this list represents a set of data that is used in the Compendium.
+        /// Gets or sets the list of source data sets associated with the SelectedCompendium.
+        /// Each item in this list represents a set of data that is used in the SelectedCompendium.
         /// </summary>
         List<SourceDataSet> SourceDataSets { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of chat prompts to use for generating the Compendium.
+        /// Gets or sets the list of chat prompts to use for generating the SelectedCompendium.
         /// Each item in this list represents a prompt that will be used to generate a campaign entry.
         /// </summary>
         List<Prompt> Prompts { get; set; }
 
         /// <summary>
-        /// Gets or sets the title of the Compendium.
-        /// This property is typically used to provide a succinct name for the Compendium.
+        /// Gets or sets the title of the SelectedCompendium.
+        /// This property is typically used to provide a succinct name for the SelectedCompendium.
         /// </summary>
         string Title { get; set; }
+
+        /// <summary>
+        /// Gets a list of unique labels from all source datasets.
+        /// </summary>
+        /// <returns>A list of unique labels.</returns>
+        public List<string> UniqueLabels { get; }
+
+        /// <summary>
+        /// Gets a list of SourceDataSetGroupings from the SourceDataSets.
+        /// </summary>
+        /// <returns>A list of SourceDataSetGroupings.</returns>
+        public List<SourceDataSetGrouping> SourceDataSetGroupings { get; }
     }
 }

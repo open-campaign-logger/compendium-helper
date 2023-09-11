@@ -21,23 +21,17 @@ namespace CampaignKit.Compendium.Helper
     using Radzen;
 
     /// <summary>
-    /// Default Program class.
+    /// Main method for the Program class which configures the HTTP request pipeline and adds
+    /// services to the container.
     /// </summary>
-    public class Program
+    internal class Program
     {
-        /// <summary>
-        /// Main method for the application, configures the HTTP request pipeline and adds services
-        /// to the container.
-        /// </summary>
-        /// <param name="args">The command line arguments.</param>
-        public static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the builder
+            // Add services to the container.
             builder.Services.AddRazorPages();
-            builder.Services.AddServerSideBlazor();
-
             builder.Services.AddServerSideBlazor().AddHubOptions(o =>
             {
                 o.MaximumReceiveMessageSize = 10 * 1024 * 1024;
@@ -46,12 +40,10 @@ namespace CampaignKit.Compendium.Helper
             builder.Services.AddScoped<NotificationService>();
             builder.Services.AddScoped<TooltipService>();
             builder.Services.AddScoped<ContextMenuService>();
-
-            // Add singleton services to the builder
             builder.Services.AddSingleton<DownloadService>();
-            builder.Services.AddSingleton<MarkdownService>();
-            builder.Services.AddSingleton<HtmlService>();
             builder.Services.AddSingleton<CompendiumService>();
+            builder.Services.AddSingleton<HtmlService>();
+            builder.Services.AddSingleton<MarkdownService>();
 
             var app = builder.Build();
 
@@ -64,25 +56,15 @@ namespace CampaignKit.Compendium.Helper
                 app.UseHsts();
             }
 
-            // Redirect all requests to HTTPS
             app.UseHttpsRedirection();
 
-            // Serve static files from the wwwroot folder
             app.UseStaticFiles();
 
-            // Set up routing
             app.UseRouting();
-
-            // Add support for controllers
             app.MapControllers();
-
-            // Map the Blazor Hub
             app.MapBlazorHub();
-
-            // Map the fallback page to the _Host page
             app.MapFallbackToPage("/_Host");
 
-            // Run the application
             app.Run();
         }
     }

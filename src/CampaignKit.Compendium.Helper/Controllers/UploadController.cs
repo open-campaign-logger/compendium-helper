@@ -48,6 +48,5 @@ namespace CampaignKit.Compendium.Helper.Controllers
                return this.StatusCode(500, ex.Message);
            }
        }
-
    }
 }
