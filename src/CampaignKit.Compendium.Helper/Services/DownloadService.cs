@@ -49,7 +49,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            logger.LogInformation("GetWebPage method called with URL: {Url}", url[..50]);
+            this.logger.LogInformation("GetWebPage method called with URL: {Url}", url[..50]);
 
             // Create an HTTP client
             using var client = new HttpClient();
@@ -82,7 +82,7 @@ namespace CampaignKit.Compendium.Helper.Services
             var content = await response.Content.ReadAsStringAsync();
 
             // Log the response
-            logger.LogInformation("GetWebPage method completed with response: {Response}", content[..50]);
+            this.logger.LogInformation("GetWebPage method completed with response: {Response}", content[..50]);
 
             // Return the response
             return content;

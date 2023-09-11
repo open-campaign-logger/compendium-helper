@@ -1,0 +1,24 @@
+﻿@if(Compendium != null)
+{
+    <RadzenRow>
+        <RadzenAutoComplete @bind-Value="SearchTerm" Data="AutoCompleteData" Placeholder="Search..." Change="OnSearchChanged" />
+    </RadzenRow>
+    <RadzenRow>
+            <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="@Compendium.Title" Expanded="true" Icon="book" ExpandedChanged="@((isExpanded) => OnCompendiumExpandedChanged(isExpanded, Compendium.Title))">
+                @foreach (var grouping in Compendium.SourceDataSetGroupings)
+                {
+                    if (grouping.SourceDataSets != null && grouping.SourceDataSets.Count > 0)
+                    {
+                        <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping.LabelName))">
+                            @foreach (var dataSet in grouping.SourceDataSets)
+                            {
+                                <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="OnSourceDataSetSelected" />
+                            }
+                        </RadzenPanelMenuItem>
+                    }
+                }
+            </RadzenPanelMenuItem>
+        </RadzenPanelMenu>
+    </RadzenRow>
+}

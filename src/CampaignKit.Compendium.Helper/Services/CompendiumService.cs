@@ -41,10 +41,11 @@ namespace CampaignKit.Compendium.Helper.Services
 
         /// <summary>
         /// Loads a PublicCompendium object from a JSON string.
+        /// If multiple compendiums are found only the first one is returned.
         /// </summary>
         /// <param name="json">The JSON string to deserialize.</param>
         /// <returns>A PublicCompendium object.</returns>
-        public List<PublicCompendium> LoadCompendiums(string json)
+        public ICompendium LoadCompendiums(string json)
         {
             // Validate parameters
             if (json == null)
@@ -53,17 +54,17 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", json[0..50]);
+            this.logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", json[0..50]);
 
             // Deserialize the JSON string into a Dictionary object using Newtonsoft.Json
-            var dictionary = new Dictionary<string, List<PublicCompendium>>();
+            Dictionary<string, List<PublicCompendium>> dictionary;
             try
             {
                 dictionary = JsonConvert.DeserializeObject<Dictionary<string, List<PublicCompendium>>>(json);
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Unable to deserialize JSON into list of PublicCompendium objects.");
+                this.logger.LogError(e, "Unable to deserialize JSON into list of PublicCompendium objects.");
                 throw;
             }
 
@@ -74,16 +75,11 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Get the List of PublicCompendium objects from the dictionary.
-            List<PublicCompendium> compendiumList = dictionary.Values.FirstOrDefault(new List<PublicCompendium>());
-
-            // Validate that the List contains a PublicCompendium object.
-            if (compendiumList == null)
-            {
-                throw new Exception("Unable to deserialize JSON into list of PublicCompendium objects.");
-            }
+            List<PublicCompendium> compendiumList = dictionary.Values.FirstOrDefault(new List<PublicCompendium>())
+                ?? throw new Exception("Unable to deserialize JSON into list of PublicCompendium objects.");
 
             // Return the PublicCompendium object.
-            return compendiumList;
+            return compendiumList.FirstOrDefault(new PublicCompendium());
         }
     }
 }

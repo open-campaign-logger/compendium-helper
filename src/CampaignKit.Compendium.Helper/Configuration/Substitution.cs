@@ -24,11 +24,11 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the XPath of the element to replace in the data set.
         /// </summary>
-        public string? XPath { get; set; } = string.Empty;
+        public string XPath { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the HTML to replace the element in the document found at location XPath.
         /// </summary>
-        public string? HTML { get; set; } = string.Empty;
+        public string HTML { get; set; } = string.Empty;
     }
 }
