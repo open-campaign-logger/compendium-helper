@@ -118,6 +118,15 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
+        /// Logs a message when the label assignment is changed and triggers a state change.
+        /// </summary>
+        private void OnLabelAssignmentChanted(string labelName)
+        {
+            this.Logger.LogInformation("Label assignment changed: {LabelName}", labelName);
+            this.StateHasChanged();
+        }
+
+        /// <summary>
         /// Handles the label collapse event from the navigator component.
         /// </summary>
         /// <param name="labelName">The name of the label that was selected.</param>
