@@ -38,6 +38,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         public List<SourceDataSet> AllSourceDataSets { get; set; }
 
         /// <summary>
+        /// Gets or sets the EventCallback for the label assignment change event.
+        /// </summary>
+        [Parameter]
+        public EventCallback<string> LabelAssignmentChange { get; set; }
+
+        /// <summary>
         /// Gets or sets the SourceDataSetGrouping parameter.
         /// </summary>
         [Parameter]
@@ -91,7 +97,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Source data set association changed.");
 
             // Case selected to List<string> to simplify working with it.
-            var selectedSourceDataSets = (IEnumerable<string>) selected;
+            var selectedSourceDataSets = (IEnumerable<string>)selected;
             var toBeRemoved = new List<string>();
             var toBeAdded = new List<string>();
 
@@ -134,6 +140,9 @@ namespace CampaignKit.Compendium.Helper.Pages
                     this.SourceDataSetGrouping.SourceDataSets.Add(sourceDataSet);
                 }
             }
+
+            // Fire an event to notify the parent component that the label assignment has changed.
+            this.LabelAssignmentChange.InvokeAsync(this.SourceDataSetGrouping.LabelName);
         }
 
         /// <summary>
