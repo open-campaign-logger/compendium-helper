@@ -1,0 +1,143 @@
+﻿<RadzenCard class="rz-card">
+    <RadzenRow Gap="1rem">
+        <RadzenText class="rz-text-subtitle2" TagName="TagName.H3">Source Properties</RadzenText>
+    </RadzenRow>
+
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="12">
+            <RadzenStack>
+                <!-- Source Data Set Name -->
+                <RadzenStack>
+                    <RadzenFormField Text="@labels["sourceDataSetName"]" Variant="@variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["sourceDataSetName"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetName" id="sourceDataSetName" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <!-- Labels -->
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@labels["labels"]" Variant="@variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["labels"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox Value="@string.Join(',', SelectedSource.Labels)" id="labels" ReadOnly="true" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <!-- Source Data Set URI -->
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@labels["sourceDataSetURI"]" Variant="@variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["sourceDataSetURI"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetURI" id="sourceDataSetURI" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <!-- XPath -->
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@labels["xPath"]" Variant="@variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["xPath"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SelectedSource.XPath" id="xPath" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <!-- Tag Symbol -->
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@labels["tagSymbol"]" Variant="@variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["tagSymbol"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SelectedSource.TagSymbol" id="tagSymbol" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <!-- Tag Value Prefix -->
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@labels["tagValuePrefix"]" Variant="@variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["tagValuePrefix"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SelectedSource.TagValuePrefix" id="tagValuePrefix" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <!-- Overwrite Existing -->
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@labels["overwriteExisting"]" Variant="@variant" Style="width: 150px">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["overwriteExisting"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenCheckBox @bind-Value="@SelectedSource.OverwriteExisting" id="overwriteExisting" class="m-3" Style="flex: none;" />
+                        </ChildContent>
+                    </RadzenFormField>
+                    <RadzenFormField Text="@labels["isPublic"]" Variant="@variant" Style="width: 150px">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["isPublic"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenCheckBox @bind-Value="@SelectedSource.IsPublic" id="isPublic" class="m-3" Style="flex: none;" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+@code {
+    /// <summary>
+    /// Sets the variant of the object to Outlined.
+    /// </summary>
+    Variant variant = Variant.Outlined;
+
+    /// <summary>
+    /// Dictionary containing tooltips for form fields.
+    /// </summary>
+    Dictionary<string, string> tooltips = new Dictionary<string, string>
+    {
+        {"importLimit", "Provide the import limit."},
+        {"labels", "Provide labels (comma-separated)."},
+        {"overwriteExisting", "Should files downloaded during a previous run be overwritten?"},
+        {"sourceDataSetName", "Provide a unique name for the source."},
+        {"sourceDataSetURI", "Provide the source data set URI."},
+        {"tagSymbol", "Specify the tag symbol."},
+        {"tagValuePrefix", "Provide the tag value prefix."},
+        {"xPath", "Provide the XPath."},
+        {"isPublic", "Should the generated campaign entry be public or private?"},
+    };
+
+    /// <summary>
+    /// Dictionary containing tooltips for form fields.
+    /// </summary>
+    Dictionary<string, string> labels = new Dictionary<string, string>
+    {
+        {"importLimit", "Import Limit"},
+        {"labels", "Labels"},
+        {"overwriteExisting", "Overwrite Existing?"},
+        {"sourceDataSetName", "Name"},
+        {"sourceDataSetURI", "Source URI"},
+        {"tagSymbol", "Tag Symbol"},
+        {"tagValuePrefix", "Tag Value Prefix"},
+        {"xPath", "Starting XPath"},
+        {"isPublic", "Is Public?"},
+    };
+}

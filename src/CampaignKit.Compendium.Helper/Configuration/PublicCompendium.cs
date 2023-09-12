@@ -17,8 +17,7 @@
 namespace CampaignKit.Compendium.Core.Configuration
 {
     using System.Data;
-
-    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     /// <summary>
     /// Represents the configuration of an open-source compendium within the application.
@@ -67,23 +66,23 @@ namespace CampaignKit.Compendium.Core.Configuration
         }
 
         /// <inheritdoc/>
-        public List<SourceDataSetGrouping> SourceDataSetGroupings
+        public List<LabelGroup> SourceDataSetGroupings
         {
             get
             {
-                // SourceDataSetGrouping for SourceDataSets with labels
+                // SelectedSource for SourceDataSets with labels
                 var labeledGroupings = this.SourceDataSets
                     .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
                     .GroupBy(pair => pair.Label)
                     .Where(group => !string.IsNullOrEmpty(group.Key))
-                    .Select(group => new SourceDataSetGrouping
+                    .Select(group => new LabelGroup
                     {
                         LabelName = group.Key,
                         SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                     });
 
-                // SourceDataSetGrouping for SourceDataSets without labels
-                var noLabelGrouping = new SourceDataSetGrouping
+                // SelectedSource for SourceDataSets without labels
+                var noLabelGrouping = new LabelGroup
                 {
                     LabelName = "No Label",
                     SourceDataSets = this.SourceDataSets

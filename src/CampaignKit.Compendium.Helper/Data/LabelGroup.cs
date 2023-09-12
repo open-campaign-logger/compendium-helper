@@ -1,4 +1,4 @@
-﻿// <copyright file="SourceDataSetGrouping.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="LabelGroup.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,14 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Configuration
+namespace CampaignKit.Compendium.Helper.Data
 {
     using CampaignKit.Compendium.Core.Configuration;
 
     /// <summary>
     /// Used for grouping source data sets.
     /// </summary>
-    public class SourceDataSetGrouping
+    public class LabelGroup
     {
         /// <summary>
         /// Gets or sets the name of the grouping.

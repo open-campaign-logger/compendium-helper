@@ -14,10 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-using CampaignKit.Compendium.Helper.Configuration;
-
 namespace CampaignKit.Compendium.Core.Configuration
 {
+    using CampaignKit.Compendium.Helper.Data;
+
     /// <summary>
     /// Represents the configuration of a compendium within the application.
     /// These should be defined and shared in the appsettings.json and secrets.json files.
@@ -87,6 +87,6 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// Gets a list of SourceDataSetGroupings from the SourceDataSets.
         /// </summary>
         /// <returns>A list of SourceDataSetGroupings.</returns>
-        public List<SourceDataSetGrouping> SourceDataSetGroupings { get; }
+        public List<LabelGroup> SourceDataSetGroupings { get; }
     }
 }

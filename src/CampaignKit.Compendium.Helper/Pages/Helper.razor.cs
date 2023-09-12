@@ -17,7 +17,7 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Core.Configuration;
-    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
     using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
@@ -89,7 +89,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <summary>
         /// Gets or sets the property to store the selected label.
         /// </summary>
-        private SourceDataSetGrouping SelectedSourceDataSetGrouping { get; set; }
+        private LabelGroup SelectedSourceDataSetGrouping { get; set; }
 
         /// <summary>
         /// Handles the compendium collapsed event from the navigator component.
@@ -97,7 +97,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="compendiumName">The name of the selected compendium.</param>
         private void OnCompendiumCollapsed(string compendiumName)
         {
-            this.Logger.LogInformation("Compendium collapsed: {CompendiumName}", compendiumName);
+            this.Logger.LogInformation("SelectedCompendium collapsed: {CompendiumName}", compendiumName);
 
             // Update user selections
             this.SelectedSourceDataSetGrouping = null;
@@ -110,7 +110,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="compendiumName">The name of the selected compendium.</param>
         private void OnCompendiumExpanded(string compendiumName)
         {
-            this.Logger.LogInformation("Compendium expanded: {CompendiumName}", compendiumName);
+            this.Logger.LogInformation("SelectedCompendium expanded: {CompendiumName}", compendiumName);
 
             // Update user selections
             this.SelectedSourceDataSetGrouping = null;
@@ -155,12 +155,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
-        /// Handles the DataSet clicked event by logging the selected DataSet name.
+        /// Handles the SelectedSource clicked event by logging the selected SelectedSource name.
         /// </summary>
-        /// <param name="sourceDataSetName">Name of the DataSet.</param>
+        /// <param name="sourceDataSetName">Name of the SelectedSource.</param>
         private void OnSourceDataSetSelected(string sourceDataSetName)
         {
-            this.Logger.LogInformation("Selected DataSet: {SourceDataSetName}", sourceDataSetName);
+            this.Logger.LogInformation("Selected SelectedSource: {SourceDataSetName}", sourceDataSetName);
 
             // Update user selections
             this.SelectedSourceDataSetGrouping = null;

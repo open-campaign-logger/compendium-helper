@@ -13,7 +13,62 @@
     <link href="_content/Radzen.Blazor/css/material-base.css" rel="stylesheet" />
     <link rel="icon" href="favicon.ico" />
     <link href="css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+
+    <!-- JS/Blazor Interop Functions -->
+    <script>
+
+        // Interop functions for the SimpleMDE control.
+        window.simpleMDEInterop = {
+
+            // Sets the value of window.simplemde to the markdown string passed in as an argument.
+            setMarkdown: function (markdown) {
+                // Log the markdown value
+                console.log("Setting markdown:", markdown.substring(0, 50) + (markdown.length > 50 ? "..." : ""));  // Log the first 50 characters of markdown value, add "..." if there's more
+                if (!window.simplemde) {
+                    // Create a new instance of the SimpleMDE library and assign it to the window.simplemde variable
+                    // Get the element with the id of 'markdownEditor' and assign it to the SimpleMDE instance
+                    window.simplemde = new SimpleMDE({
+                        element: document.getElementById('markdownEditor'),
+                        // Add a toolbar to this editor with all available toolbar icons except the preview, side-by-side and fullscreen.
+                        toolbar: ["bold", "italic", "heading-smaller", "heading-bigger", "code", "quote", "unordered-list", "ordered-list", "clean-block", "link", "image", "table", "horizontal-rule", "preview"]
+                    });
+                }
+                // Set the value of window.simplemde to the markdown string
+                window.simplemde.value(markdown);
+            }
+        };
+
+        // Interop functions for the Web Browser control.
+        window.webPreviewInterop = {
+
+            // Sets the source of an iframe element to the given URL.
+            setHtml: function (htmlContent) {
+                // Log the call
+                console.log("Setting html:", htmlContent.substring(0, 50) + (htmlContent.length > 50 ? "..." : ""));  // Log the first 50 characters of the html value, add "..." if there's more
+                // Get the iframe element by its id
+                var iframe = document.getElementById('webPreview');
+                // Set the source of the iframe to the given url
+                iframe.setAttribute('srcdoc', htmlContent);
+            }
+        };
+
+        // Sets the HTML content of the markdown preview element.
+        window.markdownPreviewInterop = {
+
+            //This function sets the HTML content of the element with the ID 'markdownPreview' to the given htmlContent parameter.
+            setMarkdown: function (markdownContent) {
+                // Log the call
+                console.log("Setting markdown:", markdownContent.substring(0, 50) + (markdownContent.length > 50 ? "..." : ""));  // Log the first 50 characters of the html value, add "..." if there's more
+                // Get the component element by its id
+                var markdownPreview = document.getElementById('markdownPreview');
+                // Set the source of the component with the provided content
+                markdownPreview.innerHTML = markdownContent;
+            }
+        };
+
+    </script>
 </head>
 <body>
     <component type="typeof(App)" render-mode="ServerPrerendered" />
@@ -31,5 +86,6 @@
 
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 </body>
 </html>
