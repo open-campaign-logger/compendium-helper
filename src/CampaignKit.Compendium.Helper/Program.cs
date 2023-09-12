@@ -42,7 +42,6 @@ namespace CampaignKit.Compendium.Helper
             builder.Services.AddScoped<ContextMenuService>();
             builder.Services.AddSingleton<DownloadService>();
             builder.Services.AddSingleton<CompendiumService>();
-            builder.Services.AddSingleton<HtmlService>();
             builder.Services.AddSingleton<MarkdownService>();
 
             var app = builder.Build();

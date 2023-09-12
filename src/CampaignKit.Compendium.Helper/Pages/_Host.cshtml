@@ -40,34 +40,6 @@
             }
         };
 
-        // Interop functions for the Web Browser control.
-        window.webPreviewInterop = {
-
-            // Sets the source of an iframe element to the given URL.
-            setHtml: function (htmlContent) {
-                // Log the call
-                console.log("Setting html:", htmlContent.substring(0, 50) + (htmlContent.length > 50 ? "..." : ""));  // Log the first 50 characters of the html value, add "..." if there's more
-                // Get the iframe element by its id
-                var iframe = document.getElementById('webPreview');
-                // Set the source of the iframe to the given url
-                iframe.setAttribute('srcdoc', htmlContent);
-            }
-        };
-
-        // Sets the HTML content of the markdown preview element.
-        window.markdownPreviewInterop = {
-
-            //This function sets the HTML content of the element with the ID 'markdownPreview' to the given htmlContent parameter.
-            setMarkdown: function (markdownContent) {
-                // Log the call
-                console.log("Setting markdown:", markdownContent.substring(0, 50) + (markdownContent.length > 50 ? "..." : ""));  // Log the first 50 characters of the html value, add "..." if there's more
-                // Get the component element by its id
-                var markdownPreview = document.getElementById('markdownPreview');
-                // Set the source of the component with the provided content
-                markdownPreview.innerHTML = markdownContent;
-            }
-        };
-
     </script>
 </head>
 <body>

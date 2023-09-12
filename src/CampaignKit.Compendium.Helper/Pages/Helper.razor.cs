@@ -43,17 +43,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         private DownloadService DownloadService { get; set; }
 
         /// <summary>
-        /// Gets or sets the source HTML for the current data set.
-        /// </summary>
-        private string Html { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the HtmlService.
-        /// </summary>
-        [Inject]
-        private HtmlService HtmlService { get; set; }
-
-        /// <summary>
         /// Gets or sets the JSRuntime for JS interop.
         /// </summary>
         [Inject]
@@ -66,15 +55,20 @@ namespace CampaignKit.Compendium.Helper.Pages
         private ILogger<Helper> Logger { get; set; }
 
         /// <summary>
-        /// Gets or sets the Markdown conversion of the extracted HTML.
-        /// </summary>
-        private string Markdown { get; set; } = string.Empty;
-
-        /// <summary>
         /// Gets or sets the MarkdownService.
         /// </summary>
         [Inject]
         private MarkdownService MarkdownService { get; set; }
+
+        /// <summary>
+        /// Gets or sets the downloaded HTML;
+        /// </summary>
+        private string HTML { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the Markdown conversion of the extracted HTML.
+        /// </summary>
+        private string Markdown { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the selected compendium.
@@ -158,7 +152,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Handles the SelectedSource clicked event by logging the selected SelectedSource name.
         /// </summary>
         /// <param name="sourceDataSetName">Name of the SelectedSource.</param>
-        private void OnSourceDataSetSelected(string sourceDataSetName)
+        private async Task OnSourceDataSetSelected(string sourceDataSetName)
         {
             this.Logger.LogInformation("Selected SelectedSource: {SourceDataSetName}", sourceDataSetName);
 
@@ -166,6 +160,12 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.SelectedSourceDataSetGrouping = null;
             this.SelectedSourceDataSet
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(sourceDataSetName), null);
+
+            // Download HTML
+            this.HTML = await this.DownloadService.GetWebPageAync(this.SelectedSourceDataSet.SourceDataSetURI);
+
+            // Convert to markdown
+            this.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(this.HTML);
         }
 
         /// <summary>

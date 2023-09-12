@@ -16,10 +16,51 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.JSInterop;
+
     /// <summary>
     /// Partial class for the Editor component.
     /// </summary>
     public partial class Editor
     {
+        /// <summary>
+        /// Gets or sets the Markdown string.
+        /// </summary>
+        [Parameter]
+        public string Markdown { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the JSRuntime for JS interop.
+        /// </summary>
+        [Inject]
+        private IJSRuntime JSRuntime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Logger.
+        /// </summary>
+        [Inject]
+        private ILogger<Editor> Logger { get; set; }
+
+        /// <summary>
+        /// Invokes the JavaScript function to set the markdown.
+        /// </summary>
+        /// <param name="firstRender">A boolean value indicating whether this is the first render.</param>
+        /// <returns>
+        /// A <see cref="Task"/> representing the asynchronous operation.
+        /// </returns>
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            this.Logger.LogInformation("OnAfterRenderAsync with firstRender parameter value: {FirstRender}", firstRender);
+
+            try
+            {
+                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Markdown);
+            }
+            catch (JSException jsEx)
+            {
+                this.Logger.LogError(jsEx, "Unable to set markdown content in editor.");
+            }
+        }
     }
 }

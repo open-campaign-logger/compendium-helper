@@ -16,6 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
+    using System.Text.RegularExpressions;
+
     using CampaignKit.Compendium.Core.Configuration;
 
     using Newtonsoft.Json;
@@ -54,7 +56,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            this.logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", json[0..50]);
+            this.logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", RegexHelper.RemoveUnwantedCharactersFromLogMessage(json));
 
             // Deserialize the JSON string into a Dictionary object using Newtonsoft.Json
             Dictionary<string, List<PublicCompendium>> dictionary;
