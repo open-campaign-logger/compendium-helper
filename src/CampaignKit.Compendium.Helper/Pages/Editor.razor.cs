@@ -16,6 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
+    using CampaignKit.Compendium.Helper.Services;
+
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
@@ -43,6 +45,31 @@ namespace CampaignKit.Compendium.Helper.Pages
         private ILogger<Editor> Logger { get; set; }
 
         /// <summary>
+        /// Gets or sets property to store a reference to an Editor object.
+        /// </summary>
+        private DotNetObjectReference<Editor> ObjectReference { get; set; }
+
+        /// <summary>
+        /// Disposes the object reference.
+        /// </summary>
+        public void Dispose()
+        {
+            this.ObjectReference?.Dispose();
+        }
+
+        /// <summary>
+        /// Invoked when the content of the Markdown editor is changed.
+        /// </summary>
+        /// <param name="content">The new content of the Markdown editor.</param>
+        [JSInvokable]
+        public void OnContentChanged(string content)
+        {
+            this.Logger.LogInformation("OnChange with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
+
+            this.Markdown = content;
+        }
+
+        /// <summary>
         /// Invokes the JavaScript function to set the markdown.
         /// </summary>
         /// <param name="firstRender">A boolean value indicating whether this is the first render.</param>
@@ -62,29 +89,6 @@ namespace CampaignKit.Compendium.Helper.Pages
             {
                 this.Logger.LogError(jsEx, "Unable to set markdown content in editor.");
             }
-        }
-
-
-        private DotNetObjectReference<Editor> ObjectReference { get; set; }
-
-
-        [JSInvokable]
-        public void OnContentChanged(string content)
-        {
-            this.Logger.LogInformation("OnChange with value parameter value: {Value}", content);
-
-            this.Markdown = content;
-        }
-
-        public void Dispose()
-        {
-            this.ObjectReference?.Dispose();
-        }
-
-
-        // Create a handler for the RadzenTextArea OnChange event.
-        private void OnChange(string value)
-        {
         }
     }
 }

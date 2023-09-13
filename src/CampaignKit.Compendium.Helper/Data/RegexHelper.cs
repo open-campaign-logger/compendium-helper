@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-// <copyright file="CompendiumService.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="RegexHelper.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,13 +16,13 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Utility class for generating Regex objects.
     /// </summary>
     internal static partial class RegexHelper
     {
-
         /// <summary>
         /// Generates a Regex to select wanted characters.
         /// </summary>
