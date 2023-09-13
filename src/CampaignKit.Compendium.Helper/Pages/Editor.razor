@@ -13,7 +13,12 @@
     
     <RadzenRow Gap="1rem">
         <RadzenColumn Size="12">
-            <textarea id="markdownEditor" class="form-control" style="flex-grow: 1; overflow: auto; box-sizing: border-box;"></textarea>
+            <RadzenTextArea 
+                id="markdownEditor" 
+                class="form-control" 
+                style="flex-grow: 1; overflow: auto; box-sizing: border-box;"
+                Change="OnChange">
+            </RadzenTextArea>
         </RadzenColumn>    
     </RadzenRow>
 

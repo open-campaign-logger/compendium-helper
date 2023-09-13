@@ -23,20 +23,35 @@
         window.simpleMDEInterop = {
 
             // Sets the value of window.simplemde to the markdown string passed in as an argument.
-            setMarkdown: function (markdown) {
+            setMarkdown: function (markdown, dotNetReference) {
                 // Log the markdown value
-                console.log("Setting markdown:", markdown.substring(0, 50) + (markdown.length > 50 ? "..." : ""));  // Log the first 50 characters of markdown value, add "..." if there's more
-                if (!window.simplemde) {
-                    // Create a new instance of the SimpleMDE library and assign it to the window.simplemde variable
-                    // Get the element with the id of 'markdownEditor' and assign it to the SimpleMDE instance
-                    window.simplemde = new SimpleMDE({
-                        element: document.getElementById('markdownEditor'),
-                        // Add a toolbar to this editor with all available toolbar icons except the preview, side-by-side and fullscreen.
-                        toolbar: ["bold", "italic", "heading-smaller", "heading-bigger", "code", "quote", "unordered-list", "ordered-list", "clean-block", "link", "image", "table", "horizontal-rule", "preview"]
-                    });
+                console.log("Setting markdown:", markdown.substring(0, 50).replace(/\r\n|\r|\n/g, ' ') + (markdown.length > 50 ? "..." : ""));  // Log the first 50 characters of markdown value, add "..." if there's more
+
+                // Remove the existing SimpleMDE instance if it exists
+                if (window.simplemde) {
+                    window.simplemde.toTextArea();
+                    window.simplemde = null;
                 }
+
+                // Create a new instance of the SimpleMDE library and assign it to the window.simplemde variable
+                // Get the element with the id of 'markdownEditor' and assign it to the SimpleMDE instance
+                window.simplemde = new SimpleMDE({
+                    element: document.getElementById('markdownEditor'),
+                    // Add a toolbar to this editor with all available toolbar icons except the preview, side-by-side and fullscreen.
+                    toolbar: ["bold", "italic", "heading-smaller", "heading-bigger", "code", "quote", "unordered-list", "ordered-list", "clean-block", "link", "image", "table", "horizontal-rule", "preview"]
+                });
+
+                // Add a callback to the Blazor method OnContentChanged when the content of the SimpleMDE editor changes
+                window.simplemde.codemirror.on("change", function () {
+                    var content = simplemde.value();
+                    dotNetReference.invokeMethodAsync("OnContentChanged", content);
+                });
+
                 // Set the value of window.simplemde to the markdown string
                 window.simplemde.value(markdown);
+
+                // Return success flag
+                return true;
             }
         };
 

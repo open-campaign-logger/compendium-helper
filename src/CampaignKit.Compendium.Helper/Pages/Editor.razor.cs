@@ -55,12 +55,36 @@ namespace CampaignKit.Compendium.Helper.Pages
 
             try
             {
-                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Markdown);
+                this.ObjectReference = DotNetObjectReference.Create(this);
+                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Markdown, this.ObjectReference);
             }
             catch (JSException jsEx)
             {
                 this.Logger.LogError(jsEx, "Unable to set markdown content in editor.");
             }
+        }
+
+
+        private DotNetObjectReference<Editor> ObjectReference { get; set; }
+
+
+        [JSInvokable]
+        public void OnContentChanged(string content)
+        {
+            this.Logger.LogInformation("OnChange with value parameter value: {Value}", content);
+
+            this.Markdown = content;
+        }
+
+        public void Dispose()
+        {
+            this.ObjectReference?.Dispose();
+        }
+
+
+        // Create a handler for the RadzenTextArea OnChange event.
+        private void OnChange(string value)
+        {
         }
     }
 }

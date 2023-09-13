@@ -30,7 +30,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// <returns>
         /// A Regex to select characters that are not alphanumeric, curly brackets, or square brackets.
         /// </returns>
-        [GeneratedRegex("[^a-zA-Z0-9{\\[\\]}]")]
+        [GeneratedRegex("[^a-zA-Z0-9{\\[\\]}<>]")]
         public static partial Regex SelectWantedCharacters();
 
         /// <summary>
