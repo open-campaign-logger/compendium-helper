@@ -14,8 +14,6 @@
 // limitations under the License.
 // </copyright>
 
-using System.Text.RegularExpressions;
-
 namespace CampaignKit.Compendium.Helper.Services
 {
     /// <summary>
@@ -103,6 +101,5 @@ namespace CampaignKit.Compendium.Helper.Services
             // Return the response
             return content;
         }
-
     }
 }

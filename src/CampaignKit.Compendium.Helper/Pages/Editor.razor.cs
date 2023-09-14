@@ -16,6 +16,7 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
+    using CampaignKit.Compendium.Core.Configuration;
     using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
@@ -27,10 +28,27 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Editor
     {
         /// <summary>
-        /// Gets or sets the Markdown string.
+        /// Gets or sets the selected source data set.
         /// </summary>
         [Parameter]
-        public string Markdown { get; set; } = string.Empty;
+        public SourceDataSet Source { get; set; }
+
+        /// <summary>
+        /// Gets or sets the DownloadService.
+        /// </summary>
+        [Inject]
+        private DownloadService DownloadService { get; set; }
+
+        /// <summary>
+        /// Gets or sets the HTMLService.
+        /// </summary>
+        [Inject]
+        private HtmlService HtmlService { get; set; }
+
+        /// <summary>
+        /// Gets or sets the downloaded HTML.
+        /// </summary>
+        private string HTML { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the JSRuntime for JS interop.
@@ -43,6 +61,17 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         [Inject]
         private ILogger<Editor> Logger { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Markdown conversion of the extracted HTML.
+        /// </summary>
+        private string Markdown { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the MarkdownService.
+        /// </summary>
+        [Inject]
+        private MarkdownService MarkdownService { get; set; }
 
         /// <summary>
         /// Gets or sets property to store a reference to an Editor object.
@@ -65,8 +94,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         public void OnContentChanged(string content)
         {
             this.Logger.LogInformation("OnChange with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
-
-            this.Markdown = content;
         }
 
         /// <summary>
@@ -88,6 +115,45 @@ namespace CampaignKit.Compendium.Helper.Pages
             catch (JSException jsEx)
             {
                 this.Logger.LogError(jsEx, "Unable to set markdown content in editor.");
+            }
+        }
+
+        /// <summary>
+        /// Initializes the component, retrieves the HTML for ths source, and converts it to Markdown.
+        /// </summary>
+        /// <returns>
+        /// The HTML and Markdown content from the editor.
+        /// </returns>
+        protected async override Task OnInitializedAsync()
+        {
+            this.Logger.LogInformation("OnInitializedAsync");
+
+            try
+            {
+                // Set the markdown to "Loading..."
+                this.Markdown = "# Loading...";
+
+                // Download the web page asynchronously
+                this.HTML = await this.DownloadService.GetWebPageAync(this.Source.SourceDataSetURI);
+
+                // Log the HTML
+                this.Logger.LogInformation("HTML: {HTML}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.HTML));
+
+                // Set the markdown to "Converting..."
+                this.Markdown = "# Converting...";
+
+                // Convert the HTML to markdown
+                this.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(this.HTML);
+
+                // Log the markdown
+                this.Logger.LogInformation("Markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Markdown));
+            }
+            catch (JSException jsEx)
+            {
+                // Log the error
+                this.Markdown = "# Unable to load content...";
+
+                this.Logger.LogError(jsEx, "Unable to get HTML content from editor.");
             }
         }
     }

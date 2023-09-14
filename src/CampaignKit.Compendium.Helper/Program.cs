@@ -43,6 +43,7 @@ namespace CampaignKit.Compendium.Helper
             builder.Services.AddSingleton<DownloadService>();
             builder.Services.AddSingleton<CompendiumService>();
             builder.Services.AddSingleton<MarkdownService>();
+            builder.Services.AddSingleton<HtmlService>();
 
             var app = builder.Build();
 

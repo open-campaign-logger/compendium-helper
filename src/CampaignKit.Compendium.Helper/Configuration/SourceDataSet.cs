@@ -29,6 +29,11 @@ namespace CampaignKit.Compendium.Core.Configuration
         public int? ImportLimit { get; set; } = int.MaxValue;
 
         /// <summary>
+        /// Gets or sets a value indicating whether the data set should be rendered as a public campaign entry or a private one.
+        /// </summary>
+        public bool IsPublic { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets a list of default labels to apply to all entries imported
         /// from this data source.
         /// </summary>
@@ -85,17 +90,6 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// </summary>
         public string XPath { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the data set should be rendered as a public campaign entry or a private one.
-        /// </summary>
-        public bool IsPublic { get; set; } = false;
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return this.SourceDataSetName;
-        }
-
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -111,6 +105,12 @@ namespace CampaignKit.Compendium.Core.Configuration
         public override int GetHashCode()
         {
             return this.SourceDataSetName.GetHashCode();
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return this.SourceDataSetName;
         }
     }
 }
