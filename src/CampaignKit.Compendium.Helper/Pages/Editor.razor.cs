@@ -111,6 +111,12 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("OnInitializedAsync");
         }
 
+        /// <summary>
+        /// Loads the source data set and logs the markdown.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
         protected async override Task OnParametersSetAsync()
         {
             this.Logger.LogInformation("OnParametersSetAsync");
