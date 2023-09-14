@@ -20,7 +20,11 @@ namespace CampaignKit.Compendium.Helper.Pages
     using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.JSInterop;
+
+    using System.Diagnostics;
+    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Partial class for the Editor component.
@@ -32,23 +36,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         [Parameter]
         public SourceDataSet Source { get; set; }
-
-        /// <summary>
-        /// Gets or sets the DownloadService.
-        /// </summary>
-        [Inject]
-        private DownloadService DownloadService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the HTMLService.
-        /// </summary>
-        [Inject]
-        private HtmlService HtmlService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the downloaded HTML.
-        /// </summary>
-        private string HTML { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the JSRuntime for JS interop.
@@ -63,20 +50,15 @@ namespace CampaignKit.Compendium.Helper.Pages
         private ILogger<Editor> Logger { get; set; }
 
         /// <summary>
-        /// Gets or sets the Markdown conversion of the extracted HTML.
-        /// </summary>
-        private string Markdown { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the MarkdownService.
-        /// </summary>
-        [Inject]
-        private MarkdownService MarkdownService { get; set; }
-
-        /// <summary>
         /// Gets or sets property to store a reference to an Editor object.
         /// </summary>
         private DotNetObjectReference<Editor> ObjectReference { get; set; }
+
+        /// <summary>
+        /// Gets or sets the SourceDataSetService.
+        /// </summary>
+        [Inject]
+        private SourceDataSetService SourceDataSetService { get; set; }
 
         /// <summary>
         /// Disposes the object reference.
@@ -110,7 +92,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             try
             {
                 this.ObjectReference = DotNetObjectReference.Create(this);
-                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Markdown, this.ObjectReference);
+                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Source.Markdown, this.ObjectReference);
             }
             catch (JSException jsEx)
             {
@@ -127,32 +109,22 @@ namespace CampaignKit.Compendium.Helper.Pages
         protected async override Task OnInitializedAsync()
         {
             this.Logger.LogInformation("OnInitializedAsync");
+        }
 
+        protected async override Task OnParametersSetAsync()
+        {
+            this.Logger.LogInformation("OnParametersSetAsync");
+            await base.OnParametersSetAsync();
             try
             {
-                // Set the markdown to "Loading..."
-                this.Markdown = "# Loading...";
-
-                // Download the web page asynchronously
-                this.HTML = await this.DownloadService.GetWebPageAync(this.Source.SourceDataSetURI);
-
-                // Log the HTML
-                this.Logger.LogInformation("HTML: {HTML}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.HTML));
-
-                // Set the markdown to "Converting..."
-                this.Markdown = "# Converting...";
-
-                // Convert the HTML to markdown
-                this.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(this.HTML);
+                // Download the web page source data
+                await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source);
 
                 // Log the markdown
-                this.Logger.LogInformation("Markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Markdown));
+                this.Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Source.Markdown));
             }
             catch (JSException jsEx)
             {
-                // Log the error
-                this.Markdown = "# Unable to load content...";
-
                 this.Logger.LogError(jsEx, "Unable to get HTML content from editor.");
             }
         }

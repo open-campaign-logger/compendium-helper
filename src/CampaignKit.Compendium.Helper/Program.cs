@@ -44,6 +44,7 @@ namespace CampaignKit.Compendium.Helper
             builder.Services.AddSingleton<CompendiumService>();
             builder.Services.AddSingleton<MarkdownService>();
             builder.Services.AddSingleton<HtmlService>();
+            builder.Services.AddSingleton<SourceDataSetService>();
 
             var app = builder.Build();
 

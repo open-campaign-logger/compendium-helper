@@ -14,6 +14,8 @@
 // limitations under the License.
 // </copyright>
 
+using Newtonsoft.Json;
+
 namespace CampaignKit.Compendium.Core.Configuration
 {
     /// <summary>
@@ -21,6 +23,12 @@ namespace CampaignKit.Compendium.Core.Configuration
     /// </summary>
     public class SourceDataSet
     {
+        /// <summary>
+        /// Gets or sets the HTML conversion of the extracted source.
+        /// </summary>
+        [JsonIgnore]
+        public string HTML { get; set; } = string.Empty;
+
         /// <summary>
         /// Gets or sets the limit on the number of items to import into the compendium
         /// from the data source.  Generally this is only used for testing purposes
@@ -48,6 +56,12 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// Gets or sets the Uniform Resource Identifier (URI) where the license data for the game source data is located.
         /// </summary>
         public string LicenseDataURI { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the Markdown conversion of the extracted HTML.
+        /// </summary>
+        [JsonIgnore]
+        public string Markdown { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets a value indicating whether new data should be downloaded to replace
