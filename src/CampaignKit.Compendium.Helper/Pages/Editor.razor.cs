@@ -124,10 +124,13 @@ namespace CampaignKit.Compendium.Helper.Pages
             try
             {
                 // Download the web page source data
-                await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source);
+                if (this.Source != null)
+                {
+                    await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source);
 
-                // Log the markdown
-                this.Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Source.Markdown));
+                    // Log the markdown
+                    this.Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Source.Markdown));
+                }
             }
             catch (JSException jsEx)
             {

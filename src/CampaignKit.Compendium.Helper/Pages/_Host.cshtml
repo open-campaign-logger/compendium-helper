@@ -22,6 +22,28 @@
         // Interop functions for the SimpleMDE control.
         window.simpleMDEInterop = {
 
+            // Create a function the Blazor code can call to enable editing of the SimpleMDE control.
+            enableEditor: function () {
+                // Log the markdown value
+                console.log("Enabling editor");
+
+                // Enable the SimpleMDE control if it's not already enabled
+                if (!window.simplemde.isPreviewActive()) {
+                    window.simplemde.togglePreview();
+                };
+            },
+
+            // Create a function the Blazor code can call to disable editing of the SimpleMDE control.
+            disableEditor: function () {
+                // Log the markdown value
+                console.log("Disabling editor");
+
+                // Disable the SimpleMDE control if it's not already disabled
+                if (!window.simplemde.isPreviewActive()) {
+                    window.simplemde.togglePreview();
+                };
+            },
+
             // Sets the value of window.simplemde to the markdown string passed in as an argument.
             setMarkdown: function (markdown, dotNetReference) {
                 // Log the markdown value
@@ -49,6 +71,9 @@
 
                 // Set the value of window.simplemde to the markdown string
                 window.simplemde.value(markdown);
+
+                // Set the editor to preview mode
+                window.simplemde.disableEditor();
 
                 // Return success flag
                 return true;

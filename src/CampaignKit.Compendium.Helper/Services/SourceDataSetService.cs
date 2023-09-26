@@ -83,34 +83,38 @@ namespace CampaignKit.Compendium.Helper.Services
         public async Task LoadSourceDataSetAsync(SourceDataSet source)
         {
             this.Logger.LogInformation("Loading source data set: {Source}", source);
+            var html = string.Empty;
+
             try
             {
-                var html = await this.DownloadService.GetWebPageAync(source.SourceDataSetURI);
-
-                // If the source's XPath is not null or empty navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
-                if (!string.IsNullOrEmpty(source.XPath))
+                // Check to see if the SourceDataSet has any substitutions for XPath="//body".  If so return that HTML.
+                if (source.Substitutions != null && source.Substitutions.Any(s => s.XPath == "//body"))
                 {
-                    // Load the HTML into an HtmlAgilityPack HtmlDocument object.
-                    var doc = new HtmlDocument();
-                    doc.LoadHtml(html);
-
-                    // Navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
-                    try
-                    {
-                        var node = doc.DocumentNode.SelectSingleNode(source.XPath);
-                        html = node.OuterHtml;
-                    }
-                    catch (Exception ex)
-                    {
-                        html = $"Unable to find node corresponding to XPath: {source.XPath}";
-                    }
+                    html = source.Substitutions.First(s => s.XPath == "//body").HTML;
                 }
-
-                // If the html is not null set the HTML and Markdown properties.
-                if (!string.IsNullOrEmpty(html))
+                else
                 {
-                    source.HTML = html;
-                    source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(html);
+                    // Otherwise, download the HTML from the source's SourceDataSetURI property.
+                    html = await this.DownloadService.GetWebPageAync(source.SourceDataSetURI);
+
+                    // If the source's XPath is not null or empty navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
+                    if (!string.IsNullOrEmpty(source.XPath))
+                    {
+                        // Load the HTML into an HtmlAgilityPack HtmlDocument object.
+                        var doc = new HtmlDocument();
+                        doc.LoadHtml(html);
+
+                        // Navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
+                        try
+                        {
+                            var node = doc.DocumentNode.SelectSingleNode(source.XPath);
+                            html = node.OuterHtml;
+                        }
+                        catch (Exception ex)
+                        {
+                            html = $"Unable to find node corresponding to XPath: {source.XPath}";
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -118,6 +122,13 @@ namespace CampaignKit.Compendium.Helper.Services
                 this.Logger.LogError(ex, "Error loading html data set.");
                 source.HTML = "Unable to load source data.";
                 source.Markdown = "Unable to load source data.";
+            }
+
+            // If the html is not null set the HTML and Markdown properties.
+            if (!string.IsNullOrEmpty(html))
+            {
+                source.HTML = html;
+                source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(html);
             }
         }
     }
