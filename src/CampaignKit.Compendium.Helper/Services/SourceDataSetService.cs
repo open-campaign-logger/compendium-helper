@@ -19,6 +19,8 @@ namespace CampaignKit.Compendium.Helper.Services
     using CampaignKit.Compendium.Core.Configuration;
     using CampaignKit.Compendium.Helper.Pages;
 
+    using HtmlAgilityPack;
+
     using Microsoft.AspNetCore.Components;
 
     /// <summary>
@@ -84,7 +86,28 @@ namespace CampaignKit.Compendium.Helper.Services
             try
             {
                 var html = await this.DownloadService.GetWebPageAync(source.SourceDataSetURI);
-                if (html != null)
+
+                // If the source's XPath is not null or empty navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
+                if (!string.IsNullOrEmpty(source.XPath))
+                {
+                    // Load the HTML into an HtmlAgilityPack HtmlDocument object.
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(html);
+
+                    // Navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
+                    try
+                    {
+                        var node = doc.DocumentNode.SelectSingleNode(source.XPath);
+                        html = node.OuterHtml;
+                    }
+                    catch (Exception ex)
+                    {
+                        html = $"Unable to find node corresponding to XPath: {source.XPath}";
+                    }
+                }
+
+                // If the html is not null set the HTML and Markdown properties.
+                if (!string.IsNullOrEmpty(html))
                 {
                     source.HTML = html;
                     source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(html);
