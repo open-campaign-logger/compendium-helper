@@ -28,7 +28,6 @@ namespace CampaignKit.Compendium.Helper.Services
     /// </summary>
     public class SourceDataSetService
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SourceDataSetService"/> class.
         /// </summary>

@@ -20,11 +20,7 @@ namespace CampaignKit.Compendium.Helper.Pages
     using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
-    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.JSInterop;
-
-    using System.Diagnostics;
-    using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Partial class for the Editor component.
@@ -32,10 +28,21 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Editor
     {
         /// <summary>
+        /// Gets or sets a value indicating whether the source data has customized content.
+        /// </summary>
+        public bool HasCustomizedContent { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets the selected source data set.
         /// </summary>
         [Parameter]
         public SourceDataSet Source { get; set; }
+
+        /// <summary>
+        /// Gets or sets the HtmlService.
+        /// </summary>
+        [Inject]
+        private HtmlService HtmlService { get; set; }
 
         /// <summary>
         /// Gets or sets the JSRuntime for JS interop.
@@ -48,6 +55,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         [Inject]
         private ILogger<Editor> Logger { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Markdown service.
+        /// </summary>
+        [Inject]
+        private MarkdownService MarkdownService { get; set; }
 
         /// <summary>
         /// Gets or sets property to store a reference to an Editor object.
@@ -76,6 +89,22 @@ namespace CampaignKit.Compendium.Helper.Pages
         public void OnContentChanged(string content)
         {
             this.Logger.LogInformation("OnChange with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
+
+            // Update the markdown property of the source data set
+            this.Source.Markdown = content;
+
+            // Convert the markdown to HTML
+            var html = this.HtmlService.ConvertMarkdownToHtml(content);
+
+            // Update the html property of the //body substitution
+            if (!this.Source.Substitutions.Any(s => s.XPath == "//body"))
+            {
+                this.Source.Substitutions.Add(new Substitution { XPath = "//body", HTML = html });
+            }
+            else
+            {
+                this.Source.Substitutions.First(s => s.XPath == "//body").HTML = html;
+            }
         }
 
         /// <summary>
@@ -126,6 +155,7 @@ namespace CampaignKit.Compendium.Helper.Pages
                 // Download the web page source data
                 if (this.Source != null)
                 {
+                    // Load the source data set
                     await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source);
 
                     // Log the markdown
@@ -135,6 +165,26 @@ namespace CampaignKit.Compendium.Helper.Pages
             catch (JSException jsEx)
             {
                 this.Logger.LogError(jsEx, "Unable to get HTML content from editor.");
+            }
+        }
+
+        /// <summary>
+        /// Enables or disables the editor based on the presence of a substitution element in the source.
+        /// </summary>
+        /// <returns>
+        /// Nothing.
+        /// </returns>
+        protected async Task UpdateEditorMode()
+        {
+            if (this.Source.Substitutions.Any(s => s.XPath == "//body"))
+            {
+                this.HasCustomizedContent = true;
+                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.enableEditor()");
+            }
+            else
+            {
+                this.HasCustomizedContent = false;
+                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor()");
             }
         }
     }
