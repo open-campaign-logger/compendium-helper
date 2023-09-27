@@ -16,7 +16,7 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
-    using CampaignKit.Compendium.Core.Configuration;
+    using Core.Configuration;
 
     using Microsoft.AspNetCore.Components;
 
@@ -32,7 +32,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         /// <returns>The SelectedSource object.</returns>
         [Parameter]
-        public SourceDataSet SelectedSource { get; set; } = new SourceDataSet();
+        public SourceDataSet SelectedSource { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the TooltipService.
@@ -48,7 +48,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="options">Optional options for the tooltip.</param>
         private void ShowTooltip(ElementReference elementReference, string tooltip, TooltipOptions options = null)
         {
-            this.TooltipService.Open(elementReference, tooltip, options);
+            TooltipService.Open(elementReference, tooltip, options);
         }
     }
 }

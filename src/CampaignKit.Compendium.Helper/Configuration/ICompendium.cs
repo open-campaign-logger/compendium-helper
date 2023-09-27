@@ -16,7 +16,7 @@
 
 namespace CampaignKit.Compendium.Core.Configuration
 {
-    using CampaignKit.Compendium.Helper.Data;
+    using Helper.Data;
 
     /// <summary>
     /// Represents the configuration of a compendium within the application.

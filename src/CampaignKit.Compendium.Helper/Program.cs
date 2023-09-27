@@ -16,7 +16,7 @@
 
 namespace CampaignKit.Compendium.Helper
 {
-    using CampaignKit.Compendium.Helper.Services;
+    using Services;
 
     using Radzen;
 

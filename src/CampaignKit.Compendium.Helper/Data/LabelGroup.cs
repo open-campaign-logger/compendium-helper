@@ -16,7 +16,7 @@
 
 namespace CampaignKit.Compendium.Helper.Data
 {
-    using CampaignKit.Compendium.Core.Configuration;
+    using Core.Configuration;
 
     /// <summary>
     /// Used for grouping source data sets.
@@ -32,6 +32,6 @@ namespace CampaignKit.Compendium.Helper.Data
         /// Gets or sets the list of source data sets.
         /// </summary>
         /// <returns>The list of source data sets.</returns>
-        public List<SourceDataSet> SourceDataSets { get; set; } = new List<SourceDataSet>();
+        public List<SourceDataSet> SourceDataSets { get; set; } = new();
     }
 }

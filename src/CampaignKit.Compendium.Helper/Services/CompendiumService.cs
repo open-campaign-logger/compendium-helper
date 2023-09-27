@@ -18,7 +18,7 @@ namespace CampaignKit.Compendium.Helper.Services
 {
     using System.Text.RegularExpressions;
 
-    using CampaignKit.Compendium.Core.Configuration;
+    using Core.Configuration;
 
     using Newtonsoft.Json;
 
@@ -56,7 +56,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            this.logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", RegexHelper.RemoveUnwantedCharactersFromLogMessage(json));
+            logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", RegexHelper.RemoveUnwantedCharactersFromLogMessage(json));
 
             // Deserialize the JSON string into a Dictionary object using Newtonsoft.Json
             Dictionary<string, List<PublicCompendium>> dictionary;
@@ -66,7 +66,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
             catch (Exception e)
             {
-                this.logger.LogError(e, "Unable to deserialize JSON into list of PublicCompendium objects.");
+                logger.LogError(e, "Unable to deserialize JSON into list of PublicCompendium objects.");
                 throw;
             }
 

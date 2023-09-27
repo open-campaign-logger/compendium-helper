@@ -53,7 +53,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            this.logger.LogInformation("ConvertHtmlToMarkdown method called with html: {Html}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(html));
+            logger.LogInformation("ConvertHtmlToMarkdown method called with html: {Html}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(html));
 
             // Create a new HtmlDocument object
             var doc = new HtmlDocument();
@@ -82,7 +82,7 @@ namespace CampaignKit.Compendium.Helper.Services
             var markdown = converter.Convert(html);
 
             // Log the response
-            this.logger.LogInformation("ConvertHtmlToMarkdown method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(markdown));
+            logger.LogInformation("ConvertHtmlToMarkdown method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(markdown));
 
             // Return the reponse.
             return markdown;

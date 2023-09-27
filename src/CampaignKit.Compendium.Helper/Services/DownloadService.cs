@@ -49,7 +49,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            this.logger.LogInformation("GetWebPageAync method called with URL: {Url}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(url));
+            logger.LogInformation("GetWebPageAync method called with URL: {Url}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(url));
 
             // Create an HTTP client
             using var client = new HttpClient();
@@ -89,14 +89,14 @@ namespace CampaignKit.Compendium.Helper.Services
             catch (HttpRequestException httpEx)
             {
                 // Log the exception
-                this.logger.LogError(httpEx, "Unable to download web page from URL: {Url}", url);
+                logger.LogError(httpEx, "Unable to download web page from URL: {Url}", url);
 
                 // Provide a generic error message
                 content = "Unable to download web page.";
             }
 
             // Log the response
-            this.logger.LogInformation("GetWebPageAync method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
+            logger.LogInformation("GetWebPageAync method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
 
             // Return the response
             return content;

@@ -46,7 +46,7 @@ namespace CampaignKit.Compendium.Helper.Controllers
                 }
             }
 
-            this.OnReportRequest(ref proxyRequestMessage);
+            OnReportRequest(ref proxyRequestMessage);
 
             if (currentReqest.Method == "POST")
             {
@@ -77,12 +77,12 @@ namespace CampaignKit.Compendium.Helper.Controllers
         {
             if (!string.IsNullOrEmpty(url))
             {
-                using var httpClient = this.CreateHttpClient();
-                var responseMessage = await this.ForwardRequest(httpClient, this.Request, url);
+                using var httpClient = CreateHttpClient();
+                var responseMessage = await ForwardRequest(httpClient, Request, url);
 
-                CopyResponseHeaders(responseMessage, this.Response);
+                CopyResponseHeaders(responseMessage, Response);
 
-                await WriteResponse(this.Request, url, responseMessage, this.Response, false);
+                await WriteResponse(Request, url, responseMessage, Response, false);
             }
         }
 
@@ -96,8 +96,8 @@ namespace CampaignKit.Compendium.Helper.Controllers
         public async Task Proxy()
         {
             var urlToReplace =
-                $"{this.Request.Scheme}://{this.Request.Host.Value}{this.Request.PathBase}/{"ssrsproxy"}/";
-            var requestedUrl = this.Request.GetDisplayUrl().Replace(urlToReplace, string.Empty, StringComparison.InvariantCultureIgnoreCase);
+                $"{Request.Scheme}://{Request.Host.Value}{Request.PathBase}/{"ssrsproxy"}/";
+            var requestedUrl = Request.GetDisplayUrl().Replace(urlToReplace, string.Empty, StringComparison.InvariantCultureIgnoreCase);
             var reportServerIndex = requestedUrl.IndexOf("/ReportServer", StringComparison.InvariantCultureIgnoreCase);
             if (reportServerIndex == -1)
             {
@@ -108,25 +108,25 @@ namespace CampaignKit.Compendium.Helper.Controllers
 
             var url = string.Format("{0}://{1}:{2}{3}", reportUrlParts[0], reportUrlParts[1], reportUrlParts[2], requestedUrl[reportServerIndex..]);
 
-            using var httpClient = this.CreateHttpClient();
-            var responseMessage = await this.ForwardRequest(httpClient, this.Request, url);
+            using var httpClient = CreateHttpClient();
+            var responseMessage = await ForwardRequest(httpClient, Request, url);
 
-            CopyResponseHeaders(responseMessage, this.Response);
+            CopyResponseHeaders(responseMessage, Response);
 
-            if (this.Request.Method == "POST")
+            if (Request.Method == "POST")
             {
-                await WriteResponse(this.Request, url, responseMessage, this.Response, true);
+                await WriteResponse(Request, url, responseMessage, Response, true);
             }
             else
             {
                 if (responseMessage.Content.Headers.ContentType != null && responseMessage.Content.Headers.ContentType.MediaType == "text/html")
                 {
-                    await WriteResponse(this.Request, url, responseMessage, this.Response, false);
+                    await WriteResponse(Request, url, responseMessage, Response, false);
                 }
                 else
                 {
                     using var responseStream = await responseMessage.Content.ReadAsStreamAsync();
-                    await responseStream.CopyToAsync(this.Response.Body, 81920, this.HttpContext.RequestAborted);
+                    await responseStream.CopyToAsync(Response.Body, 81920, HttpContext.RequestAborted);
                 }
             }
         }
@@ -250,7 +250,7 @@ namespace CampaignKit.Compendium.Helper.Controllers
             }
 
             response.Headers.Remove("Content-Length");
-            response.Headers.Add("Content-Length", new string[] { System.Text.Encoding.UTF8.GetByteCount(result).ToString() });
+            response.Headers.Add("Content-Length", new string[] { Encoding.UTF8.GetByteCount(result).ToString() });
 
             await response.WriteAsync(result);
         }
@@ -272,7 +272,7 @@ namespace CampaignKit.Compendium.Helper.Controllers
                 httpClientHandler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             }
 
-            this.OnHttpClientHandlerCreate(ref httpClientHandler);
+            OnHttpClientHandlerCreate(ref httpClientHandler);
 
             return new HttpClient(httpClientHandler);
         }

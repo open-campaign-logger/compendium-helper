@@ -83,7 +83,7 @@
     /// <summary>
     /// Dictionary containing labels for form fields.
     /// </summary>
-    private Dictionary<string, string> labels = new Dictionary<string, string>
+    private Dictionary<string, string> labels = new()
     {
         {"title", "Name"},
         {"description", "Description"},
@@ -96,7 +96,7 @@
     /// <summary>
     /// Dictionary containing tooltips for form fields.
     /// </summary>
-    private Dictionary<string, string> tooltips = new Dictionary<string, string>
+    private Dictionary<string, string> tooltips = new()
     {
         {"title", "Provide a name for the compendium."},
         {"description", "Provide a brief description of this compendium."},

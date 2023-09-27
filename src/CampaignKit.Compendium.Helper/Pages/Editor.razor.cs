@@ -16,8 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
-    using CampaignKit.Compendium.Core.Configuration;
-    using CampaignKit.Compendium.Helper.Services;
+    using Core.Configuration;
+    using Services;
 
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
@@ -78,7 +78,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         public void Dispose()
         {
-            this.ObjectReference?.Dispose();
+            ObjectReference?.Dispose();
         }
 
         /// <summary>
@@ -88,22 +88,31 @@ namespace CampaignKit.Compendium.Helper.Pages
         [JSInvokable]
         public void OnContentChanged(string content)
         {
-            this.Logger.LogInformation("OnChange with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
+            Logger.LogInformation("OnChange with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
 
             // Update the markdown property of the source data set
-            this.Source.Markdown = content;
+            Source.Markdown = content;
 
             // Convert the markdown to HTML
-            var html = this.HtmlService.ConvertMarkdownToHtml(content);
+            var html = HtmlService.ConvertMarkdownToHtml(content);
 
-            // Update the html property of the //body substitution
-            if (!this.Source.Substitutions.Any(s => s.XPath == "//body"))
+            // Check if there is no existing substitution with XPath "//body" in the Source.Substitutions list
+            if (Source.Substitutions.All(s => s.XPath != "//body"))
             {
-                this.Source.Substitutions.Add(new Substitution { XPath = "//body", HTML = html });
+                // If there is no existing substitution, create a new list with a single Substitution object
+                Source.Substitutions = new List<Substitution>
+                {
+                    new()
+                    {
+                        XPath = "//body",
+                        HTML = html,
+                    },
+                };
             }
             else
             {
-                this.Source.Substitutions.First(s => s.XPath == "//body").HTML = html;
+                // If there is an existing substitution with XPath "//body", update its HTML property with the new value
+                Source.Substitutions.First(s => s.XPath == "//body").HTML = html;
             }
         }
 
@@ -116,16 +125,16 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </returns>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            this.Logger.LogInformation("OnAfterRenderAsync with firstRender parameter value: {FirstRender}", firstRender);
+            Logger.LogInformation("OnAfterRenderAsync with firstRender parameter value: {FirstRender}", firstRender);
 
             try
             {
-                this.ObjectReference = DotNetObjectReference.Create(this);
-                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Source.Markdown, this.ObjectReference);
+                ObjectReference = DotNetObjectReference.Create(this);
+                await JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", Source.Markdown, ObjectReference);
             }
             catch (JSException jsEx)
             {
-                this.Logger.LogError(jsEx, "Unable to set markdown content in editor.");
+                Logger.LogError(jsEx, "Unable to set markdown content in editor.");
             }
         }
 
@@ -137,7 +146,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </returns>
         protected async override Task OnInitializedAsync()
         {
-            this.Logger.LogInformation("OnInitializedAsync");
+            Logger.LogInformation("OnInitializedAsync");
         }
 
         /// <summary>
@@ -148,23 +157,23 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </returns>
         protected async override Task OnParametersSetAsync()
         {
-            this.Logger.LogInformation("OnParametersSetAsync");
+            Logger.LogInformation("OnParametersSetAsync");
             await base.OnParametersSetAsync();
             try
             {
                 // Download the web page source data
-                if (this.Source != null)
+                if (Source != null)
                 {
                     // Load the source data set
-                    await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source);
+                    await SourceDataSetService.LoadSourceDataSetAsync(Source);
 
                     // Log the markdown
-                    this.Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Source.Markdown));
+                    Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(Source.Markdown));
                 }
             }
             catch (JSException jsEx)
             {
-                this.Logger.LogError(jsEx, "Unable to get HTML content from editor.");
+                Logger.LogError(jsEx, "Unable to get HTML content from editor.");
             }
         }
 
@@ -176,15 +185,15 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </returns>
         protected async Task UpdateEditorMode()
         {
-            if (this.Source.Substitutions.Any(s => s.XPath == "//body"))
+            if (Source.Substitutions.Any(s => s.XPath == "//body"))
             {
-                this.HasCustomizedContent = true;
-                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.enableEditor()");
+                HasCustomizedContent = true;
+                await JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.enableEditor()");
             }
             else
             {
-                this.HasCustomizedContent = false;
-                await this.JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor()");
+                HasCustomizedContent = false;
+                await JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor()");
             }
         }
     }

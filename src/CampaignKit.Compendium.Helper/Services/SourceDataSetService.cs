@@ -16,8 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
-    using CampaignKit.Compendium.Core.Configuration;
-    using CampaignKit.Compendium.Helper.Pages;
+    using Core.Configuration;
+    using Pages;
 
     using HtmlAgilityPack;
 
@@ -44,10 +44,10 @@ namespace CampaignKit.Compendium.Helper.Services
             ILogger<SourceDataSetService> logger,
             MarkdownService markdownService)
         {
-            this.DownloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
-            this.HtmlService = htmlService ?? throw new ArgumentNullException(nameof(htmlService));
-            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.MarkdownService = markdownService ?? throw new ArgumentNullException(nameof(markdownService));
+            DownloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
+            HtmlService = htmlService ?? throw new ArgumentNullException(nameof(htmlService));
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            MarkdownService = markdownService ?? throw new ArgumentNullException(nameof(markdownService));
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task LoadSourceDataSetAsync(SourceDataSet source)
         {
-            this.Logger.LogInformation("Loading source data set: {Source}", source);
+            Logger.LogInformation("Loading source data set: {Source}", source);
             var html = string.Empty;
 
             try
@@ -94,7 +94,7 @@ namespace CampaignKit.Compendium.Helper.Services
                 else
                 {
                     // Otherwise, download the HTML from the source's SourceDataSetURI property.
-                    html = await this.DownloadService.GetWebPageAync(source.SourceDataSetURI);
+                    html = await DownloadService.GetWebPageAync(source.SourceDataSetURI);
 
                     // If the source's XPath is not null or empty navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
                     if (!string.IsNullOrEmpty(source.XPath))
@@ -118,7 +118,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
             catch (Exception ex)
             {
-                this.Logger.LogError(ex, "Error loading html data set.");
+                Logger.LogError(ex, "Error loading html data set.");
                 source.HTML = "Unable to load source data.";
                 source.Markdown = "Unable to load source data.";
             }
@@ -127,7 +127,7 @@ namespace CampaignKit.Compendium.Helper.Services
             if (!string.IsNullOrEmpty(html))
             {
                 source.HTML = html;
-                source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(html);
+                source.Markdown = MarkdownService.ConvertHtmlToMarkdown(html);
             }
         }
     }

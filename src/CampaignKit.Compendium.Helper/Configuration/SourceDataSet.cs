@@ -45,7 +45,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// Gets or sets a list of default labels to apply to all entries imported
         /// from this data source.
         /// </summary>
-        public List<string> Labels { get; set; } = new List<string>();
+        public List<string> Labels { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the name of the parser to use for deserializing license data.
@@ -87,7 +87,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the list of XPath/HTML susbstitutions to use with for this data source.
         /// </summary>
-        public List<Substitution> Substitutions { get; set; } = new List<Substitution> { };
+        public List<Substitution> Substitutions { get; set; } = new() { };
 
         /// <summary>
         /// Gets or sets the tag entry to use for campaign entries derived from this source.
@@ -109,7 +109,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         {
             if (obj is SourceDataSet other)
             {
-                return this.SourceDataSetName.Equals(other.SourceDataSetName);
+                return SourceDataSetName.Equals(other.SourceDataSetName);
             }
 
             return false;
@@ -118,13 +118,13 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return this.SourceDataSetName.GetHashCode();
+            return SourceDataSetName.GetHashCode();
         }
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return this.SourceDataSetName;
+            return SourceDataSetName;
         }
     }
 }

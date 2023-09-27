@@ -72,7 +72,7 @@ namespace CampaignKit.Compendium.Helper.Shared
         /// </summary>
         protected void SidebarToggleClick()
         {
-            this.SidebarExpanded = !this.SidebarExpanded;
+            SidebarExpanded = !SidebarExpanded;
         }
     }
 }
