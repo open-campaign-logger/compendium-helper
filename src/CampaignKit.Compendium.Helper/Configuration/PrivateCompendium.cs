@@ -14,12 +14,12 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
     /// <summary>
     /// Represents the configuration of a private compendium within the application.
     /// These should be defined via user secrets so that they are not shared with other
-    /// reporsitory users.
+    /// repository users.
     /// </summary>
     public class PrivateCompendium : PublicCompendium
     {

@@ -8,9 +8,9 @@
             <RadzenStack>
                 <!-- Source Data Set Name -->
                 <RadzenStack>
-                    <RadzenFormField Text="@labels["sourceDataSetName"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["sourceDataSetName"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["sourceDataSetName"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["sourceDataSetName"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetName" id="sourceDataSetName" />
@@ -20,9 +20,9 @@
 
                 <!-- Labels -->
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["labels"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["labels"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["labels"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["labels"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextBox Value="@string.Join(',', SelectedSource.Labels)" id="labels" ReadOnly="true" />
@@ -32,21 +32,21 @@
 
                 <!-- Source Data Set URI -->
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["sourceDataSetURI"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["sourceDataSetURI"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["sourceDataSetURI"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["sourceDataSetURI"]))" />
                         </End>
                         <ChildContent>
-                            <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetURI" id="sourceDataSetURI" />
+                            <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetUri" id="sourceDataSetURI" />
                         </ChildContent>
                     </RadzenFormField>
                 </RadzenStack>
 
                 <!-- XPath -->
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["xPath"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["xPath"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["xPath"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["xPath"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextBox @bind-Value="@SelectedSource.XPath" id="xPath" />
@@ -56,9 +56,9 @@
 
                 <!-- Tag Symbol -->
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["tagSymbol"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["tagSymbol"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["tagSymbol"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["tagSymbol"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextBox @bind-Value="@SelectedSource.TagSymbol" id="tagSymbol" />
@@ -68,9 +68,9 @@
 
                 <!-- Tag Value Prefix -->
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["tagValuePrefix"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["tagValuePrefix"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["tagValuePrefix"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["tagValuePrefix"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextBox @bind-Value="@SelectedSource.TagValuePrefix" id="tagValuePrefix" />
@@ -80,17 +80,17 @@
 
                 <!-- Overwrite Existing -->
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["overwriteExisting"]" Variant="@variant" Style="width: 150px">
+                    <RadzenFormField Text="@_labels["overwriteExisting"]" Variant="@_variant" Style="width: 150px">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["overwriteExisting"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["overwriteExisting"]))" />
                         </End>
                         <ChildContent>
                             <RadzenCheckBox @bind-Value="@SelectedSource.OverwriteExisting" id="overwriteExisting" class="m-3" Style="flex: none;" />
                         </ChildContent>
                     </RadzenFormField>
-                    <RadzenFormField Text="@labels["isPublic"]" Variant="@variant" Style="width: 150px">
+                    <RadzenFormField Text="@_labels["isPublic"]" Variant="@_variant" Style="width: 150px">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["isPublic"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["isPublic"]))" />
                         </End>
                         <ChildContent>
                             <RadzenCheckBox @bind-Value="@SelectedSource.IsPublic" id="isPublic" class="m-3" Style="flex: none;" />
@@ -107,12 +107,12 @@
     /// <summary>
     /// Sets the variant of the object to Outlined.
     /// </summary>
-    Variant variant = Variant.Outlined;
+    Variant _variant = Variant.Outlined;
 
     /// <summary>
     /// Dictionary containing tooltips for form fields.
     /// </summary>
-    Dictionary<string, string> tooltips = new()
+    Dictionary<string, string> _tooltips = new()
     {
         {"importLimit", "Provide the import limit."},
         {"labels", "Provide labels (comma-separated)."},
@@ -128,7 +128,7 @@
     /// <summary>
     /// Dictionary containing tooltips for form fields.
     /// </summary>
-    Dictionary<string, string> labels = new()
+    Dictionary<string, string> _labels = new()
     {
         {"importLimit", "Import Limit"},
         {"labels", "Labels"},

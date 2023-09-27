@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
     /// <summary>
     /// Configuration class for chat prompts to be executed by a module.
@@ -29,7 +29,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets a list of default labels to apply to all entries created from this prompt.
         /// </summary>
-        public List<string> Labels { get; set; } = new();
+        public List<string> Labels { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the name of the prompt. This will used for naming the campaign entry that's created from the prompt response.
@@ -39,7 +39,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the list of prompts to use for generating content.
         /// </summary>
-        public List<PromptMessage> PromptMessages { get; set; } = new();
+        public List<PromptMessage> PromptMessages { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the role that the service will play when generating content.

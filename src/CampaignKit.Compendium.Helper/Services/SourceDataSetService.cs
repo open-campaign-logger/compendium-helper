@@ -16,8 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
-    using Core.Configuration;
-    using Pages;
+    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Pages;
 
     using HtmlAgilityPack;
 
@@ -32,7 +32,6 @@ namespace CampaignKit.Compendium.Helper.Services
         /// Initializes a new instance of the <see cref="SourceDataSetService"/> class.
         /// </summary>
         /// <param name="downloadService">DownloadService DI service.</param>
-        /// <param name="htmlService">HtmlService DI service.</param>
         /// <param name="logger">ILogger DI service.</param>
         /// <param name="markdownService">MarkdownService DI service.</param>
         /// <returns>
@@ -40,14 +39,12 @@ namespace CampaignKit.Compendium.Helper.Services
         /// </returns>
         public SourceDataSetService(
             DownloadService downloadService,
-            HtmlService htmlService,
             ILogger<SourceDataSetService> logger,
             MarkdownService markdownService)
         {
-            DownloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
-            HtmlService = htmlService ?? throw new ArgumentNullException(nameof(htmlService));
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            MarkdownService = markdownService ?? throw new ArgumentNullException(nameof(markdownService));
+            this.DownloadService = downloadService ?? throw new ArgumentNullException(nameof(downloadService));
+            this.Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.MarkdownService = markdownService ?? throw new ArgumentNullException(nameof(markdownService));
         }
 
         /// <summary>
@@ -55,12 +52,6 @@ namespace CampaignKit.Compendium.Helper.Services
         /// </summary>
         [Inject]
         private DownloadService DownloadService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the HTMLService.
-        /// </summary>
-        [Inject]
-        private HtmlService HtmlService { get; set; }
 
         /// <summary>
         /// Gets or sets the Logger.
@@ -81,7 +72,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task LoadSourceDataSetAsync(SourceDataSet source)
         {
-            Logger.LogInformation("Loading source data set: {Source}", source);
+            this.Logger.LogInformation("Loading source data set: {Source}", source);
             var html = string.Empty;
 
             try
@@ -89,12 +80,12 @@ namespace CampaignKit.Compendium.Helper.Services
                 // Check to see if the SourceDataSet has any substitutions for XPath="//body".  If so return that HTML.
                 if (source.Substitutions != null && source.Substitutions.Any(s => s.XPath == "//body"))
                 {
-                    html = source.Substitutions.First(s => s.XPath == "//body").HTML;
+                    html = source.Substitutions.First(s => s.XPath == "//body").Html;
                 }
                 else
                 {
                     // Otherwise, download the HTML from the source's SourceDataSetURI property.
-                    html = await DownloadService.GetWebPageAync(source.SourceDataSetURI);
+                    html = await this.DownloadService.GetWebPageAync(source.SourceDataSetUri);
 
                     // If the source's XPath is not null or empty navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
                     if (!string.IsNullOrEmpty(source.XPath))
@@ -118,16 +109,16 @@ namespace CampaignKit.Compendium.Helper.Services
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error loading html data set.");
-                source.HTML = "Unable to load source data.";
+                this.Logger.LogError(ex, "Error loading html data set.");
+                source.Html = "Unable to load source data.";
                 source.Markdown = "Unable to load source data.";
             }
 
             // If the html is not null set the HTML and Markdown properties.
             if (!string.IsNullOrEmpty(html))
             {
-                source.HTML = html;
-                source.Markdown = MarkdownService.ConvertHtmlToMarkdown(html);
+                source.Html = html;
+                source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(html);
             }
         }
     }

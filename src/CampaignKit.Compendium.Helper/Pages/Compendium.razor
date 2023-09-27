@@ -8,9 +8,9 @@
             <RadzenStack>
 
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["title"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["title"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["title"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["title"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextBox @bind-Value="@SelectedCompendium.Title" id="title" />
@@ -19,9 +19,9 @@
                 </RadzenStack>
 
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["description"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["description"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["description"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["description"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextArea @bind-Value="@SelectedCompendium.Description" id="description" />
@@ -30,9 +30,9 @@
                 </RadzenStack>
 
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["gameSystem"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["gameSystem"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["gameSystem"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["gameSystem"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextBox @bind-Value="@SelectedCompendium.GameSystem" id="gameSystem" />
@@ -41,9 +41,9 @@
                 </RadzenStack>
 
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["imageUrl"]" Variant="@variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["imageUrl"]" Variant="@_variant" Style="width: 100%">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["imageUrl"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["imageUrl"]))" />
                         </End>
                         <ChildContent>
                             <RadzenTextBox @bind-Value="@SelectedCompendium.ImageUrl" id="imageUrl" />
@@ -52,17 +52,17 @@
                 </RadzenStack>
 
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@labels["isActive"]" Variant="@variant" Style="width: 150px">
+                    <RadzenFormField Text="@_labels["isActive"]" Variant="@_variant" Style="width: 150px">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["isActive"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["isActive"]))" />
                         </End>
                         <ChildContent>
                             <RadzenCheckBox @bind-Value="@SelectedCompendium.IsActive" id="isActive" class="m-3" Style="flex: none;" />
                         </ChildContent>
                     </RadzenFormField>
-                    <RadzenFormField Text="@labels["overwriteExisting"]" Variant="@variant" Style="width: 150px">
+                    <RadzenFormField Text="@_labels["overwriteExisting"]" Variant="@_variant" Style="width: 150px">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, tooltips["overwriteExisting"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["overwriteExisting"]))" />
                         </End>
                         <ChildContent>
                             <RadzenCheckBox @bind-Value="@SelectedCompendium.OverwriteExisting" id="overwriteExisting" class="m-3" Style="flex: none;" />
@@ -78,12 +78,12 @@
     /// <summary>
     /// Sets the variant of the object to Outlined.
     /// </summary>
-    private Variant variant = Variant.Outlined;
+    private Variant _variant = Variant.Outlined;
 
     /// <summary>
     /// Dictionary containing labels for form fields.
     /// </summary>
-    private Dictionary<string, string> labels = new()
+    private Dictionary<string, string> _labels = new()
     {
         {"title", "Name"},
         {"description", "Description"},
@@ -96,7 +96,7 @@
     /// <summary>
     /// Dictionary containing tooltips for form fields.
     /// </summary>
-    private Dictionary<string, string> tooltips = new()
+    private Dictionary<string, string> _tooltips = new()
     {
         {"title", "Provide a name for the compendium."},
         {"description", "Provide a brief description of this compendium."},

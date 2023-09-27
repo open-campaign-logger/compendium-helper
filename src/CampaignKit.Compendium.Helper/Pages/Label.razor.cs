@@ -19,8 +19,8 @@ namespace CampaignKit.Compendium.Helper.Pages
     using System.Linq;
     using System.Threading.Tasks;
 
-    using Core.Configuration;
-    using Data;
+    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
     using Microsoft.AspNetCore.Components;
 
     using Radzen;
@@ -76,14 +76,14 @@ namespace CampaignKit.Compendium.Helper.Pages
             await base.OnInitializedAsync();
 
             // Sort the source data sets.
-            AllSources.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
+            this.AllSources.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
 
             // Sort the source data sets associated with the grouping.
-            SelectedSource.SourceDataSets.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
+            this.SelectedSource.SourceDataSets.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
 
             // Get the list of selected data sets, convert them to a list of strings, sort them and then assign them to SelectedDataSets.
-            SelectedDataSets
-                = SelectedSource.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
+            this.SelectedDataSets
+                = this.SelectedSource.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
         }
 
         /// <summary>
@@ -93,26 +93,26 @@ namespace CampaignKit.Compendium.Helper.Pages
         private void OnChange(object selected)
         {
             // Log the method entry
-            Logger.LogInformation("Source data set association changed.");
+            this.Logger.LogInformation("Source data set association changed.");
 
             // Case selected to List<string> to simplify working with it.
             var selectedSourceDataSets = (IEnumerable<string>)selected;
             var toBeAdded = new List<string>();
 
             // Iterate through SelectedSource.SourceDataSets to see if any of them have been removed.  selected is a List<string>
-            var toBeRemoved = (from sourceDataSet in SelectedSource.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
+            var toBeRemoved = (from sourceDataSet in this.SelectedSource.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
 
             // Cycle through toBeRemoved list and remove the appropriate sourcedatasets from the SelectedSource.SourceDataSets list.
             foreach (var tbr in toBeRemoved)
             {
                 // Find the object in the SelectedSource.SourceDataSets lists
-                var sourceDataSet = SelectedSource.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
+                var sourceDataSet = this.SelectedSource.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
 
                 // Remove the label from the sourceDataSet.
-                sourceDataSet.Labels.Remove(SelectedSource.LabelName);
+                sourceDataSet.Labels.Remove(this.SelectedSource.LabelName);
 
                 // Remove the label from the source data set grouping.
-                SelectedSource.SourceDataSets.Remove(sourceDataSet);
+                this.SelectedSource.SourceDataSets.Remove(sourceDataSet);
             }
 
             // Iterate through selected to see if any new labels have been added.
@@ -121,18 +121,21 @@ namespace CampaignKit.Compendium.Helper.Pages
                 // If the sourceDataSetName is not in the SelectedSource.SourceDataSets list, add it.
                 {
                     // Get the SourceDataSet object from AllSources.
-                    var sourceDataSet = AllSources.FirstOrDefault(x => x.SourceDataSetName == sourceDataSetName);
+                    var sourceDataSet = this.AllSources.FirstOrDefault(x => x.SourceDataSetName == sourceDataSetName);
 
                     // Add the label to the sourceDataSet.
-                    sourceDataSet.Labels.Add(SelectedSource.LabelName);
+                    if (sourceDataSet != null)
+                    {
+                        sourceDataSet.Labels.Add(this.SelectedSource.LabelName);
 
-                    // Add the sourceDataSet to the SelectedSource.SourceDataSets list.
-                    SelectedSource.SourceDataSets.Add(sourceDataSet);
+                        // Add the sourceDataSet to the SelectedSource.SourceDataSets list.
+                        this.SelectedSource.SourceDataSets.Add(sourceDataSet);
+                    }
                 }
             }
 
             // Fire an event to notify the parent component that the label assignment has changed.
-            LabelChanged.InvokeAsync(SelectedSource.LabelName);
+            this.LabelChanged.InvokeAsync(this.SelectedSource.LabelName);
         }
 
         /// <summary>
@@ -143,7 +146,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="options">Optional options for the tooltip.</param>
         private void ShowTooltip(ElementReference elementReference, string tooltip, TooltipOptions options = null)
         {
-            TooltipService.Open(elementReference, tooltip, options);
+            this.TooltipService.Open(elementReference, tooltip, options);
         }
     }
 }

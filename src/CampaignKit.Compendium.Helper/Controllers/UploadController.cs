@@ -35,17 +35,17 @@ namespace CampaignKit.Compendium.Helper.Controllers
            {
                if (file == null || file.Length == 0)
                {
-                   return BadRequest("No file uploaded.");
+                   return this.BadRequest("No file uploaded.");
                }
 
                using var reader = new StreamReader(file.OpenReadStream());
                var content = await reader.ReadToEndAsync();
 
-               return Ok(content);
+               return this.Ok(content);
            }
            catch (Exception ex)
            {
-               return StatusCode(500, ex.Message);
+               return this.StatusCode(500, ex.Message);
            }
        }
    }

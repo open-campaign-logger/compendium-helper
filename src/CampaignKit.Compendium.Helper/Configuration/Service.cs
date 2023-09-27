@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
     /// <summary>
     /// Configuration class for external services to be consumed by a module.
@@ -24,7 +24,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the key of the service.
         /// </summary>
-        public string APIKey { get; set; } = string.Empty;
+        public string ApiKey { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the endpoint of the service.

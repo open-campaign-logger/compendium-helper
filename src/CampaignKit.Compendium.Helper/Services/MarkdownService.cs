@@ -16,6 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
+    using CampaignKit.Compendium.Helper.Data;
+
     using HtmlAgilityPack;
 
     using ReverseMarkdown;
@@ -53,7 +55,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            logger.LogInformation("ConvertHtmlToMarkdown method called with html: {Html}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(html));
+            this.logger.LogInformation("ConvertHtmlToMarkdown method called with html: {Html}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(html));
 
             // Create a new HtmlDocument object
             var doc = new HtmlDocument();
@@ -82,7 +84,7 @@ namespace CampaignKit.Compendium.Helper.Services
             var markdown = converter.Convert(html);
 
             // Log the response
-            logger.LogInformation("ConvertHtmlToMarkdown method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(markdown));
+            this.logger.LogInformation("ConvertHtmlToMarkdown method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(markdown));
 
             // Return the reponse.
             return markdown;

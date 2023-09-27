@@ -14,10 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
     using System.Data;
-    using Helper.Data;
+    using CampaignKit.Compendium.Helper.Data;
 
     /// <summary>
     /// Represents the configuration of an open-source compendium within the application.
@@ -44,10 +44,10 @@ namespace CampaignKit.Compendium.Core.Configuration
         public bool OverwriteExisting { get; set; } = false;
 
         /// <inheritdoc/>
-        public List<Prompt> Prompts { get; set; } = new() { };
+        public List<Prompt> Prompts { get; set; } = new () { };
 
         /// <inheritdoc/>
-        public List<SourceDataSet> SourceDataSets { get; set; } = new();
+        public List<SourceDataSet> SourceDataSets { get; set; } = new ();
 
         /// <inheritdoc/>
         public string Title { get; set; } = string.Empty;
@@ -57,7 +57,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         {
             get
             {
-                return SourceDataSets
+                return this.SourceDataSets
                     .SelectMany(ds => ds.Labels)
                     .Distinct()
                     .OrderBy(label => label)
@@ -71,7 +71,7 @@ namespace CampaignKit.Compendium.Core.Configuration
             get
             {
                 // SelectedSource for SourceDataSets with labels
-                var labeledGroupings = SourceDataSets
+                var labeledGroupings = this.SourceDataSets
                     .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
                     .GroupBy(pair => pair.Label)
                     .Where(group => !string.IsNullOrEmpty(group.Key))
@@ -85,7 +85,7 @@ namespace CampaignKit.Compendium.Core.Configuration
                 var noLabelGrouping = new LabelGroup
                 {
                     LabelName = "No Label",
-                    SourceDataSets = SourceDataSets
+                    SourceDataSets = this.SourceDataSets
                         .Where(ds => !ds.Labels.Any())
                         .OrderBy(sds => sds.SourceDataSetName)
                         .ToList(),

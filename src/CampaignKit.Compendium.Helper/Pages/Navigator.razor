@@ -8,7 +8,7 @@
             <RadzenPanelMenuItem Text="@SelectedCompendium.Title" Expanded="true" Icon="book" ExpandedChanged="@((isExpanded) => OnCompendiumExpandedChanged(isExpanded, SelectedCompendium.Title))">
                 @foreach (var grouping in SelectedCompendium.SourceDataSetGroupings)
                 {
-                    if (grouping.SourceDataSets != null && grouping.SourceDataSets.Count > 0)
+                    if (grouping.SourceDataSets is {Count: > 0 })
                     {
                         <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping.LabelName))">
                             @foreach (var dataSet in grouping.SourceDataSets)

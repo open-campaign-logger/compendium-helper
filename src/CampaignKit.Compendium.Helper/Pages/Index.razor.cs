@@ -16,9 +16,9 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
-    using Core.Configuration;
-    using Data;
-    using Services;
+    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
+    using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
@@ -35,12 +35,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         [Inject]
         private CompendiumService CompendiumService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the JSRuntime for JS interop.
-        /// </summary>
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; }
 
         /// <summary>
         /// Gets or sets the Logger.
@@ -69,11 +63,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="compendiumName">The name of the selected compendium.</param>
         private void OnCompendiumCollapsed(string compendiumName)
         {
-            Logger.LogInformation("SelectedCompendium collapsed: {CompendiumName}", compendiumName);
+            this.Logger.LogInformation("SelectedCompendium collapsed: {CompendiumName}", compendiumName);
 
             // Update user selections
-            SelectedSourceDataSetGrouping = null;
-            SelectedSourceDataSet = null;
+            this.SelectedSourceDataSetGrouping = null;
+            this.SelectedSourceDataSet = null;
         }
 
         /// <summary>
@@ -82,11 +76,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="compendiumName">The name of the selected compendium.</param>
         private void OnCompendiumExpanded(string compendiumName)
         {
-            Logger.LogInformation("SelectedCompendium expanded: {CompendiumName}", compendiumName);
+            this.Logger.LogInformation("SelectedCompendium expanded: {CompendiumName}", compendiumName);
 
             // Update user selections
-            SelectedSourceDataSetGrouping = null;
-            SelectedSourceDataSet = null;
+            this.SelectedSourceDataSetGrouping = null;
+            this.SelectedSourceDataSet = null;
         }
 
         /// <summary>
@@ -94,8 +88,8 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         private void OnLabelAssignmentChanted(string labelName)
         {
-            Logger.LogInformation("Label assignment changed: {LabelName}", labelName);
-            StateHasChanged();
+            this.Logger.LogInformation("Label assignment changed: {LabelName}", labelName);
+            this.StateHasChanged();
         }
 
         /// <summary>
@@ -104,12 +98,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="labelName">The name of the label that was selected.</param>
         private void OnLabelCollapsed(string labelName)
         {
-            Logger.LogInformation("Label collapsed: {LabelName}", labelName);
+            this.Logger.LogInformation("Label collapsed: {LabelName}", labelName);
 
             // Update user selections
-            SelectedSourceDataSetGrouping
-                = SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
-            SelectedSourceDataSet = null;
+            this.SelectedSourceDataSetGrouping
+                = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
+            this.SelectedSourceDataSet = null;
         }
 
         /// <summary>
@@ -118,12 +112,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="labelName">The name of the label that was selected.</param>
         private void OnLabelExpanded(string labelName)
         {
-            Logger.LogInformation("Label expanded: {LabelName}", labelName);
+            this.Logger.LogInformation("Label expanded: {LabelName}", labelName);
 
             // Update user selections
-            SelectedSourceDataSetGrouping
-                = SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
-            SelectedSourceDataSet = null;
+            this.SelectedSourceDataSetGrouping
+                = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
+            this.SelectedSourceDataSet = null;
         }
 
         /// <summary>
@@ -132,12 +126,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="sourceDataSetName">Name of the SelectedSource.</param>
         private async Task OnSourceDataSetSelected(string sourceDataSetName)
         {
-            Logger.LogInformation("Selected SelectedSource: {SourceDataSetName}", sourceDataSetName);
+            this.Logger.LogInformation("Selected SelectedSource: {SourceDataSetName}", sourceDataSetName);
 
             // Update user selections
-            SelectedSourceDataSetGrouping = null;
-            SelectedSourceDataSet
-                = SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(sourceDataSetName), null);
+            this.SelectedSourceDataSetGrouping = null;
+            this.SelectedSourceDataSet
+                = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(sourceDataSetName), null);
         }
 
         /// <summary>
@@ -149,10 +143,10 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </returns>
         private async Task UploadComplete(UploadCompleteEventArgs args)
         {
-            Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);
+            this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);
             var json = args.RawResponse;
-            SelectedCompendium = CompendiumService.LoadCompendiums(json);
-            SelectedSourceDataSet = null;
+            this.SelectedCompendium = this.CompendiumService.LoadCompendiums(json);
+            this.SelectedSourceDataSet = null;
         }
     }
 }

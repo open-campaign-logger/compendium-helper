@@ -18,7 +18,7 @@ namespace CampaignKit.Compendium.Helper.Pages
 {
     using System;
 
-    using Core.Configuration;
+    using CampaignKit.Compendium.Helper.Configuration;
 
     using Microsoft.AspNetCore.Components;
 
@@ -73,7 +73,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             get
             {
-                return SelectedCompendium.SourceDataSetGroupings
+                return this.SelectedCompendium.SourceDataSetGroupings
                         .SelectMany(s => s.SourceDataSets)
                         .Select(ds => ds.SourceDataSetName)
                         .Distinct();
@@ -100,8 +100,8 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         protected override void OnParametersSet()
         {
-            SearchTerm = string.Empty;
-            FilterTree();
+            this.SearchTerm = string.Empty;
+            this.FilterTree();
         }
 
         /// <summary>
@@ -109,18 +109,18 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         private void FilterTree()
         {
-            if (string.IsNullOrWhiteSpace(SearchTerm))
+            if (string.IsNullOrWhiteSpace(this.SearchTerm))
             {
-                FilteredCompendium = SelectedCompendium;
+                this.FilteredCompendium = this.SelectedCompendium;
             }
             else
             {
-                FilteredCompendium.SourceDataSets =
-                    SelectedCompendium.SourceDataSets
-                    .Where(sds => sds.SourceDataSetName.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+                this.FilteredCompendium.SourceDataSets =
+                    this.SelectedCompendium.SourceDataSets
+                    .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
-            StateHasChanged();
+            this.StateHasChanged();
         }
 
         /// <summary>
@@ -133,11 +133,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             if (isExpanded)
             {
-                await CompendiumExpanded.InvokeAsync(compendiumName);
+                await this.CompendiumExpanded.InvokeAsync(compendiumName);
             }
             else
             {
-                await CompendiumCollapsed.InvokeAsync(compendiumName);
+                await this.CompendiumCollapsed.InvokeAsync(compendiumName);
             }
         }
 
@@ -151,11 +151,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             if (isExpanded)
             {
-                await LabelExpanded.InvokeAsync(labelName);
+                await this.LabelExpanded.InvokeAsync(labelName);
             }
             else
             {
-                await LabelCollapsed.InvokeAsync(labelName);
+                await this.LabelCollapsed.InvokeAsync(labelName);
             }
         }
 
@@ -164,7 +164,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         private void OnSearchChanged(object value)
         {
-            FilterTree();
+            this.FilterTree();
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>A task that represents the asynchronous operation.</returns>
         private async Task OnSourceDataSetSelected(MenuItemEventArgs args)
         {
-            await SourceSelected.InvokeAsync(args.Text);
+            await this.SourceSelected.InvokeAsync(args.Text);
         }
     }
 }

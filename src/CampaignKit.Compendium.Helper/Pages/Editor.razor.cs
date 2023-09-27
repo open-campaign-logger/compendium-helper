@@ -16,9 +16,9 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
-    using Core.Configuration;
-    using Services;
-
+    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
+    using CampaignKit.Compendium.Helper.Services;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
@@ -48,19 +48,13 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the JSRuntime for JS interop.
         /// </summary>
         [Inject]
-        private IJSRuntime JSRuntime { get; set; }
+        private IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
         /// Gets or sets the Logger.
         /// </summary>
         [Inject]
         private ILogger<Editor> Logger { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Markdown service.
-        /// </summary>
-        [Inject]
-        private MarkdownService MarkdownService { get; set; }
 
         /// <summary>
         /// Gets or sets property to store a reference to an Editor object.
@@ -78,7 +72,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         public void Dispose()
         {
-            ObjectReference?.Dispose();
+            this.ObjectReference?.Dispose();
         }
 
         /// <summary>
@@ -88,31 +82,31 @@ namespace CampaignKit.Compendium.Helper.Pages
         [JSInvokable]
         public void OnContentChanged(string content)
         {
-            Logger.LogInformation("OnChange with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
+            this.Logger.LogInformation("OnChange with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
 
             // Update the markdown property of the source data set
-            Source.Markdown = content;
+            this.Source.Markdown = content;
 
             // Convert the markdown to HTML
-            var html = HtmlService.ConvertMarkdownToHtml(content);
+            var html = this.HtmlService.ConvertMarkdownToHtml(content);
 
             // Check if there is no existing substitution with XPath "//body" in the Source.Substitutions list
-            if (Source.Substitutions.All(s => s.XPath != "//body"))
+            if (this.Source.Substitutions.All(s => s.XPath != "//body"))
             {
                 // If there is no existing substitution, create a new list with a single Substitution object
-                Source.Substitutions = new List<Substitution>
+                this.Source.Substitutions = new List<Substitution>
                 {
-                    new()
+                    new ()
                     {
                         XPath = "//body",
-                        HTML = html,
+                        Html = html,
                     },
                 };
             }
             else
             {
                 // If there is an existing substitution with XPath "//body", update its HTML property with the new value
-                Source.Substitutions.First(s => s.XPath == "//body").HTML = html;
+                this.Source.Substitutions.First(s => s.XPath == "//body").Html = html;
             }
         }
 
@@ -125,16 +119,16 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </returns>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Logger.LogInformation("OnAfterRenderAsync with firstRender parameter value: {FirstRender}", firstRender);
+            this.Logger.LogInformation("OnAfterRenderAsync with firstRender parameter value: {FirstRender}", firstRender);
 
             try
             {
-                ObjectReference = DotNetObjectReference.Create(this);
-                await JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", Source.Markdown, ObjectReference);
+                this.ObjectReference = DotNetObjectReference.Create(this);
+                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Source.Markdown, this.ObjectReference);
             }
             catch (JSException jsEx)
             {
-                Logger.LogError(jsEx, "Unable to set markdown content in editor.");
+                this.Logger.LogError(jsEx, "Unable to set markdown content in editor.");
             }
         }
 
@@ -144,9 +138,9 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>
         /// The HTML and Markdown content from the editor.
         /// </returns>
-        protected async override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
-            Logger.LogInformation("OnInitializedAsync");
+            this.Logger.LogInformation("OnInitializedAsync");
         }
 
         /// <summary>
@@ -155,25 +149,25 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>
         /// Task representing the asynchronous operation.
         /// </returns>
-        protected async override Task OnParametersSetAsync()
+        protected override async Task OnParametersSetAsync()
         {
-            Logger.LogInformation("OnParametersSetAsync");
+            this.Logger.LogInformation("OnParametersSetAsync");
             await base.OnParametersSetAsync();
             try
             {
                 // Download the web page source data
-                if (Source != null)
+                if (this.Source != null)
                 {
                     // Load the source data set
-                    await SourceDataSetService.LoadSourceDataSetAsync(Source);
+                    await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source);
 
                     // Log the markdown
-                    Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(Source.Markdown));
+                    this.Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Source.Markdown));
                 }
             }
             catch (JSException jsEx)
             {
-                Logger.LogError(jsEx, "Unable to get HTML content from editor.");
+                this.Logger.LogError(jsEx, "Unable to get HTML content from editor.");
             }
         }
 
@@ -185,15 +179,15 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </returns>
         protected async Task UpdateEditorMode()
         {
-            if (Source.Substitutions.Any(s => s.XPath == "//body"))
+            if (this.Source.Substitutions.Any(s => s.XPath == "//body"))
             {
-                HasCustomizedContent = true;
-                await JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.enableEditor()");
+                this.HasCustomizedContent = true;
+                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.enableEditor()");
             }
             else
             {
-                HasCustomizedContent = false;
-                await JSRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor()");
+                this.HasCustomizedContent = false;
+                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor()");
             }
         }
     }

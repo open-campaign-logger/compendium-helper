@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Services
+namespace CampaignKit.Compendium.Helper.Data
 {
     using System.Text.RegularExpressions;
 

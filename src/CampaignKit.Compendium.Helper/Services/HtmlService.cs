@@ -16,6 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
+    using CampaignKit.Compendium.Helper.Data;
+
     using Markdig;
 
     /// <summary>
@@ -51,14 +53,14 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            logger.LogInformation("ConvertMarkdownToHtml method called with markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(markdown, 50));
+            this.logger.LogInformation("ConvertMarkdownToHtml method called with markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(markdown, 50));
 
             // Use Markdig to convert Markdown to HTML
             var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
             var response = Markdown.ToHtml(markdown, pipeline);
 
             // Log the response
-            logger.LogInformation("ConvertMarkdownToHtml method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(markdown, 50));
+            this.logger.LogInformation("ConvertMarkdownToHtml method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(markdown, 50));
 
             // Return the response.
             return response;

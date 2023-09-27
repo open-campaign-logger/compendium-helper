@@ -16,7 +16,7 @@
 
 namespace CampaignKit.Compendium.Helper.Pages
 {
-    using Core.Configuration;
+    using CampaignKit.Compendium.Helper.Configuration;
 
     using Microsoft.AspNetCore.Components;
 
@@ -48,7 +48,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="options">Optional options for the tooltip.</param>
         private void ShowTooltip(ElementReference elementReference, string tooltip, TooltipOptions options = null)
         {
-            TooltipService.Open(elementReference, tooltip, options);
+            this.TooltipService.Open(elementReference, tooltip, options);
         }
     }
 }

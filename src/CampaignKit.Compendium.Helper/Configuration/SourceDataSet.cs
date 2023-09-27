@@ -14,10 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-using Newtonsoft.Json;
-
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Represents a set of source data for a Tabletop Role-Playing Game (TTRPG) system.
     /// </summary>
@@ -27,7 +27,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// Gets or sets the HTML conversion of the extracted source.
         /// </summary>
         [JsonIgnore]
-        public string HTML { get; set; } = string.Empty;
+        public string Html { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the limit on the number of items to import into the compendium
@@ -45,7 +45,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// Gets or sets a list of default labels to apply to all entries imported
         /// from this data source.
         /// </summary>
-        public List<string> Labels { get; set; } = new();
+        public List<string> Labels { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the name of the parser to use for deserializing license data.
@@ -55,7 +55,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the Uniform Resource Identifier (URI) where the license data for the game source data is located.
         /// </summary>
-        public string LicenseDataURI { get; set; } = string.Empty;
+        public string LicenseDataUri { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the Markdown conversion of the extracted HTML.
@@ -82,12 +82,12 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the Uniform Resource Identifier (URI) where the actual game source data is located.
         /// </summary>
-        public string SourceDataSetURI { get; set; } = string.Empty;
+        public string SourceDataSetUri { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the list of XPath/HTML susbstitutions to use with for this data source.
         /// </summary>
-        public List<Substitution> Substitutions { get; set; } = new() { };
+        public List<Substitution> Substitutions { get; set; } = new () { };
 
         /// <summary>
         /// Gets or sets the tag entry to use for campaign entries derived from this source.
@@ -109,7 +109,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         {
             if (obj is SourceDataSet other)
             {
-                return SourceDataSetName.Equals(other.SourceDataSetName);
+                return this.SourceDataSetName.Equals(other.SourceDataSetName);
             }
 
             return false;
@@ -118,13 +118,13 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            return SourceDataSetName.GetHashCode();
+            return this.SourceDataSetName.GetHashCode();
         }
 
         /// <inheritdoc/>
         public override string ToString()
         {
-            return SourceDataSetName;
+            return this.SourceDataSetName;
         }
     }
 }

@@ -42,7 +42,7 @@ namespace CampaignKit.Compendium.Helper.Shared
         /// Gets or sets the JSRuntime for JS interop.
         /// </summary>
         [Inject]
-        protected IJSRuntime JSRuntime { get; set; }
+        protected IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
         /// Gets or sets the NavigationManager.
@@ -72,7 +72,7 @@ namespace CampaignKit.Compendium.Helper.Shared
         /// </summary>
         protected void SidebarToggleClick()
         {
-            SidebarExpanded = !SidebarExpanded;
+            this.SidebarExpanded = !this.SidebarExpanded;
         }
     }
 }

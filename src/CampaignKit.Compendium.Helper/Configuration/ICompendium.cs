@@ -14,9 +14,9 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
-    using Helper.Data;
+    using CampaignKit.Compendium.Helper.Data;
 
     /// <summary>
     /// Represents the configuration of a compendium within the application.
