@@ -95,7 +95,8 @@ namespace CampaignKit.Compendium.Helper.Controllers
         [Route("/ssrsproxy/{*url}")]
         public async Task Proxy()
         {
-            var urlToReplace = string.Format("{0}://{1}{2}/{3}/", this.Request.Scheme, this.Request.Host.Value, this.Request.PathBase, "ssrsproxy");
+            var urlToReplace =
+                $"{this.Request.Scheme}://{this.Request.Host.Value}{this.Request.PathBase}/{"ssrsproxy"}/";
             var requestedUrl = this.Request.GetDisplayUrl().Replace(urlToReplace, string.Empty, StringComparison.InvariantCultureIgnoreCase);
             var reportServerIndex = requestedUrl.IndexOf("/ReportServer", StringComparison.InvariantCultureIgnoreCase);
             if (reportServerIndex == -1)
