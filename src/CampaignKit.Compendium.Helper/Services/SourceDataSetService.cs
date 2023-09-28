@@ -17,7 +17,7 @@
 namespace CampaignKit.Compendium.Helper.Services
 {
     using CampaignKit.Compendium.Helper.Configuration;
-    using CampaignKit.Compendium.Helper.Pages;
+    using CampaignKit.Compendium.Helper.Data;
 
     using HtmlAgilityPack;
 

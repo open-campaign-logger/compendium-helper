@@ -86,7 +86,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <summary>
         /// Logs a message when the label assignment is changed and triggers a state change.
         /// </summary>
-        private void OnLabelAssignmentChanted(string labelName)
+        private void OnLabelAssignmentChanged(string labelName)
         {
             this.Logger.LogInformation("Label assignment changed: {LabelName}", labelName);
             this.StateHasChanged();
@@ -123,15 +123,16 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <summary>
         /// Handles the SelectedSource clicked event by logging the selected SelectedSource name.
         /// </summary>
-        /// <param name="sourceDataSetName">Name of the SelectedSource.</param>
-        private async Task OnSourceDataSetSelected(string sourceDataSetName)
+        /// <param name="values">The tuple containing the selected data set name and the lable it's associated with.</param>
+        private async Task OnSourceDataSetSelected((string sourceDataSetName, string labelName) values)
         {
-            this.Logger.LogInformation("Selected SelectedSource: {SourceDataSetName}", sourceDataSetName);
+            this.Logger.LogInformation("Selected SelectedSource: {SourceDataSetName}", values.sourceDataSetName);
 
             // Update user selections
-            this.SelectedSourceDataSetGrouping = null;
+            this.SelectedSourceDataSetGrouping
+                = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(values.labelName), null);
             this.SelectedSourceDataSet
-                = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(sourceDataSetName), null);
+                = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null);
         }
 
         /// <summary>

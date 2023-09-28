@@ -63,7 +63,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the EventCallback for source selection.
         /// </summary>
         [Parameter]
-        public EventCallback<string> SourceSelected { get; set; }
+        public EventCallback<(string, string)> SourceSelected { get; set; }
 
         /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
@@ -171,10 +171,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Event handler for when a data set is selected in the menu.
         /// </summary>
         /// <param name="args">The menu item event arguments.</param>
+        /// <param name="label">The label name.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        private async Task OnSourceDataSetSelected(MenuItemEventArgs args)
+        private async Task OnSourceDataSetSelected(MenuItemEventArgs args, string label)
         {
-            await this.SourceSelected.InvokeAsync(args.Text);
+            await this.SourceSelected.InvokeAsync((args.Text, label));
         }
     }
 }

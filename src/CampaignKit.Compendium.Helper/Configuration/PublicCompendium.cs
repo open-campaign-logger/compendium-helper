@@ -17,6 +17,7 @@
 namespace CampaignKit.Compendium.Helper.Configuration
 {
     using System.Data;
+
     using CampaignKit.Compendium.Helper.Data;
 
     /// <summary>

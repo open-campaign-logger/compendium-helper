@@ -71,9 +71,10 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>
         /// A list of strings containing the selected data sets.
         /// </returns>
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnParametersSetAsync()
         {
-            await base.OnInitializedAsync();
+            this.Logger.LogInformation("OnParametersSetAsync");
+            await base.OnParametersSetAsync();
 
             // Sort the source data sets.
             this.AllSources.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));

@@ -13,7 +13,7 @@
                         <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping.LabelName))">
                             @foreach (var dataSet in grouping.SourceDataSets)
                             {
-                                <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="OnSourceDataSetSelected" />
+                                <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceDataSetSelected(args, grouping.LabelName)" />
                             }
                         </RadzenPanelMenuItem>
                     }
