@@ -50,25 +50,6 @@
                         </ChildContent>
                     </RadzenFormField>
                 </RadzenStack>
-
-                <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@_labels["isActive"]" Variant="@_variant" Style="width: 150px">
-                        <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["isActive"]))" />
-                        </End>
-                        <ChildContent>
-                            <RadzenCheckBox @bind-Value="@SelectedCompendium.IsActive" id="isActive" class="m-3" Style="flex: none;" />
-                        </ChildContent>
-                    </RadzenFormField>
-                    <RadzenFormField Text="@_labels["overwriteExisting"]" Variant="@_variant" Style="width: 150px">
-                        <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["overwriteExisting"]))" />
-                        </End>
-                        <ChildContent>
-                            <RadzenCheckBox @bind-Value="@SelectedCompendium.OverwriteExisting" id="overwriteExisting" class="m-3" Style="flex: none;" />
-                        </ChildContent>
-                    </RadzenFormField>
-                </RadzenStack>
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
