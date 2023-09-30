@@ -13,32 +13,27 @@
         </RadzenStack>
     </RadzenColumn>
     <RadzenColumn Size="10">
-        <RadzenTabs>
+        <RadzenTabs SelectedIndex="SelectedIndex">
             <Tabs>
-                @if (SelectedSourceDataSet != null)
-                {
-                    <RadzenTabsItem Text="Source">
-                        <Source SelectedSource="SelectedSourceDataSet" />
-                    </RadzenTabsItem>
 
-                    <RadzenTabsItem Text="Editor">
-                        <Editor Source="SelectedSourceDataSet"/>
-                    </RadzenTabsItem>
-                }
-                else if (SelectedSourceDataSetGrouping != null)
-                {
-                    <RadzenTabsItem Text="Label">
-                        <Label SelectedSource="SelectedSourceDataSetGrouping"
-                               AllSources="SelectedCompendium.SourceDataSets"
-                               LabelChanged="OnLabelAssignmentChanged"></Label>
-                    </RadzenTabsItem>
-                }
-                else if (SelectedCompendium != null)
-                {
-                    <RadzenTabsItem Text="Compendium">
-                        <Compendium SelectedCompendium="SelectedCompendium" />
-                    </RadzenTabsItem>
-                }
+                <RadzenTabsItem Text="Compendium" Visible="SelectedCompendium !=null" >
+                    <Compendium SelectedCompendium="SelectedCompendium" />
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Label" Visible="SelectedSourceDataSetGrouping !=null" >
+                    <Label SelectedSource="SelectedSourceDataSetGrouping"
+                           AllSources="SelectedCompendium.SourceDataSets"
+                           LabelChanged="OnLabelAssignmentChanged"></Label>
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Source" Visible="SelectedSourceDataSet != null" >
+                    <Source SelectedSource="SelectedSourceDataSet" />
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Editor" Visible="SelectedSourceDataSet != null">
+                    <Editor Source="SelectedSourceDataSet"/>
+                </RadzenTabsItem>
+
             </Tabs>
         </RadzenTabs>
     </RadzenColumn>

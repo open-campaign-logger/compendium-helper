@@ -53,6 +53,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         private LabelGroup SelectedSourceDataSetGrouping { get; set; }
 
         /// <summary>
+        /// Gets or sets the selected tab index.
+        /// </summary>
+        private int SelectedIndex { get; set; }
+
+        /// <summary>
         /// Handles the compendium collapsed event from the navigator component.
         /// </summary>
         /// <param name="compendiumName">The name of the selected compendium.</param>
@@ -63,6 +68,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             // Update user selections
             this.SelectedSourceDataSetGrouping = null;
             this.SelectedSourceDataSet = null;
+            this.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -76,6 +82,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             // Update user selections
             this.SelectedSourceDataSetGrouping = null;
             this.SelectedSourceDataSet = null;
+            this.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -99,6 +106,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.SelectedSourceDataSetGrouping
                 = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
             this.SelectedSourceDataSet = null;
+            this.SelectedIndex = 1;
         }
 
         /// <summary>
@@ -113,6 +121,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.SelectedSourceDataSetGrouping
                 = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
             this.SelectedSourceDataSet = null;
+            this.SelectedIndex = 1;
         }
 
         /// <summary>
@@ -128,6 +137,7 @@ namespace CampaignKit.Compendium.Helper.Pages
                 = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(values.labelName), null);
             this.SelectedSourceDataSet
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null);
+            this.SelectedIndex = 3;
         }
 
     }
