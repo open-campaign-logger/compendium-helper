@@ -1,21 +1,35 @@
+@using CampaignKit.Compendium.Helper.Pages
 @inherits LayoutComponentBase
 <RadzenDialog />
 <RadzenNotification />
 <RadzenTooltip />
 <RadzenContextMenu />
 
-<RadzenLayout style="grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body';">
+<!-- Create a RadzenLayout according to the following specifications:
+    1. Page header with the following content:
+        a. A RadzenImage with the CampaignKit logo
+        b. A RadzenMenu named "File" with the following items:
+            i. A RadzenMenuItem with the text "New" and the click event New 
+            ii. A RadzenMenuItem with the text "Open" and the click event Open
+            iii. A RadzenMenuItem with the text "Save" and the click event Save
+    2. Body of the page should be comprised of:
+        a. A narrow vertical panel on the left for navigating compendiums
+        b. A wide vertical panel on the right for viewing and editing compendiums  
+-->
+<RadzenLayout>
     <RadzenHeader>
-        <RadzenMenu>
-            <RadzenMenuItem Text="" Path="/" Image="/images/logo.png"></RadzenMenuItem>
-        </RadzenMenu>
-       
+        <div class="d-flex align-items-center">
+            <RadzenImage Src="/images/logo.png" />
+            <RadzenMenu>
+                <RadzenMenuItem Text="File" Icon="folder">
+                    <RadzenMenuItem Text="New.." Icon="add" Click="ShowNewDialog"/>
+                    <RadzenMenuItem Text="Upload..." Icon="file_upload" Click="ShowUploadDialog" />
+                    <RadzenMenuItem Text="Download..." Icon="file_download" />
+                </RadzenMenuItem>
+            </RadzenMenu>
+        </div>
     </RadzenHeader>
-    <RadzenBody Expanded="@SidebarExpanded">
-        <RadzenRow class="rz-mx-auto rz-px-4 rz-pt-2 rz-pt-md-4 rz-pt-lg-6 rz-pt-xl-12 rz-pb-2 rz-pb-lg-12" Style="max-width: 1440px;">
-            <RadzenColumn Size="12">
-            @Body
-            </RadzenColumn>
-        </RadzenRow>
+    <RadzenBody>
+        <Body SelectedCompendium="SelectedCompendium" ></Body>
     </RadzenBody>
 </RadzenLayout>

@@ -1,38 +1,7 @@
-@page "/"
-<style>
-
-    .rz-fileupload-buttonbar {
-        padding: 0px;
-    }
-
-        .rz-fileupload-buttonbar > .rz-fileupload-choose {
-            font-size: 0.875rem;
-        }
-
-    .rz-fileupload .rz-button .rz-button-text {
-        line-height: 1.5rem;
-    }
-
-</style>
-<PageTitle>Helper</PageTitle>
 <RadzenRow>
-    <RadzenColumn Size="4">
+    <RadzenColumn Size="2">
         <RadzenStack Gap="1rem">
-            <RadzenCard>
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Configuration</RadzenText>
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap">
-                    <RadzenButton Text="New"
-                                  ButtonStyle="ButtonStyle.Light" />
-                    <RadzenText Text="- or -" />
-                    <RadzenUpload Accept=".json"
-                                  Url="upload/single"
-                                  Complete="UploadComplete"
-                                  ChooseText="Upload"
-                                  Multiple=false />
-                </RadzenStack>
-
-            </RadzenCard>
-            <RadzenCard>
+            <RadzenCard Visible="@(SelectedCompendium != null)">
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
                 <Navigator SelectedCompendium="SelectedCompendium"
                            CompendiumExpanded="OnCompendiumExpanded"
@@ -43,7 +12,7 @@
             </RadzenCard>
         </RadzenStack>
     </RadzenColumn>
-    <RadzenColumn Size="8">
+    <RadzenColumn Size="10">
         <RadzenTabs>
             <Tabs>
                 @if (SelectedSourceDataSet != null)

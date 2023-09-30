@@ -14,65 +14,88 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Shared
-{
-    using Microsoft.AspNetCore.Components;
-    using Microsoft.JSInterop;
-
-    using Radzen;
+namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendium.Helper.Configuration;    using Microsoft.AspNetCore.Components;    using Microsoft.JSInterop;    using Radzen;
 
     /// <summary>
-    /// Code behind class for MainLayou.razor.
+    /// Represents the main layout of the application.
     /// </summary>
-    public partial class MainLayout
-    {
+    public partial class MainLayout    {
         /// <summary>
-        /// Gets or sets the ContextMenuService.
+        /// Gets or sets the TooltipService property is used for injecting the TooltipService dependency.
         /// </summary>
-        [Inject]
-        protected ContextMenuService ContextMenuService { get; set; }
+        [Inject]        protected TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Gets or sets the DialogService.
+        /// Gets or sets the ContextMenuService property is injected with the ContextMenuService dependency.
         /// </summary>
-        [Inject]
-        protected DialogService DialogService { get; set; }
+        [Inject]        private ContextMenuService ContextMenuService { get; set; }
 
         /// <summary>
-        /// Gets or sets the JSRuntime for JS interop.
+        /// Gets or sets the DialogService dependency into the property DialogService.
         /// </summary>
-        [Inject]
-        protected IJSRuntime JsRuntime { get; set; }
+        [Inject]        private DialogService DialogService { get; set; }
 
         /// <summary>
-        /// Gets or sets the NavigationManager.
+        /// Gets or sets the IJSRuntime dependency into the property JsRuntime.
         /// </summary>
-        [Inject]
-        protected NavigationManager NavigationManager { get; set; }
+        [Inject]        private IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
-        /// Gets or sets the NotificationService.
+        /// Gets or sets the ILogger into the Logger property.
         /// </summary>
-        [Inject]
-        protected NotificationService NotificationService { get; set; }
+        [Inject]        private ILogger<MainLayout> Logger { get; set; }
 
         /// <summary>
-        /// Gets or sets the TooltipService.
+        /// Gets or sets the NavigationManager dependency into the property NavigationManager.
         /// </summary>
-        [Inject]
-        protected TooltipService TooltipService { get; set; }
+        [Inject]        private NavigationManager NavigationManager { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the sidebar is expanded.
+        /// Gets or sets the NotificationService dependency into the property NotificationService.
         /// </summary>
-        protected bool SidebarExpanded { get; set; } = true;
+        [Inject]        private NotificationService NotificationService { get; set; }
 
         /// <summary>
-        /// Toggle the sidebarExpanded flag.
+        /// Gets or sets the selected compendium.
         /// </summary>
-        protected void SidebarToggleClick()
+        /// <value>The selected compendium.</value>
+        private ICompendium SelectedCompendium { get; set; }
+
+        /// <summary>
+        /// Method called when the upload of a compendium is complete.
+        /// </summary>
+        /// <param name="compendium">The uploaded compendium.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task OnUploadComplete(ICompendium compendium)        {            this.SelectedCompendium = compendium;            this.DialogService.Close();        }
+
+        /// <summary>
+        /// Handles the event when a new compendium selection is made by the user.
+        /// </summary>
+        /// <param name="selection">The selection made by the user.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected {Selection}.", selection);            if (selection)            {                this.CreateDefaultCompendium();            }            this.DialogService.Close();        }
+
+        private void CreateDefaultCompendium()
         {
-            this.SidebarExpanded = !this.SidebarExpanded;
+            this.SelectedCompendium = new PublicCompendium();
         }
-    }
-}
+
+        /// <summary>
+        /// Shows an "Upload File" dialog asynchronously and passes the OnUploadComplete callback method as a parameter.
+        /// </summary>
+        private async void ShowUploadDialog()        {
+            await this.DialogService.OpenAsync<UploadDialog>(                "Upload Compendium",                new Dictionary<string, object> {                    { "Prompt", "Select an existing Compendium Configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
+
+        /// <summary>
+        /// Shows a new dialog asynchronously and waits for the user's selection. The dialog is opened using the DialogService with the specified title and prompt. The OnSelection event is subscribed to the OnNewCompendiumSelection method. The result of the dialog is displayed as an info notification.
+        /// </summary>
+        private async void ShowNewDialog()        {            if (this.SelectedCompendium == null)
+            {
+                this.CreateDefaultCompendium();
+            }            else
+            {
+                await this.DialogService.OpenAsync<ConfirmationDialog>(
+                    "New Compendium",
+                    new Dictionary<string, object> {                    { "Prompt", "Replace the current Compendium Configuration?" },                    { "OnSelection", EventCallback.Factory.Create<bool>(this, this.OnNewCompendiumSelection) },
+                    });
+            }        }    }}

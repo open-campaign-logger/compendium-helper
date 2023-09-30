@@ -1,4 +1,4 @@
-// <copyright file="Index.razor.cs" company="Jochen Linnemann - IT-Service">
+// <copyright file="Body.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,31 +21,26 @@ namespace CampaignKit.Compendium.Helper.Pages
     using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
-    using Microsoft.JSInterop;
 
     using Radzen;
 
     /// <summary>
-    /// Code behind class for Index.razor.
+    /// Code behind class for Body.razor.
     /// </summary>
-    public partial class Index
+    public partial class Body
     {
+
         /// <summary>
-        /// Gets or sets the CompendiumService.
+        /// Gets or sets the selected compendium.
         /// </summary>
-        [Inject]
-        private CompendiumService CompendiumService { get; set; }
+        [Parameter]
+        public ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
         /// Gets or sets the Logger.
         /// </summary>
         [Inject]
-        private ILogger<Index> Logger { get; set; }
-
-        /// <summary>
-        /// Gets or sets the selected compendium.
-        /// </summary>
-        private ICompendium SelectedCompendium { get; set; }
+        private ILogger<Body> Logger { get; set; }
 
         /// <summary>
         /// Gets or sets the selected source data set.
@@ -135,19 +130,5 @@ namespace CampaignKit.Compendium.Helper.Pages
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null);
         }
 
-        /// <summary>
-        /// Uploads a compendium and creates a tree from it.
-        /// </summary>
-        /// <param name="args">The upload event arguments.</param>
-        /// <returns>
-        /// A tree created from the uploaded compendium.
-        /// </returns>
-        private async Task UploadComplete(UploadCompleteEventArgs args)
-        {
-            this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);
-            var json = args.RawResponse;
-            this.SelectedCompendium = this.CompendiumService.LoadCompendiums(json);
-            this.SelectedSourceDataSet = null;
-        }
     }
 }
