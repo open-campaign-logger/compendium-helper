@@ -18,11 +18,8 @@ namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
-    using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
-
-    using Radzen;
 
     /// <summary>
     /// Code behind class for Body.razor.
@@ -43,6 +40,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         private ILogger<Body> Logger { get; set; }
 
         /// <summary>
+        /// Gets or sets the selected tab index.
+        /// </summary>
+        private int SelectedIndex { get; set; }
+
+        /// <summary>
         /// Gets or sets the selected source data set.
         /// </summary>
         private SourceDataSet SelectedSourceDataSet { get; set; }
@@ -53,9 +55,15 @@ namespace CampaignKit.Compendium.Helper.Pages
         private LabelGroup SelectedSourceDataSetGrouping { get; set; }
 
         /// <summary>
-        /// Gets or sets the selected tab index.
+        /// This method is called when the component's parameters are set. It first calls the base implementation of the method. Then, it sets the SelectedSourceDataSet and SelectedSourceDataSetGrouping properties to null.
         /// </summary>
-        private int SelectedIndex { get; set; }
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            this.SelectedSourceDataSet = null;
+            this.SelectedSourceDataSetGrouping = null;
+            this.SelectedIndex = 0;
+        }
 
         /// <summary>
         /// Handles the compendium collapsed event from the navigator component.

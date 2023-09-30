@@ -2,8 +2,12 @@
     <RadzenLabel Text="@Prompt"></RadzenLabel>
 
     <RadzenUpload Accept=".json"
-                  Url="upload/single"
-                  Complete="UploadComplete"
-                  ChooseText="Upload"
-                  Multiple=false />
+                    Url="upload/single"
+                    Complete="UploadComplete"
+                    ChooseText="Upload"
+                    Multiple=false
+                    Progress="OnProgress"/>
+
+    <RadzenProgressBar Value="DownloadProgress" />
+
 </RadzenStack>

@@ -125,6 +125,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             {
                 this.ObjectReference = DotNetObjectReference.Create(this);
                 await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Source.Markdown, this.ObjectReference);
+                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor"); // Start in preview mode.
             }
             catch (JSException jsEx)
             {
@@ -168,26 +169,6 @@ namespace CampaignKit.Compendium.Helper.Pages
             catch (JSException jsEx)
             {
                 this.Logger.LogError(jsEx, "Unable to get HTML content from editor.");
-            }
-        }
-
-        /// <summary>
-        /// Enables or disables the editor based on the presence of a substitution element in the source.
-        /// </summary>
-        /// <returns>
-        /// Nothing.
-        /// </returns>
-        protected async Task UpdateEditorMode()
-        {
-            if (this.Source.Substitutions.Any(s => s.XPath == "//body"))
-            {
-                this.HasCustomizedContent = true;
-                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.enableEditor()");
-            }
-            else
-            {
-                this.HasCustomizedContent = false;
-                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor()");
             }
         }
     }

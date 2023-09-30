@@ -77,27 +77,6 @@
                         </ChildContent>
                     </RadzenFormField>
                 </RadzenStack>
-
-                <!-- Overwrite Existing -->
-                <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@_labels["overwriteExisting"]" Variant="@_variant" Style="width: 150px">
-                        <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["overwriteExisting"]))" />
-                        </End>
-                        <ChildContent>
-                            <RadzenCheckBox @bind-Value="@SelectedSource.OverwriteExisting" id="overwriteExisting" class="m-3" Style="flex: none;" />
-                        </ChildContent>
-                    </RadzenFormField>
-                    <RadzenFormField Text="@_labels["isPublic"]" Variant="@_variant" Style="width: 150px">
-                        <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["isPublic"]))" />
-                        </End>
-                        <ChildContent>
-                            <RadzenCheckBox @bind-Value="@SelectedSource.IsPublic" id="isPublic" class="m-3" Style="flex: none;" />
-                        </ChildContent>
-                    </RadzenFormField>
-                </RadzenStack>
-
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
