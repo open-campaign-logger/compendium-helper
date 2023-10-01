@@ -17,21 +17,31 @@
 namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Services;
 
-    using Microsoft.AspNetCore.Components;    using Radzen;
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.JSInterop;
+
+    using Radzen;
 
     /// <summary>
     /// Represents the main layout of the application.
     /// </summary>
     public partial class MainLayout    {
         /// <summary>
-        /// Gets or sets the TooltipService property is used for injecting the TooltipService dependency.
+        /// Gets or sets the Compendium dependency.
         /// </summary>
-        [Inject]        protected TooltipService TooltipService { get; set; }
+        [Inject]
+        private CompendiumService CompendiumService { get; set; }
 
         /// <summary>
-        /// Gets or sets the DialogService dependency into the property DialogService.
+        /// Gets or sets the DialogService dependency.
         /// </summary>
         [Inject]        private DialogService DialogService { get; set; }
+
+        /// <summary>
+        /// Gets or sets the JSRuntime for JS interop.
+        /// </summary>
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
         /// Gets or sets the ILogger into the Logger property.
@@ -45,11 +55,52 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
+        /// Gets or sets the TooltipService dependency.
+        /// </summary>
+        [Inject]        private TooltipService TooltipService { get; set; }
+
+        /// <summary>
         /// Instantiates a new, blank compendium and assigns it to the SelectedCompendium property.
         /// </summary>
         private void CreateDefaultCompendium()
         {
             this.SelectedCompendium = new PublicCompendium();
+        }
+
+        /// <summary>
+        /// Downloads a JSON string as a file using JavaScript runtime.
+        /// </summary>
+        /// <param name="json">The JSON string to download.</param>
+        /// <param name="fileName">The name of the file to save the JSON as.</param>
+        private void DownloadJSON(string json, string fileName)
+        {
+            var blob = $"data:text/json;charset=utf-8,{Uri.EscapeDataString(json)}";
+            var script = $@"(function() {{
+                        var link = document.createElement('a');
+                        link.href = '{blob}';
+                        link.download = '{fileName}';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }})();";
+            this.JsRuntime.InvokeVoidAsync("eval", script);
+        }
+
+        /// <summary>
+        /// Method to handle the event of downloading a selected compendium.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnDownloadSelected()
+        {
+            if (this.SelectedCompendium == null)
+            {
+                return;
+            }
+
+            var json = this.CompendiumService.SaveCompendium(this.SelectedCompendium);
+            this.DownloadJSON(json, this.SelectedCompendium.Title + ".json");
         }
 
         /// <summary>
@@ -77,13 +128,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
                 });        }
 
         /// <summary>
-        /// Shows an "Upload File" dialog asynchronously and passes the OnUploadComplete callback method as a parameter.
-        /// </summary>
-        private async void ShowUploadDialog()        {
-            await this.DialogService.OpenAsync<UploadDialog>(                "Upload Compendium",                new Dictionary<string, object>
-                {                    { "Prompt", "Select an existing compendium configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
-
-        /// <summary>
         /// Opens a dialog to confirm loading a package and replacing the current compendium configuration.
         /// </summary>
         /// <param name="packageName">The name of the package to load.</param>
@@ -93,4 +137,12 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
                 "Load Package",
                 new Dictionary<string, object>
                 {                    { "Prompt", $"Load the {packageName} package and replace the current compendium configuration?" },                    { "PackageFileName", packageUrl },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },
-                });        }    }}
+                });        }
+
+        /// <summary>
+        /// Shows an "Upload File" dialog asynchronously and passes the OnUploadComplete callback method as a parameter.
+        /// </summary>
+        private async void ShowUploadDialog()        {
+            await this.DialogService.OpenAsync<UploadDialog>(                "Upload Compendium",                new Dictionary<string, object>
+                {                    { "Prompt", "Select an existing compendium configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
+    }}

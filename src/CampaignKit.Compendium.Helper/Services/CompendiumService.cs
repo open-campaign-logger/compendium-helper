@@ -18,6 +18,7 @@ namespace CampaignKit.Compendium.Helper.Services
 {
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
+
     using Newtonsoft.Json;
 
     /// <summary>
@@ -80,6 +81,27 @@ namespace CampaignKit.Compendium.Helper.Services
 
             // Return the PublicCompendium object.
             return compendiumList.FirstOrDefault(new PublicCompendium());
+        }
+
+        /// <summary>
+        /// Saves the provided compendium object as a JSON string.
+        /// </summary>
+        /// <param name="compendium">The compendium object to be saved.</param>
+        /// <returns>A JSON string representation of the compendium object.</returns>
+        public string SaveCompendium(ICompendium compendium)
+        {
+            // Validate parameters
+            if (compendium == null)
+            {
+                throw new ArgumentNullException(nameof(compendium));
+            }
+
+            Dictionary<string, List<PublicCompendium>> dictionary
+                = new Dictionary<string, List<PublicCompendium>> { { "WebScraperPublicCompendiums", new List<PublicCompendium> { (PublicCompendium)compendium } } };
+
+            // Serialize compendium into a JSON string using Newtonsoft.Json.
+            string json = JsonConvert.SerializeObject(dictionary);
+            return json;
         }
     }
 }
