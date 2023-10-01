@@ -16,12 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
-    using System.Text.RegularExpressions;
-
-    using CampaignKit.Compendium.Helper.Data;
-
     using CampaignKit.Compendium.Helper.Configuration;
-
+    using CampaignKit.Compendium.Helper.Data;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -49,7 +45,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// </summary>
         /// <param name="json">The JSON string to deserialize.</param>
         /// <returns>A PublicCompendium object.</returns>
-        public ICompendium LoadCompendiums(string json)
+        public ICompendium LoadCompendium(string json)
         {
             // Validate parameters
             if (json == null)

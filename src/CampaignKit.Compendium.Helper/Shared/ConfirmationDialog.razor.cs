@@ -32,12 +32,19 @@
         [Parameter]        public string Prompt { get; set; }
 
         /// <summary>
+        /// Gets or sets injects an ILogger dependency into the Logger property.
+        /// </summary>
+        [Inject]
+        private ILogger<ConfirmationDialog> Logger { get; set; }
+
+        /// <summary>
         /// Handles the event when the "Yes" option is selected.
         /// </summary>
         /// <returns>
         /// A task representing the asynchronous operation.
         /// </returns>
-        private async Task OnYes()        {            await this.OnSelection.InvokeAsync(true);        }
+        private async Task OnYes()        {            this.Logger.LogInformation("User selected Yes.");
+            await this.OnSelection.InvokeAsync(true);        }
 
         /// <summary>
         /// Handles the event when the "No" option is selected.
@@ -45,4 +52,5 @@
         /// <returns>
         /// A task representing the asynchronous operation.
         /// </returns>
-        private async Task OnNo()        {            await this.OnSelection.InvokeAsync(false);        }    }}
+        private async Task OnNo()        {
+            this.Logger.LogInformation("User selected No.");            await this.OnSelection.InvokeAsync(false);        }    }}

@@ -25,6 +25,8 @@
                     <RadzenMenuItem Text="New.." Icon="add" Click="ShowNewDialog"/>
                     <RadzenMenuItem Text="Upload..." Icon="file_upload" Click="ShowUploadDialog" />
                     <RadzenMenuItem Text="Download..." Icon="file_download" />
+                    <hr class="separator mx-2 text-dark">
+                    <RadzenMenuItem Text="W.O.I.N." Icon="folder" Click="@(args => ShowPackageDialog(_packages["woin"][0], _packages["woin"][1]))" />
                 </RadzenMenuItem>
             </RadzenMenu>
         </div>
@@ -33,3 +35,19 @@
         <Body SelectedCompendium="SelectedCompendium" ></Body>
     </RadzenBody>
 </RadzenLayout>
+
+@code{
+
+    /// <summary>
+    /// Dictionary containing package names and locations.
+    /// </summary>
+    private Dictionary<string, List<string>> _packages = new()
+    {
+        { "woin", new List<string> 
+            { 
+                "W.O.I.N.",
+                "module_woin.json"
+            }
+        },
+    };
+}

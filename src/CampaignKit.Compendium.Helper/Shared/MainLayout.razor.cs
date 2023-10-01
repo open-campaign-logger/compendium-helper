@@ -14,7 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendium.Helper.Configuration;    using Microsoft.AspNetCore.Components;    using Microsoft.JSInterop;    using Radzen;
+namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Services;
+
+    using Microsoft.AspNetCore.Components;    using Radzen;
 
     /// <summary>
     /// Represents the main layout of the application.
@@ -42,11 +45,12 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
-        /// Method called when the upload of a compendium is complete.
+        /// Instantiates a new, blank compendium and assigns it to the SelectedCompendium property.
         /// </summary>
-        /// <param name="compendium">The uploaded compendium.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnUploadComplete(ICompendium compendium)        {            this.SelectedCompendium = compendium;            this.DialogService.Close();        }
+        private void CreateDefaultCompendium()
+        {
+            this.SelectedCompendium = new PublicCompendium();
+        }
 
         /// <summary>
         /// Handles the event when a new compendium selection is made by the user.
@@ -55,29 +59,38 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected {Selection}.", selection);            if (selection)            {                this.CreateDefaultCompendium();            }            this.DialogService.Close();        }
 
-        private void CreateDefaultCompendium()
-        {
-            this.SelectedCompendium = new PublicCompendium();
-        }
+        /// <summary>
+        /// Method called when the upload of a compendium is complete.
+        /// </summary>
+        /// <param name="compendium">The uploaded compendium.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task OnUploadComplete(ICompendium compendium)        {            this.SelectedCompendium = compendium;            this.DialogService.Close();        }
+
+        /// <summary>
+        /// Shows a new dialog asynchronously and waits for the user's selection. The dialog is opened using the DialogService with the specified title and prompt. The OnSelection event is subscribed to the OnNewCompendiumSelection method. The result of the dialog is displayed as an info notification.
+        /// </summary>
+        private async void ShowNewDialog()        {
+            await this.DialogService.OpenAsync<ConfirmationDialog>(
+                "New Compendium",
+                new Dictionary<string, object>
+                {                    { "Prompt", "Replace the current compendium configuration?" },                    { "OnSelection", EventCallback.Factory.Create<bool>(this, this.OnNewCompendiumSelection) },
+                });        }
 
         /// <summary>
         /// Shows an "Upload File" dialog asynchronously and passes the OnUploadComplete callback method as a parameter.
         /// </summary>
         private async void ShowUploadDialog()        {
             await this.DialogService.OpenAsync<UploadDialog>(                "Upload Compendium",                new Dictionary<string, object>
-                {                    { "Prompt", "Select an existing Compendium Configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
+                {                    { "Prompt", "Select an existing compendium configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
 
         /// <summary>
-        /// Shows a new dialog asynchronously and waits for the user's selection. The dialog is opened using the DialogService with the specified title and prompt. The OnSelection event is subscribed to the OnNewCompendiumSelection method. The result of the dialog is displayed as an info notification.
+        /// Opens a dialog to confirm loading a package and replacing the current compendium configuration.
         /// </summary>
-        private async void ShowNewDialog()        {            if (this.SelectedCompendium == null)
-            {
-                this.CreateDefaultCompendium();
-            }            else
-            {
-                await this.DialogService.OpenAsync<ConfirmationDialog>(
-                    "New Compendium",
-                    new Dictionary<string, object>
-                    {                        { "Prompt", "Replace the current Compendium Configuration?" },                        { "OnSelection", EventCallback.Factory.Create<bool>(this, this.OnNewCompendiumSelection) },
-                    });
-            }        }    }}
+        /// <param name="packageName">The name of the package to load.</param>
+        /// <param name="packageUrl">The URL of the package.</param>
+        private async void ShowPackageDialog(string packageName, string packageUrl)        {
+            await this.DialogService.OpenAsync<PackageDialog>(
+                "Load Package",
+                new Dictionary<string, object>
+                {                    { "Prompt", $"Load the {packageName} package and replace the current compendium configuration?" },                    { "PackageFileName", packageUrl },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },
+                });        }    }}
