@@ -38,7 +38,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// SourceDataSetService object.
         /// </returns>
         public SourceDataSetService(
-            DownloadService downloadService,
+            FetchService downloadService,
             ILogger<SourceDataSetService> logger,
             MarkdownService markdownService)
         {
@@ -51,7 +51,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// Gets or sets the DownloadService.
         /// </summary>
         [Inject]
-        private DownloadService DownloadService { get; set; }
+        private FetchService DownloadService { get; set; }
 
         /// <summary>
         /// Gets or sets the Logger.

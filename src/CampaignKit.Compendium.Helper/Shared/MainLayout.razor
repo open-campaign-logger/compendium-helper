@@ -5,17 +5,8 @@
 <RadzenTooltip />
 <RadzenContextMenu />
 
-<!-- Create a RadzenLayout according to the following specifications:
-    1. Page header with the following content:
-        a. A RadzenImage with the CampaignKit logo
-        b. A RadzenMenu named "File" with the following items:
-            i. A RadzenMenuItem with the text "New" and the click event New 
-            ii. A RadzenMenuItem with the text "Open" and the click event Open
-            iii. A RadzenMenuItem with the text "Save" and the click event Save
-    2. Body of the page should be comprised of:
-        a. A narrow vertical panel on the left for navigating compendiums
-        b. A wide vertical panel on the right for viewing and editing compendiums  
--->
+<CustomPageTitle Title="@(SelectedCompendium != null ? SelectedCompendium.Title : "Compendium Helper")"></CustomPageTitle>
+
 <RadzenLayout>
     <RadzenHeader>
         <div class="d-flex align-items-center">
@@ -28,6 +19,7 @@
                     <hr class="separator mx-2 text-dark">
                     <RadzenMenuItem Text="W.O.I.N." Icon="folder" Click="@(args => ShowPackageDialog(_packages["woin"][0], _packages["woin"][1]))" />
                 </RadzenMenuItem>
+                <RadzenMenuItem Text="Generate" Icon="loop" Click="OnGenerate" Visible="(SelectedCompendium != null)"></RadzenMenuItem>
             </RadzenMenu>
         </div>
     </RadzenHeader>

@@ -40,12 +40,14 @@ namespace CampaignKit.Compendium.Helper
             builder.Services.AddScoped<NotificationService>();
             builder.Services.AddScoped<TooltipService>();
             builder.Services.AddScoped<ContextMenuService>();
-            builder.Services.AddSingleton<DownloadService>();
+            builder.Services.AddSingleton<FetchService>();
             builder.Services.AddSingleton<CompendiumService>();
             builder.Services.AddSingleton<MarkdownService>();
             builder.Services.AddSingleton<HtmlService>();
             builder.Services.AddSingleton<SourceDataSetService>();
             builder.Services.AddSingleton<FileService>();
+            builder.Services.AddSingleton<CampaignLoggerService>();
+            builder.Services.AddSingleton<DownloadService>();
 
             var app = builder.Build();
 

@@ -33,20 +33,32 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private CompendiumService CompendiumService { get; set; }
 
         /// <summary>
+        /// Gets or sets the Campaign Logger Service dependency.
+        /// </summary>
+        [Inject]
+        private CampaignLoggerService CampaignLoggerService { get; set; }
+
+        /// <summary>
         /// Gets or sets the DialogService dependency.
         /// </summary>
         [Inject]        private DialogService DialogService { get; set; }
 
         /// <summary>
-        /// Gets or sets the JSRuntime for JS interop.
+        /// Gets or sets the JS runtime dependency.
         /// </summary>
         [Inject]
-        private IJSRuntime JsRuntime { get; set; }
+        private IJSRuntime JSRuntime { get; set; }
 
         /// <summary>
         /// Gets or sets the ILogger into the Logger property.
         /// </summary>
         [Inject]        private ILogger<MainLayout> Logger { get; set; }
+
+        /// <summary>
+        /// Gets or sets the DownloadService dependency.
+        /// </summary>
+        [Inject]
+        private DownloadService DownloadService { get; set; }
 
         /// <summary>
         /// Gets or sets the selected compendium.
@@ -63,25 +75,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         }
 
         /// <summary>
-        /// Downloads a JSON string as a file using JavaScript runtime.
-        /// </summary>
-        /// <param name="json">The JSON string to download.</param>
-        /// <param name="fileName">The name of the file to save the JSON as.</param>
-        private async Task DownloadJSON(string json, string fileName)
-        {
-            var blob = $"data:text/json;charset=utf-8,{Uri.EscapeDataString(json)}";
-            var script = $@"(function() {{
-                        var link = document.createElement('a');
-                        link.href = '{blob}';
-                        link.download = '{fileName}';
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }})();";
-            await this.JsRuntime.InvokeVoidAsync("eval", script);
-        }
-
-        /// <summary>
         /// Method to handle the event of downloading a selected compendium.
         /// </summary>
         /// <returns>
@@ -95,7 +88,24 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
             }
 
             var json = this.CompendiumService.SaveCompendium(this.SelectedCompendium);
-            await this.DownloadJSON(json, this.SelectedCompendium.Title + ".json");
+            await this.DownloadService.DownloadTextFile(this.JSRuntime, json, "campaign-logger.json");
+        }
+
+        /// <summary>
+        /// Method to handle the generation of a campaign JSON file based on the selected compendium.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnGenerate()
+        {
+            if (this.SelectedCompendium == null)
+            {
+                return;
+            }
+
+            var json = await this.CampaignLoggerService.ConvertToCampaignJson(this.SelectedCompendium);
+            await this.DownloadService.DownloadTextFile(this.JSRuntime, json, "compendium-helper.json");
         }
 
         /// <summary>

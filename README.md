@@ -3,7 +3,7 @@
 
 ## Description:
 
-**Compendium Helper** is a stand-alone application designed to assist users in creating
+**Compendium Helper** is a single-page web application designed to assist users in creating
 [Campaign Logger](https://app.campaign-logger.com/) campaign files from publicly available
 websites.
 
@@ -26,7 +26,7 @@ Once you've configured a compendium you can:
  
 ### Sources
 
-> **Source** = A website that contains content that you want to scrape.
+> **Source** = A public webpage that contains content that you want to scrape.
 
 Sources are the individual items that are found in a compendium.  For example, an entity
 could be a specific dwarf, such as "Gimli", or it could be a group of dwarves, such as "The

@@ -66,17 +66,18 @@
                     </RadzenFormField>
                 </RadzenStack>
 
-                <!-- Tag Value Prefix -->
+                <!-- IsPublic -->
                 <RadzenStack Orientation="Orientation.Horizontal">
-                    <RadzenFormField Text="@_labels["tagValuePrefix"]" Variant="@_variant" Style="width: 100%">
+                    <RadzenFormField Text="@_labels["isPublic"]" Variant="@_variant" Style="width: 150px">
                         <End>
-                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["tagValuePrefix"]))" />
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["isPublic"]))" />
                         </End>
                         <ChildContent>
-                            <RadzenTextBox @bind-Value="@SelectedSource.TagValuePrefix" id="tagValuePrefix" />
+                            <RadzenCheckBox @bind-Value="@SelectedSource.IsPublic" id="isPublic" class="m-3" Style="flex: none;" />
                         </ChildContent>
                     </RadzenFormField>
                 </RadzenStack>
+
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>

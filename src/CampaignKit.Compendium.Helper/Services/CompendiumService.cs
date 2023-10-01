@@ -26,6 +26,9 @@ namespace CampaignKit.Compendium.Helper.Services
     /// </summary>
     public partial class CompendiumService
     {
+        /// <summary>
+        /// Gets or sets the ILogger into the Logger property.
+        /// </summary>
         private readonly ILogger<CompendiumService> logger;
 
         /// <summary>

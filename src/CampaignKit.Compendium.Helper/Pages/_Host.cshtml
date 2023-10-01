@@ -19,6 +19,11 @@
     <!-- JS/Blazor Interop Functions -->
     <script>
 
+        // Interop functions for the window title object.
+        window.setTitle = (title) => {
+            document.title = title;
+        }
+
         // Interop functions for the SimpleMDE control.
         window.simpleMDEInterop = {
 

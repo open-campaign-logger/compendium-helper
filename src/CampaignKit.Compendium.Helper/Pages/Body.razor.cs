@@ -144,7 +144,7 @@ namespace CampaignKit.Compendium.Helper.Pages
                 = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(values.labelName), null);
             this.SelectedSourceDataSet
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null);
-            this.SelectedIndex = 3;
+            this.SelectedIndex = 2;
         }
     }
 }
