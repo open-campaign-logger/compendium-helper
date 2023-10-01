@@ -14,10 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-using CampaignKit.Compendium.Helper.Data;
-
 namespace CampaignKit.Compendium.Helper.Services
 {
+    using CampaignKit.Compendium.Helper.Data;
+
     /// <summary>
     /// DownloadService class provides methods for downloading data from the web.
     /// </summary>

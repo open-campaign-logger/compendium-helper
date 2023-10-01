@@ -96,8 +96,17 @@ namespace CampaignKit.Compendium.Helper.Services
                 throw new ArgumentNullException(nameof(compendium));
             }
 
+            // Create a dictionary of objects to serialize.
             Dictionary<string, List<PublicCompendium>> dictionary
-                = new Dictionary<string, List<PublicCompendium>> { { "WebScraperPublicCompendiums", new List<PublicCompendium> { (PublicCompendium)compendium } } };
+                = new ()
+                {
+                    {
+                        "WebScraperPublicCompendiums", new List<PublicCompendium>
+                        {
+                            (PublicCompendium)compendium,
+                        }
+                    },
+                };
 
             // Serialize compendium into a JSON string using Newtonsoft.Json.
             string json = JsonConvert.SerializeObject(dictionary);

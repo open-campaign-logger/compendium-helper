@@ -55,11 +55,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
-        /// Gets or sets the TooltipService dependency.
-        /// </summary>
-        [Inject]        private TooltipService TooltipService { get; set; }
-
-        /// <summary>
         /// Instantiates a new, blank compendium and assigns it to the SelectedCompendium property.
         /// </summary>
         private void CreateDefaultCompendium()
@@ -72,7 +67,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// </summary>
         /// <param name="json">The JSON string to download.</param>
         /// <param name="fileName">The name of the file to save the JSON as.</param>
-        private void DownloadJSON(string json, string fileName)
+        private async Task DownloadJSON(string json, string fileName)
         {
             var blob = $"data:text/json;charset=utf-8,{Uri.EscapeDataString(json)}";
             var script = $@"(function() {{
@@ -83,7 +78,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
                         link.click();
                         document.body.removeChild(link);
                     }})();";
-            this.JsRuntime.InvokeVoidAsync("eval", script);
+            await this.JsRuntime.InvokeVoidAsync("eval", script);
         }
 
         /// <summary>
@@ -100,7 +95,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
             }
 
             var json = this.CompendiumService.SaveCompendium(this.SelectedCompendium);
-            this.DownloadJSON(json, this.SelectedCompendium.Title + ".json");
+            await this.DownloadJSON(json, this.SelectedCompendium.Title + ".json");
         }
 
         /// <summary>

@@ -14,7 +14,6 @@
 // limitations under the License.
 // </copyright>
 
-
 namespace CampaignKit.Compendium.Helper.Shared
 {
     using CampaignKit.Compendium.Helper.Configuration;
