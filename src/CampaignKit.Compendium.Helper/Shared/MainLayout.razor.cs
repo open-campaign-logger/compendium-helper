@@ -26,34 +26,14 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         [Inject]        protected TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Gets or sets the ContextMenuService property is injected with the ContextMenuService dependency.
-        /// </summary>
-        [Inject]        private ContextMenuService ContextMenuService { get; set; }
-
-        /// <summary>
         /// Gets or sets the DialogService dependency into the property DialogService.
         /// </summary>
         [Inject]        private DialogService DialogService { get; set; }
 
         /// <summary>
-        /// Gets or sets the IJSRuntime dependency into the property JsRuntime.
-        /// </summary>
-        [Inject]        private IJSRuntime JsRuntime { get; set; }
-
-        /// <summary>
         /// Gets or sets the ILogger into the Logger property.
         /// </summary>
         [Inject]        private ILogger<MainLayout> Logger { get; set; }
-
-        /// <summary>
-        /// Gets or sets the NavigationManager dependency into the property NavigationManager.
-        /// </summary>
-        [Inject]        private NavigationManager NavigationManager { get; set; }
-
-        /// <summary>
-        /// Gets or sets the NotificationService dependency into the property NotificationService.
-        /// </summary>
-        [Inject]        private NotificationService NotificationService { get; set; }
 
         /// <summary>
         /// Gets or sets the selected compendium.
@@ -84,7 +64,8 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// Shows an "Upload File" dialog asynchronously and passes the OnUploadComplete callback method as a parameter.
         /// </summary>
         private async void ShowUploadDialog()        {
-            await this.DialogService.OpenAsync<UploadDialog>(                "Upload Compendium",                new Dictionary<string, object> {                    { "Prompt", "Select an existing Compendium Configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
+            await this.DialogService.OpenAsync<UploadDialog>(                "Upload Compendium",                new Dictionary<string, object>
+                {                    { "Prompt", "Select an existing Compendium Configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
 
         /// <summary>
         /// Shows a new dialog asynchronously and waits for the user's selection. The dialog is opened using the DialogService with the specified title and prompt. The OnSelection event is subscribed to the OnNewCompendiumSelection method. The result of the dialog is displayed as an info notification.
@@ -96,6 +77,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
             {
                 await this.DialogService.OpenAsync<ConfirmationDialog>(
                     "New Compendium",
-                    new Dictionary<string, object> {                    { "Prompt", "Replace the current Compendium Configuration?" },                    { "OnSelection", EventCallback.Factory.Create<bool>(this, this.OnNewCompendiumSelection) },
+                    new Dictionary<string, object>
+                    {                        { "Prompt", "Replace the current Compendium Configuration?" },                        { "OnSelection", EventCallback.Factory.Create<bool>(this, this.OnNewCompendiumSelection) },
                     });
             }        }    }}

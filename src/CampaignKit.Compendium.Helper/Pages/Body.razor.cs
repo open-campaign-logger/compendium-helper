@@ -26,7 +26,6 @@ namespace CampaignKit.Compendium.Helper.Pages
     /// </summary>
     public partial class Body
     {
-
         /// <summary>
         /// Gets or sets the selected compendium.
         /// </summary>
@@ -147,6 +146,5 @@ namespace CampaignKit.Compendium.Helper.Pages
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null);
             this.SelectedIndex = 3;
         }
-
     }
 }
