@@ -36,7 +36,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// </summary>
         /// <param name="logger">Logger object for logging.</param>
         /// <returns>
-        /// DownloadService object.
+        /// BrowserService object.
         /// </returns>
         public CompendiumService(ILogger<CompendiumService> logger)
         {

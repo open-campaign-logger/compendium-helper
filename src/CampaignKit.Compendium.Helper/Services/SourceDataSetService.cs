@@ -31,7 +31,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="SourceDataSetService"/> class.
         /// </summary>
-        /// <param name="downloadService">DownloadService DI service.</param>
+        /// <param name="downloadService">BrowserService DI service.</param>
         /// <param name="logger">ILogger DI service.</param>
         /// <param name="markdownService">MarkdownService DI service.</param>
         /// <returns>
@@ -48,7 +48,7 @@ namespace CampaignKit.Compendium.Helper.Services
         }
 
         /// <summary>
-        /// Gets or sets the DownloadService.
+        /// Gets or sets the BrowserService.
         /// </summary>
         [Inject]
         private FetchService DownloadService { get; set; }

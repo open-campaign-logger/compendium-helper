@@ -1,4 +1,4 @@
-﻿// <copyright file="DownloadService.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="BrowserService.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,23 +19,25 @@ namespace CampaignKit.Compendium.Helper.Services
     using CampaignKit.Compendium.Helper.Data;
     using CampaignKit.Compendium.Helper.Shared;
 
+    using Markdig.Helpers;
+
     using Microsoft.JSInterop;
 
     /// <summary>
-    /// DownloadService class provides methods for downloading data to the client.
+    /// BrowserService class provides methods for downloading data to the client.
     /// </summary>
-    public class DownloadService
+    public class BrowserService
     {
         /// <summary>
         /// Gets or sets the ILogger into the Logger property.
         /// </summary>
-        private readonly ILogger<MainLayout> logger;
+        private readonly ILogger<BrowserService> logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DownloadService"/> class.
+        /// Initializes a new instance of the <see cref="BrowserService"/> class.
         /// </summary>
         /// <param name="logger">A logger for log messages.</param>
-        public DownloadService(ILogger<MainLayout> logger)
+        public BrowserService(ILogger<BrowserService> logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -60,6 +62,24 @@ namespace CampaignKit.Compendium.Helper.Services
                         document.body.removeChild(link);
                     }})();";
             await jsRuntime.InvokeVoidAsync("eval", script);
+        }
+
+        /// <summary>
+        /// Sets the title of the page using JavaScript runtime.
+        /// </summary>
+        /// <param name="jsRuntime">The JavaScript runtime.</param>
+        /// <param name="title">The title to set. If null, the default title "Compendium Helper" will be used.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        public async Task SetTitle(IJSRuntime jsRuntime, string title)
+        {
+            try
+            {
+                await jsRuntime.InvokeVoidAsync("setTitle", title ??= "Compendium Helper");
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError(ex, "Error setting page title");
+            }
         }
     }
 }

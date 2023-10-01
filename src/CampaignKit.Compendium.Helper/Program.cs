@@ -47,7 +47,7 @@ namespace CampaignKit.Compendium.Helper
             builder.Services.AddSingleton<SourceDataSetService>();
             builder.Services.AddSingleton<FileService>();
             builder.Services.AddSingleton<CampaignLoggerService>();
-            builder.Services.AddSingleton<DownloadService>();
+            builder.Services.AddSingleton<BrowserService>();
 
             var app = builder.Build();
 

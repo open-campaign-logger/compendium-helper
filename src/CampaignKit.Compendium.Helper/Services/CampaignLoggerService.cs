@@ -42,7 +42,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// <param name="logger">Logger object for logging.</param>
         /// <param name="sourceDataSetService">Service for working with source data sets.</param>
         /// <returns>
-        /// DownloadService object.
+        /// BrowserService object.
         /// </returns>
         public CampaignLoggerService(
             ILogger<CampaignLoggerService> logger,

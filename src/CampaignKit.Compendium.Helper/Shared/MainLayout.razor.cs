@@ -55,10 +55,10 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         [Inject]        private ILogger<MainLayout> Logger { get; set; }
 
         /// <summary>
-        /// Gets or sets the DownloadService dependency.
+        /// Gets or sets the BrowserService dependency.
         /// </summary>
         [Inject]
-        private DownloadService DownloadService { get; set; }
+        private BrowserService DownloadService { get; set; }
 
         /// <summary>
         /// Gets or sets the selected compendium.
