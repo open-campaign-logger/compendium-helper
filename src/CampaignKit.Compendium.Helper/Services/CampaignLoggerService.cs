@@ -53,29 +53,53 @@ namespace CampaignKit.Compendium.Helper.Services
         }
 
         /// <summary>
+        /// Event that is raised when the progress changes.
+        /// </summary>
+        public event EventHandler<int> ProgressChanged;
+
+        /// <summary>
+        /// Event that is raised when the status has changed.
+        /// </summary>
+        /// <remarks>
+        /// The event handler receives a string parameter containing the new status.
+        /// </remarks>
+        public event EventHandler<string> StatusChanged;
+
+        /// <summary>
         /// Converts the given compendium to a campaign object and serializes it to JSON format.
         /// </summary>
         /// <param name="compendium">The compendium to convert.</param>
         /// <returns>The JSON representation of the converted campaign.</returns>
         public async Task<string> ConvertToCampaignJson(ICompendium compendium)
         {
-            this.logger.LogInformation("Converting compendium to json: {Compendium}", compendium.Title);
+            this.StatusChanged?.Invoke(this, $"Converting compendium to campaign: {compendium.Title}");
+            this.ProgressChanged?.Invoke(this, 0);
             var campaign = await this.ConvertToCampaign(compendium);
             var json = JsonConvert.SerializeObject(campaign, Formatting.Indented);
             return json;
         }
 
+        /// <summary>
+        /// Converts a given Compendium object to a Campaign object.
+        /// </summary>
+        /// <param name="compendium">The Compendium object to convert.</param>
+        /// <returns>The converted Campaign object.</returns>
         private async Task<Campaign> ConvertToCampaign(ICompendium compendium)
         {
             this.logger.LogInformation("Converting compendium to campaign: {Compendium}", compendium.Title);
 
             var campaignEntries = new List<CampaignEntry>();
 
+            double progressPerEntry = 100.0 / compendium.SourceDataSets.Count;
+            double progress = 0;
+
             foreach (var source in compendium.SourceDataSets)
             {
-                this.logger.LogInformation("Converting source data set to campaign entry: {SourceDataSet}", source.SourceDataSetName);
+                this.StatusChanged?.Invoke(this, $"Converting source data set to campaign entry: {source.SourceDataSetName}");
                 var campaignEntry = await this.ConvertToCampaignEntry(source);
                 campaignEntries.Add(campaignEntry);
+                progress += progressPerEntry;
+                this.ProgressChanged?.Invoke(this, (int)progress);
             }
 
             var campaign = new Campaign()
@@ -102,6 +126,7 @@ namespace CampaignKit.Compendium.Helper.Services
             this.logger.LogInformation("Converting source data set to campaign entry: {SourceDataSet}", source.SourceDataSetName);
 
             // Load the source data set.
+            this.StatusChanged?.Invoke(this, $"Loading source data set: {source.SourceDataSetName}");
             await this.sourceDataSetService.LoadSourceDataSetAsync(source);
 
             // Convert the source data set to a campaign entry.
