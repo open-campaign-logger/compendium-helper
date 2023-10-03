@@ -17,13 +17,14 @@
             <Tabs>
 
                 <RadzenTabsItem Text="Compendium" Visible="SelectedCompendium !=null" >
-                    <Compendium SelectedCompendium="SelectedCompendium" />
+                    <Compendium SelectedCompendium="SelectedCompendium" 
+                        CompendiumTitleChanged="OnCompendiumTitleChanged"/>
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Label" Visible="SelectedSourceDataSetGrouping !=null" >
                     <Label SelectedSource="SelectedSourceDataSetGrouping"
                            AllSources="SelectedCompendium.SourceDataSets"
-                           LabelChanged="OnLabelAssignmentChanged"></Label>
+                           LabelAssignmentChanged="OnLabelAssignmentChanged"></Label>
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Source" Visible="SelectedSourceDataSet != null" >

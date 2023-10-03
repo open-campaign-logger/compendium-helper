@@ -18,8 +18,10 @@ namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
+    using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
+    using Microsoft.JSInterop;
 
     /// <summary>
     /// Code behind class for Body.razor.
@@ -33,11 +35,22 @@ namespace CampaignKit.Compendium.Helper.Pages
         public ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
+        /// Gets or sets the BrowserService dependency.
+        /// </summary>
+        [Inject]
+        private BrowserService BrowserService { get; set; }
+
+        /// <summary>
+        /// Gets or sets the JsRuntime dependency.
+        /// </summary>
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; }
+
+        /// <summary>
         /// Gets or sets the Logger.
         /// </summary>
         [Inject]
         private ILogger<Body> Logger { get; set; }
-
         /// <summary>
         /// Gets or sets the selected tab index.
         /// </summary>
@@ -54,6 +67,16 @@ namespace CampaignKit.Compendium.Helper.Pages
         private LabelGroup SelectedSourceDataSetGrouping { get; set; }
 
         /// <summary>
+        /// Method called after the component has been rendered.
+        /// </summary>
+        /// <param name="firstRender">Indicates if this is the first time the component is being rendered.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await this.UpdateTitle();
+        }
+
+        /// <summary>
         /// This method is called when the component's parameters are set. It first calls the base implementation of the method. Then, it sets the SelectedSourceDataSet and SelectedSourceDataSetGrouping properties to null.
         /// </summary>
         protected override void OnParametersSet()
@@ -63,7 +86,6 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.SelectedSourceDataSetGrouping = null;
             this.SelectedIndex = 0;
         }
-
         /// <summary>
         /// Handles the compendium collapsed event from the navigator component.
         /// </summary>
@@ -90,6 +112,18 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.SelectedSourceDataSetGrouping = null;
             this.SelectedSourceDataSet = null;
             this.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// Event handler for when the title of the selected compendium changes.
+        /// Logs the new title using the logger and triggers a state change.
+        /// </summary>
+        /// <param name="title">The new title of the selected compendium</param>
+        private async void OnCompendiumTitleChanged(string title)
+        {
+            this.Logger.LogInformation("SelectedCompendium title changed: {Title}", title);
+            await this.UpdateTitle();
+            this.StateHasChanged();
         }
 
         /// <summary>
@@ -145,6 +179,18 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.SelectedSourceDataSet
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null);
             this.SelectedIndex = 2;
+        }
+
+        /// <summary>
+        /// Sets the page title of the browser using the selected compendium's title.
+        /// </summary>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// </returns>
+        private async Task UpdateTitle()
+        {
+            var title = string.IsNullOrEmpty(this.SelectedCompendium?.Title) ? "Compendium Helper" : this.SelectedCompendium.Title;
+            await this.BrowserService.SetTitle(this.JsRuntime, title);
         }
     }
 }

@@ -67,6 +67,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         private ILogger<Generator> Logger { get; set; }
 
         /// <summary>
+        /// Gets or sets the CancellationTokenSource used for canceling asynchronous operations.
+        /// </summary>
+        private CancellationTokenSource CancellationTokenSource { get; set; }
+
+        /// <summary>
         /// Gets or sets the progress value.
         /// </summary>
         /// <value>The progress value.</value>
@@ -90,6 +95,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.CampaignLoggerService.StatusChanged += this.OnStatusChanged;
             this.Progress = 0;
             this.Status = string.Empty;
+            this.CancellationTokenSource = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -101,6 +107,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         private async Task OnCancel()
         {
             this.Logger.LogInformation("User selected to cancel the current generation.");
+            this.CancellationTokenSource.Cancel();
             this.DialogService.Close();
         }
 
@@ -115,8 +122,16 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("User selected to generate a campaign JSON file.");
             this.Progress = 0;
             this.Status = string.Empty;
-            var json = await this.CampaignLoggerService.ConvertToCampaignJson(this.SelectedCompendium);
-            await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "compendium-helper.json");
+            try
+            {
+                var json = await this.CampaignLoggerService.ConvertToCampaignJson(this.SelectedCompendium, this.CancellationTokenSource.Token);
+                await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "compendium-helper.json");
+            }
+            catch (OperationCanceledException oce)
+            {
+                this.Logger.LogInformation(oce, "User canceled the campaign generation process.");
+            }
+
             this.DialogService.Close();
         }
 

@@ -37,16 +37,10 @@ namespace CampaignKit.Compendium.Helper.Pages
         public ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
-        /// Gets or sets the BrowserService dependency.
+        /// Gets or sets the EventCallback for the compendium title change event.
         /// </summary>
-        [Inject]
-        private BrowserService BrowserService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the JsRuntime dependency.
-        /// </summary>
-        [Inject]
-        private IJSRuntime JsRuntime { get; set; }
+        [Parameter]
+        public EventCallback<string> CompendiumTitleChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the TooltipService.
@@ -55,48 +49,14 @@ namespace CampaignKit.Compendium.Helper.Pages
         private TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Overrides the OnAfterRenderAsync method and calls the SetBrowserPageTitle method asynchronously.
-        /// </summary>
-        /// <param name="firstRender">A boolean value indicating whether this is the first render of the component.</param>
-        /// <returns>A Task representing the asynchronous operation.</returns>
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            await this.SetBrowserPageTitle();
-        }
-
-        /// <summary>
-        /// This method is called when the component is being initialized asynchronously.
-        /// It first calls the base implementation of OnInitializedAsync() to ensure that the component is properly initialized.
-        /// Then it calls the SetBrowserPageTitle() method asynchronously to set the title of the browser page.
-        /// </summary>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// </returns>
-        protected override async Task OnInitializedAsync()
-        {
-            await base.OnInitializedAsync();
-        }
-
-        /// <summary>
         /// Event handler for when the compendium title is changed.
         /// </summary>
         /// <param name="title">The new title of the compendium.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnCompendiumTitleChanged(string title)
         {
-            await this.SetBrowserPageTitle();
-        }
-
-        /// <summary>
-        /// Sets the page title of the browser using the selected compendium's title.
-        /// </summary>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// </returns>
-        private async Task SetBrowserPageTitle()
-        {
-            var title = this.SelectedCompendium?.Title ?? string.Empty;
-            await this.BrowserService.SetTitle(this.JsRuntime, title);
+            // Invoke callback
+            await this.CompendiumTitleChanged.InvokeAsync(title);
         }
 
         /// <summary>

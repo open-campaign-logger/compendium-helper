@@ -40,7 +40,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the EventCallback for the label assignment change event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> LabelChanged { get; set; }
+        public EventCallback<string> LabelAssignmentChanged{ get; set; }
 
         /// <summary>
         /// Gets or sets the SelectedSource parameter.
@@ -136,7 +136,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             }
 
             // Fire an event to notify the parent component that the label assignment has changed.
-            this.LabelChanged.InvokeAsync(this.SelectedSource.LabelName);
+            this.LabelAssignmentChanged.InvokeAsync(this.SelectedSource.LabelName);
         }
 
         /// <summary>
