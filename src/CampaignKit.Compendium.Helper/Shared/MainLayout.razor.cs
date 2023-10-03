@@ -116,14 +116,14 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// </summary>
         /// <param name="selection">The selection made by the user.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected to create a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }            this.DialogService.Close();        }
+        private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected to create a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
 
         /// <summary>
         /// Method called when the upload of a compendium is complete.
         /// </summary>
         /// <param name="compendium">The uploaded compendium.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnUploadComplete(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;            this.DialogService.Close();        }
+        private async Task OnUploadComplete(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;        }
 
         /// <summary>
         /// Shows a new dialog asynchronously and waits for the user's selection. The dialog is opened using the DialogService with the specified title and prompt. The OnSelection event is subscribed to the OnNewCompendiumSelection method. The result of the dialog is displayed as an info notification.

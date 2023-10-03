@@ -47,11 +47,11 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <summary>
         /// Gets or sets the progress of the download.
         /// </summary>
-        private double DownloadProgress { get; set; }
+        private double UploadProgress { get; set; }
 
         private void OnProgress(UploadProgressArgs args)
         {
-            this.DownloadProgress = args.Progress;
+            this.UploadProgress = args.Progress;
         }
 
         /// <summary>
@@ -59,4 +59,4 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// </summary>
         /// <param name="args">The event arguments containing the raw response.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task UploadComplete(UploadCompleteEventArgs args)        {            this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);            this.DownloadProgress = 50;            var json = args.RawResponse;            var compendium = this.CompendiumService.LoadCompendium(json);            this.DownloadProgress = 75;            await this.OnUploadComplete.InvokeAsync(compendium);            this.DownloadProgress = 100;        }    }}
+        private async Task UploadComplete(UploadCompleteEventArgs args)        {            this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);            this.UploadProgress = 50;            var json = args.RawResponse;            var compendium = this.CompendiumService.LoadCompendium(json);            this.UploadProgress = 75;            await this.OnUploadComplete.InvokeAsync(compendium);            this.UploadProgress = 100;        }    }}

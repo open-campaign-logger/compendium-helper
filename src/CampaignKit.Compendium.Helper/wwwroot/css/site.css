@@ -1,3 +1,9 @@
+:root {
+    font-size: var(--rz-root-font-size);
+    --rz-primary: #d28640;
+    --rz-secondary: #e3A972;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -15,11 +21,6 @@
     position: absolute;
     right: 0.75rem;
     top: 0.5rem;
-}
-
-:root {
-    font-size: var(--rz-root-font-size);
-    --rz-primary: #d28640;
 }
 
 body {

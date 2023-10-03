@@ -15,6 +15,8 @@
 // </copyright>namespace CampaignKit.Compendium.Helper.Shared{
     using Microsoft.AspNetCore.Components;
 
+    using Radzen;
+
     /// <summary>
     /// Represents a partial class for a confirmation dialog.
     /// </summary>
@@ -32,6 +34,11 @@
         [Parameter]        public string Prompt { get; set; }
 
         /// <summary>
+        /// Gets or sets the DialogService dependency.
+        /// </summary>
+        [Inject]        private DialogService DialogService { get; set; }
+
+        /// <summary>
         /// Gets or sets injects an ILogger dependency into the Logger property.
         /// </summary>
         [Inject]
@@ -44,7 +51,7 @@
         /// A task representing the asynchronous operation.
         /// </returns>
         private async Task OnYes()        {            this.Logger.LogInformation("User selected Yes.");
-            await this.OnSelection.InvokeAsync(true);        }
+            await this.OnSelection.InvokeAsync(true);            this.DialogService.Close();        }
 
         /// <summary>
         /// Handles the event when the "No" option is selected.
@@ -53,4 +60,4 @@
         /// A task representing the asynchronous operation.
         /// </returns>
         private async Task OnNo()        {
-            this.Logger.LogInformation("User selected No.");            await this.OnSelection.InvokeAsync(false);        }    }}
+            this.Logger.LogInformation("User selected No.");            await this.OnSelection.InvokeAsync(false);            this.DialogService.Close();        }    }}

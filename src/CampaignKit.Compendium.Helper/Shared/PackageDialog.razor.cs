@@ -21,6 +21,8 @@ namespace CampaignKit.Compendium.Helper.Shared
 
     using Microsoft.AspNetCore.Components;
 
+    using Radzen;
+
     /// <summary>
     /// Code behind class for PackageDialog.
     /// </summary>
@@ -53,6 +55,12 @@ namespace CampaignKit.Compendium.Helper.Shared
         private CompendiumService CompendiumService { get; set; }
 
         /// <summary>
+        /// Gets or sets the DialogService dependency.
+        /// </summary>
+        [Inject]
+        private DialogService DialogService { get; set; }
+
+        /// <summary>
         /// Gets or sets the FileService dependency into the FileService property.
         /// </summary>
         [Inject]
@@ -73,7 +81,7 @@ namespace CampaignKit.Compendium.Helper.Shared
         private async Task OnNo()
         {
             this.Logger.LogInformation("User selected No.");
-            await this.OnUploadComplete.InvokeAsync(null);
+            this.DialogService.Close();
         }
 
         /// <summary>
@@ -88,6 +96,7 @@ namespace CampaignKit.Compendium.Helper.Shared
             var json = await this.FileService.ReadPackageFileAsync(this.PackageFileName);
             var compendium = this.CompendiumService.LoadCompendium(json);
             await this.OnUploadComplete.InvokeAsync(compendium);
+            this.DialogService.Close();
         }
     }
 }
