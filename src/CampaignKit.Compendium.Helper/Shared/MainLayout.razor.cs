@@ -105,7 +105,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
             }
 
             await this.DialogService.OpenAsync<Generator>(
-                "Generate Campaign",
+                "Generate Campaign Logger File",
                 new Dictionary<string, object>                {
                     { "SelectedCompendium", this.SelectedCompendium },
                 });
