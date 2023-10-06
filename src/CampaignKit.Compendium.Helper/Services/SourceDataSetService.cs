@@ -66,59 +66,60 @@ namespace CampaignKit.Compendium.Helper.Services
         private MarkdownService MarkdownService { get; set; }
 
         /// <summary>
-        /// Loads the html data set and set the HTML and Markdown properties.
+        /// Loads the response data set and set the HTML and Markdown properties.
         /// </summary>
         /// <param name="source">The source data set to load.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task LoadSourceDataSetAsync(SourceDataSet source)
         {
             this.Logger.LogInformation("Loading source data set: {Source}", source);
-            var html = string.Empty;
 
             try
             {
-                // Check to see if the SourceDataSet has any substitutions for XPath="//body".  If so return that HTML.
-                if (source.Substitutions != null && source.Substitutions.Any(s => s.XPath == "//body"))
+                if (!string.IsNullOrEmpty(source.Markdown))
                 {
-                    html = source.Substitutions.First(s => s.XPath == "//body").Html;
+                    return;
                 }
                 else
                 {
                     // Otherwise, download the HTML from the source's SourceDataSetURI property.
-                    html = await this.DownloadService.GetWebPageAync(source.SourceDataSetUri);
+                    var response = await this.DownloadService.GetWebPageAync(source.SourceDataSetUri);
+
+                    // If response is null or empty, set the Markdown property to a message indicating that the source data set could not be loaded.
+                    if (string.IsNullOrEmpty(response) || response.StartsWith("Failed to download data"))
+                    {
+                        this.Logger.LogError("Unable to download content for source data set: {Source}", source.SourceDataSetName);
+                        source.Markdown = response;
+                        return;
+                    }
 
                     // If the source's XPath is not null or empty navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
                     if (!string.IsNullOrEmpty(source.XPath))
                     {
                         // Load the HTML into an HtmlAgilityPack HtmlDocument object.
                         var doc = new HtmlDocument();
-                        doc.LoadHtml(html);
+                        doc.LoadHtml(response);
 
                         // Navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
                         try
                         {
                             var node = doc.DocumentNode.SelectSingleNode(source.XPath);
-                            html = node.OuterHtml;
+                            response = node.OuterHtml;
                         }
                         catch (Exception ex)
                         {
-                            html = $"Unable to find node corresponding to XPath: {source.XPath}";
+                            response = $"Unable to find node corresponding to XPath: {source.XPath}";
                         }
                     }
+
+                    // Convert to markdown
+                    source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(response);
                 }
             }
             catch (Exception ex)
             {
-                this.Logger.LogError(ex, "Error loading html data set.");
-                source.Html = "Unable to load source data.";
+                this.Logger.LogError(ex, "Error loading response data set.");
                 source.Markdown = "Unable to load source data.";
-            }
-
-            // If the html is not null set the HTML and Markdown properties.
-            if (!string.IsNullOrEmpty(html))
-            {
-                source.Html = html;
-                source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(html);
             }
         }
     }

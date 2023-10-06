@@ -24,12 +24,6 @@ namespace CampaignKit.Compendium.Helper.Configuration
     public class SourceDataSet
     {
         /// <summary>
-        /// Gets or sets the HTML conversion of the extracted source.
-        /// </summary>
-        [JsonIgnore]
-        public string Html { get; set; } = string.Empty;
-
-        /// <summary>
         /// Gets or sets the limit on the number of items to import into the compendium
         /// from the data source.  Generally this is only used for testing purposes
         /// to limit the size of the generated compendiums.
@@ -60,7 +54,6 @@ namespace CampaignKit.Compendium.Helper.Configuration
         /// <summary>
         /// Gets or sets the Markdown conversion of the extracted HTML.
         /// </summary>
-        [JsonIgnore]
         public string Markdown { get; set; } = string.Empty;
 
         /// <summary>
@@ -83,11 +76,6 @@ namespace CampaignKit.Compendium.Helper.Configuration
         /// Gets or sets the Uniform Resource Identifier (URI) where the actual game source data is located.
         /// </summary>
         public string SourceDataSetUri { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the list of XPath/HTML susbstitutions to use with for this data source.
-        /// </summary>
-        public List<Substitution> Substitutions { get; set; } = new () { };
 
         /// <summary>
         /// Gets or sets the tag entry to use for campaign entries derived from this source.

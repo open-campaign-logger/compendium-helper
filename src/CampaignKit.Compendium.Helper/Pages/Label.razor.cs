@@ -40,7 +40,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the EventCallback for the label assignment change event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> LabelAssignmentChanged{ get; set; }
+        public EventCallback<string> LabelAssignmentChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the SelectedSource parameter.

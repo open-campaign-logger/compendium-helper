@@ -16,6 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Configuration
 {
+    using System.Text.Json.Serialization;
+
     using CampaignKit.Compendium.Helper.Data;
 
     /// <summary>
@@ -81,12 +83,14 @@ namespace CampaignKit.Compendium.Helper.Configuration
         /// Gets a list of unique labels from all source datasets.
         /// </summary>
         /// <returns>A list of unique labels.</returns>
+        [JsonIgnore]
         public List<string> UniqueLabels { get; }
 
         /// <summary>
         /// Gets a list of SourceDataSetGroupings from the SourceDataSets.
         /// </summary>
         /// <returns>A list of SourceDataSetGroupings.</returns>
+        [JsonIgnore]
         public List<LabelGroup> SourceDataSetGroupings { get; }
     }
 }

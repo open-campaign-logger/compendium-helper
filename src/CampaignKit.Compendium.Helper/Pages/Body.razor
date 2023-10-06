@@ -28,7 +28,8 @@
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Source" Visible="SelectedSourceDataSet != null" >
-                    <Source SelectedSource="SelectedSourceDataSet" />
+                    <Source SelectedSource="SelectedSourceDataSet" 
+                        SourceDataSetTitleChanged="OnSourceDataSetTitleChanged"/>
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Editor" Visible="SelectedSourceDataSet != null">

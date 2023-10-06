@@ -13,7 +13,7 @@
                             <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["sourceDataSetName"]))" />
                         </End>
                         <ChildContent>
-                            <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetName" id="sourceDataSetName" />
+                            <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetName" id="sourceDataSetName" Change="OnSourceDataSetTitleChanged"/>
                         </ChildContent>
                     </RadzenFormField>
                 </RadzenStack>

@@ -67,7 +67,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private void CreateDefaultCompendium()
         {
             this.Logger.LogInformation("Creating default compendium.");
-            this.SelectedCompendium = new PublicCompendium();
+            this.SelectedCompendium = new Configuration.Compendium();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
             }
 
             var json = this.CompendiumService.SaveCompendium(this.SelectedCompendium);
-            await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "campaign-logger.json");
+            await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "compendium-helper.json");
         }
 
         /// <summary>

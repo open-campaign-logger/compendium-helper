@@ -41,6 +41,23 @@ namespace CampaignKit.Compendium.Helper.Pages
         public TooltipService TooltipService { get; set; }
 
         /// <summary>
+        /// Gets or sets the EventCallback for the source data set title change event.
+        /// </summary>
+        [Parameter]
+        public EventCallback<string> SourceDataSetTitleChanged { get; set; }
+
+        /// <summary>
+        /// Event handler for when the source data set title is changed.
+        /// </summary>
+        /// <param name="title">The new title of the source data set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task OnSourceDataSetTitleChanged(string title)
+        {
+            // Invoke callback
+            await this.SourceDataSetTitleChanged.InvokeAsync(title);
+        }
+
+        /// <summary>
         /// Opens a tooltip with the specified content for the given element.
         /// </summary>
         /// <param name="elementReference">The element to open the tooltip for.</param>

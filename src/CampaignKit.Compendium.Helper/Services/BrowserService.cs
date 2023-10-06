@@ -51,7 +51,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task DownloadTextFile(IJSRuntime jsRuntime, string fileText, string fileName)
         {
-            this.logger.LogInformation("DownloadTextFile method called with fileName: {FileName}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(fileName));
+            this.logger.LogInformation("DownloadTextFile method called with fileName: {FileName}", fileName);
             var blob = $"data:text/fileText;charset=utf-8,{Uri.EscapeDataString(fileText)}";
             var script = $@"(function() {{
                         var link = document.createElement('a');

@@ -39,12 +39,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         public SourceDataSet Source { get; set; }
 
         /// <summary>
-        /// Gets or sets the HtmlService.
-        /// </summary>
-        [Inject]
-        private HtmlService HtmlService { get; set; }
-
-        /// <summary>
         /// Gets or sets the JSRuntime for JS interop.
         /// </summary>
         [Inject]
@@ -86,28 +80,6 @@ namespace CampaignKit.Compendium.Helper.Pages
 
             // Update the markdown property of the source data set
             this.Source.Markdown = content;
-
-            // Convert the markdown to HTML
-            var html = this.HtmlService.ConvertMarkdownToHtml(content);
-
-            // Check if there is no existing substitution with XPath "//body" in the Source.Substitutions list
-            if (this.Source.Substitutions.All(s => s.XPath != "//body"))
-            {
-                // If there is no existing substitution, create a new list with a single Substitution object
-                this.Source.Substitutions = new List<Substitution>
-                {
-                    new ()
-                    {
-                        XPath = "//body",
-                        Html = html,
-                    },
-                };
-            }
-            else
-            {
-                // If there is an existing substitution with XPath "//body", update its HTML property with the new value
-                this.Source.Substitutions.First(s => s.XPath == "//body").Html = html;
-            }
         }
 
         /// <summary>

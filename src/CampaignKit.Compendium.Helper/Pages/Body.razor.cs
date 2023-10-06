@@ -51,6 +51,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         [Inject]
         private ILogger<Body> Logger { get; set; }
+
         /// <summary>
         /// Gets or sets the selected tab index.
         /// </summary>
@@ -86,6 +87,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.SelectedSourceDataSetGrouping = null;
             this.SelectedIndex = 0;
         }
+
         /// <summary>
         /// Handles the compendium collapsed event from the navigator component.
         /// </summary>
@@ -118,7 +120,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Event handler for when the title of the selected compendium changes.
         /// Logs the new title using the logger and triggers a state change.
         /// </summary>
-        /// <param name="title">The new title of the selected compendium</param>
+        /// <param name="title">The new title of the selected compendium.</param>
         private async void OnCompendiumTitleChanged(string title)
         {
             this.Logger.LogInformation("SelectedCompendium title changed: {Title}", title);
@@ -179,6 +181,17 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.SelectedSourceDataSet
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null);
             this.SelectedIndex = 2;
+        }
+
+        /// <summary>
+        /// Event handler for when the title of the selected SourceDataSet is changed.
+        /// </summary>
+        /// <param name="title">The new title of the SourceDataSet.</param>
+        /// <returns>A Task representing the asynchronous operation.</returns>
+        private async Task OnSourceDataSetTitleChanged(string title)
+        {
+            this.Logger.LogInformation("Selected SourceDataSet title changed: {Title}", title);
+            this.StateHasChanged();
         }
 
         /// <summary>

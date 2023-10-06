@@ -1,4 +1,4 @@
-﻿// <copyright file="PublicCompendium.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="Compendium.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@
 namespace CampaignKit.Compendium.Helper.Configuration
 {
     using System.Data;
+    using System.Text.Json.Serialization;
 
     using CampaignKit.Compendium.Helper.Data;
 
@@ -24,7 +25,7 @@ namespace CampaignKit.Compendium.Helper.Configuration
     /// Represents the configuration of an open-source compendium within the application.
     /// These should be defined and shared in the appsettings.json file.
     /// </summary>
-    public class PublicCompendium : ICompendium
+    public class Compendium : ICompendium
     {
         /// <inheritdoc/>
         public string CompendiumService { get; set; } = string.Empty;
@@ -54,6 +55,7 @@ namespace CampaignKit.Compendium.Helper.Configuration
         public string Title { get; set; } = string.Empty;
 
         /// <inheritdoc/>
+        [JsonIgnore]
         public List<string> UniqueLabels
         {
             get
@@ -67,6 +69,7 @@ namespace CampaignKit.Compendium.Helper.Configuration
         }
 
         /// <inheritdoc/>
+        [JsonIgnore]
         public List<LabelGroup> SourceDataSetGroupings
         {
             get

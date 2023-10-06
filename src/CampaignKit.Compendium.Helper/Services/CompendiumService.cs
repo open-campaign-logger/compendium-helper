@@ -61,10 +61,10 @@ namespace CampaignKit.Compendium.Helper.Services
             this.logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", RegexHelper.RemoveUnwantedCharactersFromLogMessage(json));
 
             // Deserialize the JSON string into a Dictionary object using Newtonsoft.Json
-            Dictionary<string, List<PublicCompendium>> dictionary;
+            Dictionary<string, List<Compendium>> dictionary;
             try
             {
-                dictionary = JsonConvert.DeserializeObject<Dictionary<string, List<PublicCompendium>>>(json);
+                dictionary = JsonConvert.DeserializeObject<Dictionary<string, List<Compendium>>>(json);
             }
             catch (Exception e)
             {
@@ -79,11 +79,11 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Get the List of PublicCompendium objects from the dictionary.
-            List<PublicCompendium> compendiumList = dictionary.Values.FirstOrDefault(new List<PublicCompendium>())
+            List<Compendium> compendiumList = dictionary.Values.FirstOrDefault(new List<Compendium>())
                 ?? throw new Exception("Unable to deserialize JSON into list of PublicCompendium objects.");
 
             // Return the PublicCompendium object.
-            return compendiumList.FirstOrDefault(new PublicCompendium());
+            return compendiumList.FirstOrDefault(new Compendium());
         }
 
         /// <summary>
@@ -100,13 +100,13 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Create a dictionary of objects to serialize.
-            Dictionary<string, List<PublicCompendium>> dictionary
+            Dictionary<string, List<Compendium>> dictionary
                 = new ()
                 {
                     {
-                        "WebScraperPublicCompendiums", new List<PublicCompendium>
+                        "WebScraperPublicCompendiums", new List<Compendium>
                         {
-                            (PublicCompendium)compendium,
+                            (Compendium)compendium,
                         }
                     },
                 };
