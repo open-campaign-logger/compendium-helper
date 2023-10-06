@@ -99,16 +99,18 @@ namespace CampaignKit.Compendium.Helper.Services
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 this.StatusChanged?.Invoke(this, $"Converting source data set to campaign entry: {source.SourceDataSetName}");
-                var campaignEntry = await this.ConvertToCampaignEntry(source);
-                if (string.IsNullOrEmpty(campaignEntry.RawPublic) || string.IsNullOrEmpty(campaignEntry.RawText))
+                try
                 {
-                    this.StatusChanged?.Invoke(this, $"Unable to retrieve data for source data set: {source.SourceDataSetName}.");
-                    continue;
+                    var campaignEntry = await this.ConvertToCampaignEntry(source);
+                    campaignEntries.Add(campaignEntry);
+                    progress += progressPerEntry;
+                    this.ProgressChanged?.Invoke(this, (int)progress);
                 }
-
-                campaignEntries.Add(campaignEntry);
-                progress += progressPerEntry;
-                this.ProgressChanged?.Invoke(this, (int)progress);
+                catch (FetchException fe)
+                {
+                    this.StatusChanged?.Invoke(this, $"Unable to download source data {fe.Message}");
+                    break;
+                }
             }
 
             var campaign = new Campaign()
