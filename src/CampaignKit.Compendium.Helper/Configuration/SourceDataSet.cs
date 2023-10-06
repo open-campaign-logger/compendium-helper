@@ -1,4 +1,4 @@
-﻿// <copyright file="DataSet.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="SourceDataSet.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Represents a set of source data for a Tabletop Role-Playing Game (TTRPG) system.
     /// </summary>
@@ -29,10 +31,15 @@ namespace CampaignKit.Compendium.Core.Configuration
         public int? ImportLimit { get; set; } = int.MaxValue;
 
         /// <summary>
+        /// Gets or sets a value indicating whether the data set should be rendered as a public campaign entry or a private one.
+        /// </summary>
+        public bool IsPublic { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets a list of default labels to apply to all entries imported
         /// from this data source.
         /// </summary>
-        public List<string> Labels { get; set; } = new List<string>();
+        public List<string> Labels { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the name of the parser to use for deserializing license data.
@@ -42,7 +49,12 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the Uniform Resource Identifier (URI) where the license data for the game source data is located.
         /// </summary>
-        public string LicenseDataURI { get; set; } = string.Empty;
+        public string LicenseDataUri { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the Markdown conversion of the extracted HTML.
+        /// </summary>
+        public string Markdown { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets a value indicating whether new data should be downloaded to replace
@@ -63,12 +75,7 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the Uniform Resource Identifier (URI) where the actual game source data is located.
         /// </summary>
-        public string SourceDataSetURI { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Gets or sets the list of XPath/HTML susbstitutions to use with for this data source.
-        /// </summary>
-        public List<Substitution> Substitutions { get; set; } = new List<Substitution> { };
+        public string SourceDataSetUri { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the tag entry to use for campaign entries derived from this source.
@@ -85,17 +92,6 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// </summary>
         public string XPath { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the data set should be rendered as a public campaign entry or a private one.
-        /// </summary>
-        public bool IsPublic { get; set; } = false;
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return this.SourceDataSetName;
-        }
-
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
@@ -111,6 +107,12 @@ namespace CampaignKit.Compendium.Core.Configuration
         public override int GetHashCode()
         {
             return this.SourceDataSetName.GetHashCode();
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return this.SourceDataSetName;
         }
     }
 }

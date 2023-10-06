@@ -1,0 +1,56 @@
+﻿<RadzenCard class="rz-card">
+    <RadzenRow Gap="1rem">
+        <RadzenText class="rz-text-subtitle2" TagName="TagName.H3">Label Properties</RadzenText>
+    </RadzenRow>
+
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="12">
+            <RadzenStack>
+                <RadzenFormField Text="@_labels["labelName"]" Variant="@_variant" Style="width: 100%">
+                    <End>
+                        <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["labelName"]))" />
+                    </End>
+                    <ChildContent>
+                        <RadzenTextBox @bind-Value="@SelectedSource.LabelName" Disabled="true"/>
+                    </ChildContent>
+                </RadzenFormField>
+                <RadzenFieldset Text="@_labels["sources"]">
+                    <RadzenListBox AllowFiltering="true"
+                                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    Multiple="true"
+                                    Data="@AllSources"
+                                    TextProperty="SourceDataSetName"
+                                    ValueProperty="SourceDataSetName"
+                                    @bind-Value="SelectedDataSets"
+                                    Change="@(OnChange)"
+                                    Style="width:100%; height:300px;" />
+                </RadzenFieldset>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+@code {
+    /// <summary>
+    /// Sets the variant of the object to Outlined.
+    /// </summary>
+    Variant _variant = Variant.Outlined;
+
+    /// <summary>
+    /// Dictionary containing tooltips for form fields.
+    /// </summary>
+    Dictionary<string, string> _tooltips = new()
+    {
+        {"labelName", "A unique name for the label."},
+        {"sources", "A list of sources associated with this label."},
+    };
+
+    /// <summary>
+    /// Dictionary containing labels for form fields.
+    /// </summary>
+    Dictionary<string, string> _labels = new()
+    {
+        {"labelName", "Name"},
+        {"sources", "Sources"},
+    };
+}

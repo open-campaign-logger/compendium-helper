@@ -1,4 +1,4 @@
-﻿// <copyright file="PublicCompendium.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="Compendium.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,18 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
     using System.Data;
+    using System.Text.Json.Serialization;
 
-    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     /// <summary>
     /// Represents the configuration of an open-source compendium within the application.
     /// These should be defined and shared in the appsettings.json file.
     /// </summary>
-    public class PublicCompendium : ICompendium
+    public class Compendium : ICompendium
     {
         /// <inheritdoc/>
         public string CompendiumService { get; set; } = string.Empty;
@@ -45,15 +46,16 @@ namespace CampaignKit.Compendium.Core.Configuration
         public bool OverwriteExisting { get; set; } = false;
 
         /// <inheritdoc/>
-        public List<Prompt> Prompts { get; set; } = new List<Prompt> { };
+        public List<Prompt> Prompts { get; set; } = new () { };
 
         /// <inheritdoc/>
-        public List<SourceDataSet> SourceDataSets { get; set; } = new List<SourceDataSet>();
+        public List<SourceDataSet> SourceDataSets { get; set; } = new ();
 
         /// <inheritdoc/>
         public string Title { get; set; } = string.Empty;
 
         /// <inheritdoc/>
+        [JsonIgnore]
         public List<string> UniqueLabels
         {
             get
@@ -67,23 +69,24 @@ namespace CampaignKit.Compendium.Core.Configuration
         }
 
         /// <inheritdoc/>
-        public List<SourceDataSetGrouping> SourceDataSetGroupings
+        [JsonIgnore]
+        public List<LabelGroup> SourceDataSetGroupings
         {
             get
             {
-                // SourceDataSetGrouping for SourceDataSets with labels
+                // SelectedSource for SourceDataSets with labels
                 var labeledGroupings = this.SourceDataSets
                     .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
                     .GroupBy(pair => pair.Label)
                     .Where(group => !string.IsNullOrEmpty(group.Key))
-                    .Select(group => new SourceDataSetGrouping
+                    .Select(group => new LabelGroup
                     {
                         LabelName = group.Key,
                         SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                     });
 
-                // SourceDataSetGrouping for SourceDataSets without labels
-                var noLabelGrouping = new SourceDataSetGrouping
+                // SelectedSource for SourceDataSets without labels
+                var noLabelGrouping = new LabelGroup
                 {
                     LabelName = "No Label",
                     SourceDataSets = this.SourceDataSets

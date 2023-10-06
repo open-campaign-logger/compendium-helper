@@ -1,0 +1,89 @@
+﻿<RadzenCard class="rz-card">
+    <RadzenRow Gap="1rem">
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Compendium Properties</RadzenText>
+    </RadzenRow>
+
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="12">
+            <RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@_labels["title"]" Variant="@_variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["title"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SelectedCompendium.Title" Change="OnCompendiumTitleChanged" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@_labels["description"]" Variant="@_variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["description"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextArea @bind-Value="@SelectedCompendium.Description" id="description" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@_labels["gameSystem"]" Variant="@_variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["gameSystem"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SelectedCompendium.GameSystem" id="gameSystem" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+
+                <RadzenStack Orientation="Orientation.Horizontal">
+                    <RadzenFormField Text="@_labels["imageUrl"]" Variant="@_variant" Style="width: 100%">
+                        <End>
+                            <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["imageUrl"]))" />
+                        </End>
+                        <ChildContent>
+                            <RadzenTextBox @bind-Value="@SelectedCompendium.ImageUrl" id="imageUrl" />
+                        </ChildContent>
+                    </RadzenFormField>
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+@code {
+    /// <summary>
+    /// Sets the variant of the object to Outlined.
+    /// </summary>
+    private Variant _variant = Variant.Outlined;
+
+    /// <summary>
+    /// Dictionary containing labels for form fields.
+    /// </summary>
+    private Dictionary<string, string> _labels = new()
+    {
+        {"title", "Name"},
+        {"description", "Description"},
+        {"gameSystem", "Game System"},
+        {"imageUrl", "Image URL."},
+        {"isActive", "Is Active?"},
+        {"overwriteExisting", "Overwrite Existing?"}
+    };
+
+    /// <summary>
+    /// Dictionary containing tooltips for form fields.
+    /// </summary>
+    private Dictionary<string, string> _tooltips = new()
+    {
+        {"title", "Provide a name for the compendium."},
+        {"description", "Provide a brief description of this compendium."},
+        {"gameSystem", "Which game system does this compendium belong to?"},
+        {"imageUrl", "Provide a URL to an image for this compendium."},
+        {"isActive", "Should the compendium generator consider this configuration active during processing?"},
+        {"overwriteExisting", "Should files downloaded during a previous compendium generation run be overwritten?"}
+    };
+}
