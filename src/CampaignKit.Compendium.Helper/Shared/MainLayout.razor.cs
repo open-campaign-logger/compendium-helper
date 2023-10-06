@@ -89,6 +89,17 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
             await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "campaign-logger.json");
         }
 
+        private async Task OnAdd()
+        {
+            this.Logger.LogInformation("User selected to add sources..");
+
+            await this.DialogService.OpenAsync<AddSourcesDialog>(
+                "Add Sources to Compendium",
+                new Dictionary<string, object>                {
+                    { "Compendium", this.SelectedCompendium },
+                });
+        }
+
         /// <summary>
         /// Method to handle the generation of a campaign JSON file based on the selected compendium.
         /// </summary>

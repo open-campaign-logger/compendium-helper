@@ -18,7 +18,7 @@
                     <RadzenMenuItem Text="W.O.I.N." Icon="folder" Click="@(args => ShowPackageDialog(_packages["woin"][0], _packages["woin"][1]))" />
                 </RadzenMenuItem>
                 <RadzenMenuItem Text="Compendium" Icon="library_books" Visible="(SelectedCompendium != null)">
-                    <RadzenMenuItem Text="Add Sources..." Icon="add" />
+                    <RadzenMenuItem Text="Add Sources..." Icon="add" Click="OnAdd"/>
                     <RadzenMenuItem Text="Generate" Icon="loop" Click="OnGenerate" />
                 </RadzenMenuItem>                
             </RadzenMenu>
