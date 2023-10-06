@@ -18,7 +18,7 @@ namespace CampaignKit.Compendium.Helper.Pages
 {
     using System;
 
-    using CampaignKit.Compendium.Core.Configuration;
+    using CampaignKit.Compendium.Helper.Configuration;
 
     using Microsoft.AspNetCore.Components;
 
@@ -29,12 +29,6 @@ namespace CampaignKit.Compendium.Helper.Pages
     /// </summary>
     public partial class Navigator
     {
-        /// <summary>
-        /// Gets or sets the ICompendium object.
-        /// </summary>
-        [Parameter]
-        public ICompendium Compendium { get; set; }
-
         /// <summary>
         /// Gets or sets the EventCallback for the compendium collapsed event.
         /// </summary>
@@ -60,10 +54,16 @@ namespace CampaignKit.Compendium.Helper.Pages
         public EventCallback<string> LabelExpanded { get; set; }
 
         /// <summary>
-        /// Gets or sets the EventCallback for DataSet selection.
+        /// Gets or sets the ICompendium object.
         /// </summary>
         [Parameter]
-        public EventCallback<string> SourceDataSetSelected { get; set; }
+        public ICompendium SelectedCompendium { get; set; }
+
+        /// <summary>
+        /// Gets or sets the EventCallback for source selection.
+        /// </summary>
+        [Parameter]
+        public EventCallback<(string, string)> SourceSelected { get; set; }
 
         /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
@@ -73,7 +73,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             get
             {
-                return this.Compendium.SourceDataSetGroupings
+                return this.SelectedCompendium.SourceDataSetGroupings
                         .SelectMany(s => s.SourceDataSets)
                         .Select(ds => ds.SourceDataSetName)
                         .Distinct();
@@ -111,12 +111,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             if (string.IsNullOrWhiteSpace(this.SearchTerm))
             {
-                this.FilteredCompendium = this.Compendium;
+                this.FilteredCompendium = this.SelectedCompendium;
             }
             else
             {
                 this.FilteredCompendium.SourceDataSets =
-                    this.Compendium.SourceDataSets
+                    this.SelectedCompendium.SourceDataSets
                     .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
@@ -171,10 +171,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Event handler for when a data set is selected in the menu.
         /// </summary>
         /// <param name="args">The menu item event arguments.</param>
+        /// <param name="label">The label name.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        private async Task OnSourceDataSetSelected(MenuItemEventArgs args)
+        private async Task OnSourceDataSetSelected(MenuItemEventArgs args, string label)
         {
-            await this.SourceDataSetSelected.InvokeAsync(args.Text);
+            await this.SourceSelected.InvokeAsync((args.Text, label));
         }
     }
 }

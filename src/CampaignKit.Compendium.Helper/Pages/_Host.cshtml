@@ -6,6 +6,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Compendium Helper</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="~/" />
@@ -13,7 +14,76 @@
     <link href="_content/Radzen.Blazor/css/material-base.css" rel="stylesheet" />
     <link rel="icon" href="favicon.ico" />
     <link href="css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+
+    <!-- JS/Blazor Interop Functions -->
+    <script>
+
+        // Interop functions for the window title object.
+        window.setTitle = (title) => {
+            document.title = title;
+        }
+
+        // Interop functions for the SimpleMDE control.
+        window.simpleMDEInterop = {
+
+            // Create a function the Blazor code can call to enable editing of the SimpleMDE control.
+            enableEditor: function () {
+                // Log the markdown value
+                console.log("Enabling editor");
+
+                // Enable the SimpleMDE control if it's not already enabled
+                if (!window.simplemde.isPreviewActive()) {
+                    window.simplemde.togglePreview();
+                };
+            },
+
+            // Create a function the Blazor code can call to disable editing of the SimpleMDE control.
+            disableEditor: function () {
+                // Log the markdown value
+                console.log("Disabling editor");
+
+                // Disable the SimpleMDE control if it's not already disabled
+                if (!window.simplemde.isPreviewActive()) {
+                    window.simplemde.togglePreview();
+                };
+            },
+
+            // Sets the value of window.simplemde to the markdown string passed in as an argument.
+            setMarkdown: function (markdown, dotNetReference) {
+                // Log the markdown value
+                console.log("Setting markdown:", markdown.substring(0, 50).replace(/\r\n|\r|\n/g, ' ') + (markdown.length > 50 ? "..." : ""));  // Log the first 50 characters of markdown value, add "..." if there's more
+
+                // Remove the existing SimpleMDE instance if it exists
+                if (window.simplemde) {
+                    window.simplemde.toTextArea();
+                    window.simplemde = null;
+                }
+
+                // Create a new instance of the SimpleMDE library and assign it to the window.simplemde variable
+                // Get the element with the id of 'markdownEditor' and assign it to the SimpleMDE instance
+                window.simplemde = new SimpleMDE({
+                    element: document.getElementById('markdownEditor'),
+                    // Add a toolbar to this editor with all available toolbar icons except the preview, side-by-side and fullscreen.
+                    toolbar: ["bold", "italic", "heading-smaller", "heading-bigger", "code", "quote", "unordered-list", "ordered-list", "clean-block", "link", "image", "table", "horizontal-rule", "preview"]
+                });
+
+                // Add a callback to the Blazor method OnContentChanged when the content of the SimpleMDE editor changes
+                window.simplemde.codemirror.on("change", function () {
+                    var content = simplemde.value();
+                    dotNetReference.invokeMethodAsync("OnContentChanged", content);
+                });
+
+                // Set the value of window.simplemde to the markdown string
+                window.simplemde.value(markdown);
+
+                // Return success flag
+                return true;
+            }
+        };
+
+    </script>
 </head>
 <body>
     <component type="typeof(App)" render-mode="ServerPrerendered" />
@@ -31,5 +101,6 @@
 
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 </body>
 </html>

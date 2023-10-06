@@ -1,4 +1,4 @@
-// <copyright file="DownloadService.cs" company="Jochen Linnemann - IT-Service">
+// <copyright file="FetchService.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,21 +16,23 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
+    using CampaignKit.Compendium.Helper.Data;
+
     /// <summary>
-    /// DownloadService class provides methods for downloading data from the web.
+    /// FetchService class provides methods for downloading data from the web.
     /// </summary>
-    public class DownloadService
+    public class FetchService
     {
-        private readonly ILogger<DownloadService> logger;
+        private readonly ILogger<FetchService> logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DownloadService"/> class.
+        /// Initializes a new instance of the <see cref="FetchService"/> class.
         /// </summary>
         /// <param name="logger">Logger object for logging.</param>
         /// <returns>
-        /// DownloadService object.
+        /// BrowserService object.
         /// </returns>
-        public DownloadService(ILogger<DownloadService> logger)
+        public FetchService(ILogger<FetchService> logger)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -40,7 +42,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// </summary>
         /// <param name="url">The URL of the web page.</param>
         /// <returns>The contents of the web page.</returns>
-        public async Task<string> GetWebPage(string url)
+        public async Task<string> GetWebPageAync(string url)
         {
             // Validate parameters
             if (url == null)
@@ -49,7 +51,7 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            this.logger.LogInformation("GetWebPage method called with URL: {Url}", url[..50]);
+            this.logger.LogInformation("GetWebPageAync method called with URL: {Url}", url);
 
             // Create an HTTP client
             using var client = new HttpClient();
@@ -72,17 +74,31 @@ namespace CampaignKit.Compendium.Helper.Services
             // Request non-compressed output
             client.DefaultRequestHeaders.Add("Accept-Encoding", "identity");
 
-            // Send a GET request to the URL
-            var response = await client.GetAsync(url);
+            // Create a string to hold the response
+            var content = string.Empty;
 
-            // Ensure the request was successful
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                // Send a GET request to the URL
+                var response = await client.GetAsync(url);
 
-            // Read the response as a string
-            var content = await response.Content.ReadAsStringAsync();
+                // Ensure the request was successful
+                response.EnsureSuccessStatusCode();
+
+                // Read the response as a string
+                content = await response.Content.ReadAsStringAsync();
+            }
+            catch (HttpRequestException httpEx)
+            {
+                // Log the exception
+                this.logger.LogError(httpEx, "Unable to download web page from URL: {}. Error: {}.", url, httpEx.Message);
+
+                // Provide a generic error message
+                content = $"Failed to download data source content.  Error:{httpEx.Message}";
+            }
 
             // Log the response
-            this.logger.LogInformation("GetWebPage method completed with response: {Response}", content[..50]);
+            this.logger.LogInformation("GetWebPageAync method completed with response: {Response}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
 
             // Return the response
             return content;

@@ -16,7 +16,8 @@
 
 namespace CampaignKit.Compendium.Helper.Services
 {
-    using CampaignKit.Compendium.Core.Configuration;
+    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     using Newtonsoft.Json;
 
@@ -25,6 +26,9 @@ namespace CampaignKit.Compendium.Helper.Services
     /// </summary>
     public partial class CompendiumService
     {
+        /// <summary>
+        /// Gets or sets the ILogger into the Logger property.
+        /// </summary>
         private readonly ILogger<CompendiumService> logger;
 
         /// <summary>
@@ -32,7 +36,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// </summary>
         /// <param name="logger">Logger object for logging.</param>
         /// <returns>
-        /// DownloadService object.
+        /// BrowserService object.
         /// </returns>
         public CompendiumService(ILogger<CompendiumService> logger)
         {
@@ -45,7 +49,7 @@ namespace CampaignKit.Compendium.Helper.Services
         /// </summary>
         /// <param name="json">The JSON string to deserialize.</param>
         /// <returns>A PublicCompendium object.</returns>
-        public ICompendium LoadCompendiums(string json)
+        public ICompendium LoadCompendium(string json)
         {
             // Validate parameters
             if (json == null)
@@ -54,13 +58,13 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Log method entry.
-            this.logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", json[0..50]);
+            this.logger.LogInformation("LoadCompendium method called with JSON: {JSON}.", RegexHelper.RemoveUnwantedCharactersFromLogMessage(json));
 
             // Deserialize the JSON string into a Dictionary object using Newtonsoft.Json
-            Dictionary<string, List<PublicCompendium>> dictionary;
+            Dictionary<string, List<Compendium>> dictionary;
             try
             {
-                dictionary = JsonConvert.DeserializeObject<Dictionary<string, List<PublicCompendium>>>(json);
+                dictionary = JsonConvert.DeserializeObject<Dictionary<string, List<Compendium>>>(json);
             }
             catch (Exception e)
             {
@@ -75,11 +79,41 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Get the List of PublicCompendium objects from the dictionary.
-            List<PublicCompendium> compendiumList = dictionary.Values.FirstOrDefault(new List<PublicCompendium>())
+            List<Compendium> compendiumList = dictionary.Values.FirstOrDefault(new List<Compendium>())
                 ?? throw new Exception("Unable to deserialize JSON into list of PublicCompendium objects.");
 
             // Return the PublicCompendium object.
-            return compendiumList.FirstOrDefault(new PublicCompendium());
+            return compendiumList.FirstOrDefault(new Compendium());
+        }
+
+        /// <summary>
+        /// Saves the provided compendium object as a JSON string.
+        /// </summary>
+        /// <param name="compendium">The compendium object to be saved.</param>
+        /// <returns>A JSON string representation of the compendium object.</returns>
+        public string SaveCompendium(ICompendium compendium)
+        {
+            // Validate parameters
+            if (compendium == null)
+            {
+                throw new ArgumentNullException(nameof(compendium));
+            }
+
+            // Create a dictionary of objects to serialize.
+            Dictionary<string, List<Compendium>> dictionary
+                = new ()
+                {
+                    {
+                        "WebScraperPublicCompendiums", new List<Compendium>
+                        {
+                            (Compendium)compendium,
+                        }
+                    },
+                };
+
+            // Serialize compendium into a JSON string using Newtonsoft.Json.
+            string json = JsonConvert.SerializeObject(dictionary);
+            return json;
         }
     }
 }

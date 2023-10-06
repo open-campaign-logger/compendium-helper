@@ -3,20 +3,54 @@
 
 ## Description:
 
-The "Compendium Helper" is a dedicated Blazor application designed to assist users in creating configuration files tailored for the "Compendium Generator" application. The "Compendium Generator" serves as a standalone web tool beneficial for interactively constructing an open-sourced rule system compendium.
+**Compendium Helper** is a single-page web application designed to assist users in creating
+[Campaign Logger](https://app.campaign-logger.com/) campaign files from publicly available
+websites.
 
-## Purpose:
+At is core, **Compendium Helper** is a web scraper; you provide the configuration and 
+it will scrape and format the content for import into the Campaign Logger application.
 
-With the "Compendium Helper", users can effortlessly manage and navigate various entities, primarily focusing on the "Compendium", and smoothly generate configuration files compatible with the "Compendium Generator".
+## Configuration Items:
 
-## Features:
+### Compendiums
 
-1. **Helper**: Upload and manage files, specifically configuration files that the "Compendium Generator" can utilize.
-2. **Compendium Properties**: View and modify the properties of the Compendium, ensuring compatibility with the generator.
-3. **Home Page (Index)**: A welcoming page that provides a streamlined interface for the primary functionalities.
-4. **Label Properties**: Administer properties related to labels, ensuring that they match the requirements of the "Compendium Generator".
-5. **Navigator**: Delve into the Compendium's content, utilizing search and menu functionalities to create configurations with ease.
-6. **Source Data Set Properties**: Examine and adjust properties of different source datasets, aligning them with the generator's expectations.
+> **Compendium** = A collection of websites to scrape.
+
+A compendium is a collection of sources that are related to a specific topic.  For example,
+a compendium could be created for the topic of "Dwarves", and contain all of the dwarves that
+are found in the various source materials that you have access to.
+
+Once you've configured a compendium you can:
+1. Execute the web scraper to scrape the sources that are contained in the compendium and generate a Campaign Logger file, or
+2. Download the compendium configuration file so that you can share it with others.
+ 
+### Sources
+
+> **Source** = A public webpage that contains content that you want to scrape.
+
+Sources are the individual items that are found in a compendium.  For example, an entity
+could be a specific dwarf, such as "Gimli", or it could be a group of dwarves, such as "The
+Dwarves of the Lonely Mountain".
+
+### Labels
+
+> **Label** = A meta-data label to used to group sources.
+
+Labels are used to categorize sources. For example, you could create labels called "Mountain",
+"Hill" and "Deep" to categorize the various dwarves that are found in your compendium.
+
+Labels are used throughout the Campaign Logger application as meta-data to help you find
+content more quickly.
+
+## Configuration:
+
+### Compendiums
+
+![img.png](doc/compendium-properties.png)
+
+### SourceS
+
+### Labels
 
 ## Dependencies:
 
@@ -48,3 +82,10 @@ With the "Compendium Helper", users can effortlessly manage and navigate various
    - **Description**: Uses Roslyn to analyze C# code to ensure it adheres to StyleCop's coding rules.
    - **Link**: [StyleCop.Analyzers on GitHub](https://github.com/DotNetAnalyzers/StyleCopAnalyzers)
 
+8. **Radzen.Blazor**
+   - **Description**: A set of native Blazor components.
+   - **Link**: [Radzen Blazor Components](https://blazor.radzen.com/)
+
+9. **HtmlAgilityPack**
+   - **Description**: A .NET library that parses HTML.
+   - **Link**: [HtmlAgilityPack on GitHub](https://html-agility-pack.net/)

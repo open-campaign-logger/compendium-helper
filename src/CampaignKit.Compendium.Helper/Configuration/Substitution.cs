@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Core.Configuration
+namespace CampaignKit.Compendium.Helper.Configuration
 {
     /// <summary>
     /// Configuration class for XPath/HTML substitutions.
@@ -29,6 +29,6 @@ namespace CampaignKit.Compendium.Core.Configuration
         /// <summary>
         /// Gets or sets the HTML to replace the element in the document found at location XPath.
         /// </summary>
-        public string HTML { get; set; } = string.Empty;
+        public string Html { get; set; } = string.Empty;
     }
 }

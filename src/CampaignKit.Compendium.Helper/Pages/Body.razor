@@ -1,0 +1,42 @@
+<RadzenRow>
+    <RadzenColumn Size="2">
+        <RadzenStack Gap="1rem">
+            <RadzenCard Visible="@(SelectedCompendium != null)">
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
+                <Navigator SelectedCompendium="SelectedCompendium"
+                           CompendiumExpanded="OnCompendiumExpanded"
+                           CompendiumCollapsed="OnCompendiumCollapsed"
+                           LabelExpanded="OnLabelExpanded"
+                           LabelCollapsed="OnLabelCollapsed"
+                           SourceSelected="OnSourceDataSetSelected" />
+            </RadzenCard>
+        </RadzenStack>
+    </RadzenColumn>
+    <RadzenColumn Size="10">
+        <RadzenTabs SelectedIndex="SelectedIndex">
+            <Tabs>
+
+                <RadzenTabsItem Text="Compendium" Visible="SelectedCompendium !=null" >
+                    <Compendium SelectedCompendium="SelectedCompendium" 
+                        CompendiumTitleChanged="OnCompendiumTitleChanged"/>
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Label" Visible="SelectedSourceDataSetGrouping !=null" >
+                    <Label SelectedSource="SelectedSourceDataSetGrouping"
+                           AllSources="SelectedCompendium.SourceDataSets"
+                           LabelAssignmentChanged="OnLabelAssignmentChanged"></Label>
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Source" Visible="SelectedSourceDataSet != null" >
+                    <Source SelectedSource="SelectedSourceDataSet" 
+                        SourceDataSetTitleChanged="OnSourceDataSetTitleChanged"/>
+                </RadzenTabsItem>
+
+                <RadzenTabsItem Text="Editor" Visible="SelectedSourceDataSet != null">
+                    <Editor Source="SelectedSourceDataSet"/>
+                </RadzenTabsItem>
+
+            </Tabs>
+        </RadzenTabs>
+    </RadzenColumn>
+</RadzenRow>
