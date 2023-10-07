@@ -8,15 +8,12 @@
             <RadzenPanelMenuItem Text="@SelectedCompendium.Title" Expanded="true" Icon="book" ExpandedChanged="@((isExpanded) => OnCompendiumExpandedChanged(isExpanded, SelectedCompendium.Title))">
                 @foreach (var grouping in SelectedCompendium.SourceDataSetGroupings)
                 {
-                    if (grouping.SourceDataSets is {Count: > 0 })
-                    {
-                        <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping.LabelName))">
-                            @foreach (var dataSet in grouping.SourceDataSets)
-                            {
-                                <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceDataSetSelected(args, grouping.LabelName)" />
-                            }
-                        </RadzenPanelMenuItem>
-                    }
+                    <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping.LabelName))">
+                        @foreach (var dataSet in grouping.SourceDataSets)
+                        {
+                            <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceDataSetSelected(args, grouping.LabelName)" />
+                        }
+                    </RadzenPanelMenuItem>
                 }
             </RadzenPanelMenuItem>
         </RadzenPanelMenu>

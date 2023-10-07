@@ -66,7 +66,31 @@
                 window.simplemde = new SimpleMDE({
                     element: document.getElementById('markdownEditor'),
                     // Add a toolbar to this editor with all available toolbar icons except the preview, side-by-side and fullscreen.
-                    toolbar: ["bold", "italic", "heading-smaller", "heading-bigger", "code", "quote", "unordered-list", "ordered-list", "clean-block", "link", "image", "table", "horizontal-rule", "preview"]
+                    toolbar: [
+                        "bold",
+                        "italic",
+                        "heading-smaller",
+                        "heading-bigger",
+                        "code",
+                        "quote",
+                        "unordered-list",
+                        "ordered-list",
+                        "clean-block",
+                        "link",
+                        "image",
+                        "table",
+                        "horizontal-rule",
+                        "preview",
+                        "|",
+                        {
+                           name: "reload",
+                            action: function reload(editor) {
+                                dotNetReference.invokeMethodAsync("OnReload");
+                            },
+                            className: "fa fa-refresh",
+                            title: "Reload from Source",
+                        }
+                    ]
                 });
 
                 // Add a callback to the Blazor method OnContentChanged when the content of the SimpleMDE editor changes

@@ -19,8 +19,12 @@ namespace CampaignKit.Compendium.Helper.Pages
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
     using CampaignKit.Compendium.Helper.Services;
+    using CampaignKit.Compendium.Helper.Shared;
+
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
+
+    using Radzen;
 
     /// <summary>
     /// Partial class for the Editor component.
@@ -28,15 +32,16 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Editor
     {
         /// <summary>
-        /// Gets or sets a value indicating whether the source data has customized content.
-        /// </summary>
-        public bool HasCustomizedContent { get; set; } = false;
-
-        /// <summary>
         /// Gets or sets the selected source data set.
         /// </summary>
         [Parameter]
         public SourceDataSet Source { get; set; }
+
+        /// <summary>
+        /// Gets or sets the DialogService dependency.
+        /// </summary>
+        [Inject]
+        private DialogService DialogService { get; set; }
 
         /// <summary>
         /// Gets or sets the JSRuntime for JS interop.
@@ -83,6 +88,19 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
+        /// Method that is invoked when a reload event occurs.
+        /// </summary>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// </returns>
+        [JSInvokable]
+        public async Task OnReload()
+        {
+            this.Logger.LogInformation("OnReload");
+            await this.LoadContent(true);
+        }
+
+        /// <summary>
         /// Invokes the JavaScript function to set the markdown.
         /// </summary>
         /// <param name="firstRender">A boolean value indicating whether this is the first render.</param>
@@ -126,21 +144,36 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             this.Logger.LogInformation("OnParametersSetAsync");
             await base.OnParametersSetAsync();
+            await this.LoadContent();
+        }
+
+        /// <summary>
+        /// Loads the content by downloading the web page source data and converting it to markdown format.
+        /// </summary>
+        /// <param name="forceReload">A value indicating whether to force a reload of the source data set.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// </returns>
+        private async Task LoadContent(bool forceReload = false)
+        {
             try
             {
                 // Download the web page source data
                 if (this.Source != null)
                 {
                     // Load the source data set
-                    await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source);
+                    await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source, forceReload);
 
                     // Log the markdown
                     this.Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Source.Markdown));
                 }
             }
-            catch (JSException jsEx)
+            catch (FetchException fe)
             {
-                this.Logger.LogError(jsEx, "Unable to get HTML content from editor.");
+                await this.DialogService.OpenAsync<MessageDialog>(
+                    "Download Error",
+                    new Dictionary<string, object>                    {                        { "Prompt", fe.Message },
+                    });
             }
         }
     }

@@ -1,0 +1,90 @@
+﻿<style>
+    .noWrapTextArea {
+        white-space: nowrap;
+        overflow-x: auto;
+    }
+</style>
+
+<RadzenStack>
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenFormField Text="@_labels["urls"]" Variant="@_variant" Style="width: 100%">
+            <End>
+                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["urls"]))" />
+            </End>
+            <ChildContent>
+                <RadzenTextArea Class="noWrapTextArea" Cols="60" Rows="10" @bind-Value="@URLs"></RadzenTextArea>
+            </ChildContent>
+        </RadzenFormField>
+    </RadzenStack>
+
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenFormField Text="@_labels["labels"]" Variant="@_variant" Style="width: 100%">
+            <End>
+                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["labels"]))" />
+            </End>
+            <ChildContent>
+                <RadzenTextArea @bind-Value="@Labels" />
+            </ChildContent>
+        </RadzenFormField>
+    </RadzenStack>
+
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenFormField Text="@_labels["tag"]" Variant="@_variant" Style="width: 100%">
+            <End>
+                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["tag"]))" />
+            </End>
+            <ChildContent>
+                <RadzenDropDown @bind-Value="@Tag" Data="@Tags" />
+            </ChildContent>
+        </RadzenFormField>
+    </RadzenStack>
+
+    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="@OnAdd" Disabled="!IsValid"></RadzenButton>
+    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Click="@OnCancel"></RadzenButton>
+</RadzenStack>
+
+
+@code {
+
+
+    private readonly List<string> Tags = new List<string>
+    {
+        "~",
+        "@​",
+        "^",
+        "#",
+        "$",
+        "!",
+        "%",
+        "*",
+        "§​",
+        "+",
+        "-",
+        "&",
+    };
+
+    /// <summary>
+    /// Sets the variant of the object to Outlined.
+    /// </summary>
+    private Variant _variant = Variant.Outlined;
+
+    /// <summary>
+    /// Dictionary containing labels for form fields.
+    /// </summary>
+    private Dictionary<string, string> _labels = new()
+    {
+        {"urls", "Sources*"},
+        {"labels", "Labels"},
+        {"tag", "Tag*"}
+    };
+
+    /// <summary>
+    /// Dictionary containing tooltips for form fields.
+    /// </summary>
+    private Dictionary<string, string> _tooltips = new()
+    {
+        {"urls", "Provide a list of URLs to add as compendium sources.  One entry per line."},
+        {"labels", "Provide a comma separated list of labels to apply to the sources. (Optional)"},
+        {"tag", "Provide a tag to apply to the sources."}
+    };
+}

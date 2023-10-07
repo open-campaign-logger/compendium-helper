@@ -126,13 +126,17 @@ namespace CampaignKit.Compendium.Helper.Pages
             {
                 var json = await this.CampaignLoggerService.ConvertToCampaignJson(this.SelectedCompendium, this.CancellationTokenSource.Token);
                 await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "compendium-helper.json");
+                this.DialogService.Close();
             }
             catch (OperationCanceledException oce)
             {
                 this.Logger.LogInformation(oce, "User canceled the campaign generation process.");
             }
-
-            this.DialogService.Close();
+            catch (FetchException fe)
+            {
+                this.OnProgressChanged(this, 100);
+                this.OnStatusChanged(this, $"Unable to download source data {fe.Message}");
+            }
         }
 
         /// <summary>

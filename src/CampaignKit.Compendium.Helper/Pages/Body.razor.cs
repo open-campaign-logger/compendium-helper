@@ -65,7 +65,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <summary>
         /// Gets or sets the property to store the selected label.
         /// </summary>
-        private LabelGroup SelectedSourceDataSetGrouping { get; set; }
+        private LabelGroup SelectedLabelGroup { get; set; }
 
         /// <summary>
         /// Method called after the component has been rendered.
@@ -78,13 +78,13 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
-        /// This method is called when the component's parameters are set. It first calls the base implementation of the method. Then, it sets the SelectedSourceDataSet and SelectedSourceDataSetGrouping properties to null.
+        /// This method is called when the component's parameters are set. It first calls the base implementation of the method. Then, it sets the SelectedSourceDataSet and SelectedLabelGroup properties to null.
         /// </summary>
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
             this.SelectedSourceDataSet = null;
-            this.SelectedSourceDataSetGrouping = null;
+            this.SelectedLabelGroup = null;
             this.SelectedIndex = 0;
         }
 
@@ -97,7 +97,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("SelectedCompendium collapsed: {CompendiumName}", compendiumName);
 
             // Update user selections
-            this.SelectedSourceDataSetGrouping = null;
+            this.SelectedLabelGroup = null;
             this.SelectedSourceDataSet = null;
             this.SelectedIndex = 0;
         }
@@ -111,7 +111,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("SelectedCompendium expanded: {CompendiumName}", compendiumName);
 
             // Update user selections
-            this.SelectedSourceDataSetGrouping = null;
+            this.SelectedLabelGroup = null;
             this.SelectedSourceDataSet = null;
             this.SelectedIndex = 0;
         }
@@ -146,7 +146,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Label collapsed: {LabelName}", labelName);
 
             // Update user selections
-            this.SelectedSourceDataSetGrouping
+            this.SelectedLabelGroup
                 = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
             this.SelectedSourceDataSet = null;
             this.SelectedIndex = 1;
@@ -161,22 +161,22 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Label expanded: {LabelName}", labelName);
 
             // Update user selections
-            this.SelectedSourceDataSetGrouping
+            this.SelectedLabelGroup
                 = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null);
             this.SelectedSourceDataSet = null;
             this.SelectedIndex = 1;
         }
 
         /// <summary>
-        /// Handles the SelectedSource clicked event by logging the selected SelectedSource name.
+        /// Handles the LabelGroup clicked event by logging the selected LabelGroup name.
         /// </summary>
         /// <param name="values">The tuple containing the selected data set name and the lable it's associated with.</param>
         private async Task OnSourceDataSetSelected((string sourceDataSetName, string labelName) values)
         {
-            this.Logger.LogInformation("Selected SelectedSource: {SourceDataSetName}", values.sourceDataSetName);
+            this.Logger.LogInformation("Selected LabelGroup: {SourceDataSetName}", values.sourceDataSetName);
 
             // Update user selections
-            this.SelectedSourceDataSetGrouping
+            this.SelectedLabelGroup
                 = this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(values.labelName), null);
             this.SelectedSourceDataSet
                 = this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null);
