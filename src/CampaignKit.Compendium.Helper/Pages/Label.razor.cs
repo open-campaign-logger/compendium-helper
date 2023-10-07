@@ -49,12 +49,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         public LabelGroup LabelGroup { get; set; }
 
         /// <summary>
-        /// Gets or sets the TooltipService.
-        /// </summary>
-        [Inject]
-        public TooltipService TooltipService { get; set; }
-
-        /// <summary>
         /// Gets or sets the Logger.
         /// </summary>
         [Inject]
@@ -64,6 +58,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the values of the selected data sets.
         /// </summary>
         private IEnumerable<string> SelectedDataSets { get; set; }
+
+        /// <summary>
+        /// Gets or sets the TooltipService.
+        /// </summary>
+        [Inject]
+        private TooltipService TooltipService { get; set; }
 
         /// <summary>
         /// Sorts the source data sets and gets the list of selected data sets.
@@ -111,9 +111,6 @@ namespace CampaignKit.Compendium.Helper.Pages
 
                 // Remove the label from the sourceDataSet.
                 sourceDataSet.Labels.Remove(this.LabelGroup.LabelName);
-
-                // Remove the label from the source data set grouping.
-                this.LabelGroup.SourceDataSets.Remove(sourceDataSet);
 
                 // Remove the label from the source data set.
                 this.AllSources.First(x => x.SourceDataSetName.Equals(tbr)).Labels.Remove(this.LabelGroup.LabelName);

@@ -19,7 +19,7 @@ namespace CampaignKit.Compendium.Helper.Pages
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
     using CampaignKit.Compendium.Helper.Services;
-    using CampaignKit.Compendium.Helper.Shared;
+    using CampaignKit.Compendium.Helper.Dialogs;
 
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;

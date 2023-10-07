@@ -15,6 +15,8 @@
 // </copyright>
 
 namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
+    using CampaignKit.Compendium.Helper.Dialogs;
     using CampaignKit.Compendium.Helper.Pages;
     using CampaignKit.Compendium.Helper.Services;
 
@@ -28,6 +30,12 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
     /// </summary>
     public partial class MainLayout    {
         /// <summary>
+        /// Gets or sets the BrowserService dependency.
+        /// </summary>
+        [Inject]
+        private BrowserService BrowserService { get; set; }
+
+        /// <summary>
         /// Gets or sets the Compendium dependency.
         /// </summary>
         [Inject]
@@ -37,12 +45,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// Gets or sets the DialogService dependency.
         /// </summary>
         [Inject]        private DialogService DialogService { get; set; }
-
-        /// <summary>
-        /// Gets or sets the BrowserService dependency.
-        /// </summary>
-        [Inject]
-        private BrowserService BrowserService { get; set; }
 
         /// <summary>
         /// Gets or sets the JS runtime dependency.
@@ -62,12 +64,39 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
+        /// Gets or sets the property to store the selected label.
+        /// </summary>
+        private LabelGroup SelectedLabelGroup { get; set; }
+
+        /// <summary>
+        /// Gets or sets the selected source data set.
+        /// </summary>
+        private SourceDataSet SelectedSourceDataSet { get; set; }
+
+        /// <summary>
         /// Instantiates a new, blank compendium and assigns it to the SelectedCompendium property.
         /// </summary>
         private void CreateDefaultCompendium()
         {
             this.Logger.LogInformation("Creating default compendium.");
             this.SelectedCompendium = new Configuration.Compendium();
+        }
+
+        /// <summary>
+        /// Method to handle the event when the user selects to add sources.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnAddSources()
+        {
+            this.Logger.LogInformation("User selected to add sources..");
+
+            await this.DialogService.OpenAsync<AddSourcesDialog>(
+                "Add Sources to Compendium",
+                new Dictionary<string, object>                {
+                    { "Compendium", this.SelectedCompendium },
+                });
         }
 
         /// <summary>
@@ -87,17 +116,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
 
             var json = this.CompendiumService.SaveCompendium(this.SelectedCompendium);
             await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "compendium-helper.json");
-        }
-
-        private async Task OnAdd()
-        {
-            this.Logger.LogInformation("User selected to add sources..");
-
-            await this.DialogService.OpenAsync<AddSourcesDialog>(
-                "Add Sources to Compendium",
-                new Dictionary<string, object>                {
-                    { "Compendium", this.SelectedCompendium },
-                });
         }
 
         /// <summary>
@@ -130,6 +148,59 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected to create a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
 
         /// <summary>
+        /// Method to handle the event when the user selects to remove sources.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnRemoveSources()
+        {
+            this.Logger.LogInformation("User selected to remove sources..");
+
+            await this.DialogService.OpenAsync<RemoveSourcesDialog>(
+                "Remove Sources from Compendium",
+                new Dictionary<string, object>
+                {
+                    { "AllSources", this.SelectedCompendium.SourceDataSets },                    { "SourceRemoved", EventCallback.Factory.Create(this, this.OnSourceRemoved) },
+                });
+        }
+
+        /// <summary>
+        /// Event handler for when the selected compendium changes.
+        /// </summary>
+        /// <param name="compendium">The new selected compendium.</param>
+        private void OnSelectedCompendiumChanged(ICompendium compendium)
+        {
+            this.SelectedCompendium = compendium;
+        }
+
+        /// <summary>
+        /// Event handler for when the selected label group changes.
+        /// </summary>
+        /// <param name="labelGroup">The new selected label group.</param>
+        private void OnSelectedLabelGroupChanged(LabelGroup labelGroup)
+        {
+            this.SelectedLabelGroup = labelGroup;
+        }
+
+        /// <summary>
+        /// Event handler for when the selected source data set changes.
+        /// </summary>
+        /// <param name="sourceDataSet">The new selected source data set.</param>
+        private void OnSelectedSourceDataSetChanged(SourceDataSet sourceDataSet)
+        {
+            this.SelectedSourceDataSet = sourceDataSet;
+        }
+
+        /// <summary>
+        /// Method called when the source is removed.
+        /// </summary>
+        private void OnSourceRemoved()
+        {
+            this.Logger.LogInformation("Source removed.");
+        }
+
+        /// <summary>
         /// Method called when the upload of a compendium is complete.
         /// </summary>
         /// <param name="compendium">The uploaded compendium.</param>
@@ -156,7 +227,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private async void ShowPackageDialog(string packageName, string packageUrl)        {
             this.Logger.LogInformation("Show package dialog.");
 
-            await this.DialogService.OpenAsync<PackageDialog>(
+            await this.DialogService.OpenAsync<LoadConfigurationDialog>(
                 "Load Package",
                 new Dictionary<string, object>
                 {                    { "Prompt", $"Load the {packageName} package and replace the current compendium configuration?" },                    { "PackageFileName", packageUrl },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },
@@ -168,6 +239,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private async void ShowUploadDialog()        {
             this.Logger.LogInformation("Show upload dialog.");
 
-            await this.DialogService.OpenAsync<UploadDialog>(                "Upload Compendium",                new Dictionary<string, object>
+            await this.DialogService.OpenAsync<UploadConfigurationDialog>(                "Upload Compendium",                new Dictionary<string, object>
                 {                    { "Prompt", "Select an existing compendium configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
     }}

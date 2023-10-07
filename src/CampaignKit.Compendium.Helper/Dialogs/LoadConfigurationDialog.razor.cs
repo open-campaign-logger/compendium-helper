@@ -1,4 +1,4 @@
-﻿// <copyright file="PackageDialog.razor.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="LoadConfigurationDialog.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Shared
+namespace CampaignKit.Compendium.Helper.Dialogs
 {
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Services;
@@ -24,9 +24,9 @@ namespace CampaignKit.Compendium.Helper.Shared
     using Radzen;
 
     /// <summary>
-    /// Code behind class for PackageDialog.
+    /// Code behind class for LoadConfigurationDialog.
     /// </summary>
-    public partial class PackageDialog
+    public partial class LoadConfigurationDialog
     {
         /// <summary>
         /// Gets or sets the event callback for when the upload is complete.
@@ -70,19 +70,7 @@ namespace CampaignKit.Compendium.Helper.Shared
         /// Gets or sets injects an ILogger dependency into the Logger property.
         /// </summary>
         [Inject]
-        private ILogger<PackageDialog> Logger { get; set; }
-
-        /// <summary>
-        /// Handles the event when the "No" option is selected.
-        /// </summary>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnNo()
-        {
-            this.Logger.LogInformation("User selected No.");
-            this.DialogService.Close();
-        }
+        private ILogger<LoadConfigurationDialog> Logger { get; set; }
 
         /// <summary>
         /// Handles the event when the "Yes" option is selected.

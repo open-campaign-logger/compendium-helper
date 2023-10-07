@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Shared{
+namespace CampaignKit.Compendium.Helper.Dialogs{
     using CampaignKit.Compendium.Helper.Configuration;
 
     using Microsoft.AspNetCore.Components;
@@ -25,7 +25,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
     /// Represents a dialog for adding sources.
     /// </summary>
     public partial class AddSourcesDialog    {
-
         /// <summary>
         /// Gets or sets the Compendium parameter.
         /// </summary>
@@ -76,7 +75,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private string URLs { get; set; }
 
         /// <summary>
-        /// Method to handle the "OnAdd" event. 
+        /// Method to handle the "OnAddSources" event.
         /// Splits the "Labels" and "URLs" properties into arrays.
         /// Creates a list to store instances of the "SourceDataSet" class.
         /// Iterates through each URL and creates a new instance of "SourceDataSet" with trimmed URL and labels.
@@ -100,15 +99,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
 
             // Close the dialog.
             this.DialogService.Close();
-
         }
-
-        /// <summary>
-        /// Closes the dialog.
-        /// </summary>
-        public void OnCancel()        {
-            // Close the dialog.
-            this.DialogService.Close();        }
 
         /// <summary>
         /// Shows a tooltip for the specified element reference with the given tooltip text and optional tooltip options.

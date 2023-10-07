@@ -12,7 +12,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// </copyright>namespace CampaignKit.Compendium.Helper.Shared{
+// </copyright>
+
+namespace CampaignKit.Compendium.Helper.Dialogs{
     using Microsoft.AspNetCore.Components;
 
     using Radzen;
@@ -51,13 +53,4 @@
         /// A task representing the asynchronous operation.
         /// </returns>
         private async Task OnYes()        {            this.Logger.LogInformation("User selected Yes.");
-            await this.OnSelection.InvokeAsync(true);            this.DialogService.Close();        }
-
-        /// <summary>
-        /// Handles the event when the "No" option is selected.
-        /// </summary>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnNo()        {
-            this.Logger.LogInformation("User selected No.");            await this.OnSelection.InvokeAsync(false);            this.DialogService.Close();        }    }}
+            await this.OnSelection.InvokeAsync(true);            this.DialogService.Close();        }    }}
