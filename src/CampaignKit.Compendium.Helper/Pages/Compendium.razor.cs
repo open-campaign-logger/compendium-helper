@@ -17,10 +17,8 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Helper.Configuration;
-    using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
-    using Microsoft.JSInterop;
 
     using Radzen;
 

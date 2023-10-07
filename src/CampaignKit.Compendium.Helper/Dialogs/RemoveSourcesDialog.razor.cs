@@ -34,10 +34,10 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         public List<SourceDataSet> AllSources { get; set; }
 
         /// <summary>
-        /// Gets or sets the EventCallback for the label assignment change event.
+        /// Gets or sets the DialogService dependency.
         /// </summary>
-        [Parameter]
-        public EventCallback SourceRemoved { get; set; }
+        [Inject]
+        private DialogService DialogService { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the SelectedDataSets property is not null or empty.
@@ -91,8 +91,8 @@ namespace CampaignKit.Compendium.Helper.Dialogs
             // Remove the selected data sets from the list of all sources.
             this.AllSources.RemoveAll(x => this.SelectedDataSets.Contains(x.SourceDataSetName));
 
-            // Raise the SourceRemoved event.
-            await this.SourceRemoved.InvokeAsync();
+            // Close the dialog box.
+            this.DialogService.Close();
         }
     }
 }

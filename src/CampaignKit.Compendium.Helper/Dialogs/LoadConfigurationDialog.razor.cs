@@ -39,7 +39,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         /// Gets or sets the package filename.
         /// </summary>
         [Parameter]
-        public string PackageFileName { get; set; }
+        public string SampleConfigurationName { get; set; }
 
         /// <summary>
         /// Gets or sets the prompt for the parameter.
@@ -81,7 +81,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         private async Task OnYes()
         {
             this.Logger.LogInformation("User selected Yes.");
-            var json = await this.FileService.ReadPackageFileAsync(this.PackageFileName);
+            var json = await this.FileService.ReadPackageFileAsync(this.SampleConfigurationName);
             var compendium = this.CompendiumService.LoadCompendium(json);
             await this.OnUploadComplete.InvokeAsync(compendium);
             this.DialogService.Close();

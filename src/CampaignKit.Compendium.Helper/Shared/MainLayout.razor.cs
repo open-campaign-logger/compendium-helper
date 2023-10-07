@@ -161,7 +161,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
                 "Remove Sources from Compendium",
                 new Dictionary<string, object>
                 {
-                    { "AllSources", this.SelectedCompendium.SourceDataSets },                    { "SourceRemoved", EventCallback.Factory.Create(this, this.OnSourceRemoved) },
+                    { "AllSources", this.SelectedCompendium.SourceDataSets },
                 });
         }
 
@@ -193,14 +193,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         }
 
         /// <summary>
-        /// Method called when the source is removed.
-        /// </summary>
-        private void OnSourceRemoved()
-        {
-            this.Logger.LogInformation("Source removed.");
-        }
-
-        /// <summary>
         /// Method called when the upload of a compendium is complete.
         /// </summary>
         /// <param name="compendium">The uploaded compendium.</param>
@@ -222,15 +214,16 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <summary>
         /// Opens a dialog to confirm loading a package and replacing the current compendium configuration.
         /// </summary>
-        /// <param name="packageName">The name of the package to load.</param>
-        /// <param name="packageUrl">The URL of the package.</param>
-        private async void ShowPackageDialog(string packageName, string packageUrl)        {
+        /// <param name="sampleName">The name of the package to load.</param>
+        /// <param name="sampleUrl">The URL of the package.</param>
+        private async void ShowPackageDialog(string sampleName, string sampleUrl)        {
             this.Logger.LogInformation("Show package dialog.");
 
             await this.DialogService.OpenAsync<LoadConfigurationDialog>(
-                "Load Package",
+                "Load Sample Configuration",
                 new Dictionary<string, object>
-                {                    { "Prompt", $"Load the {packageName} package and replace the current compendium configuration?" },                    { "PackageFileName", packageUrl },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },
+                {                    { "Prompt", $"Load the {sampleName} sample configuration?" },                    { "SampleConfigurationName", sampleUrl },
+                    { "OnUploadComplete",  EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },
                 });        }
 
         /// <summary>
@@ -240,5 +233,5 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
             this.Logger.LogInformation("Show upload dialog.");
 
             await this.DialogService.OpenAsync<UploadConfigurationDialog>(                "Upload Compendium",                new Dictionary<string, object>
-                {                    { "Prompt", "Select an existing compendium configuration." },                    { "OnUploadComplete", EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
+                {                    { "Prompt", "Select an existing compendium configuration." },                    { "OnUploadComplete",  EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
     }}
