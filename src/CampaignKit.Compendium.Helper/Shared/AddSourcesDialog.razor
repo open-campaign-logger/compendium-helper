@@ -39,9 +39,10 @@
         </RadzenFormField>
     </RadzenStack>
 
-    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="@OnAdd"></RadzenButton>
+    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="@OnAdd" Disabled="!IsValid"></RadzenButton>
     <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Click="@OnCancel"></RadzenButton>
 </RadzenStack>
+
 
 @code {
 
@@ -72,9 +73,9 @@
     /// </summary>
     private Dictionary<string, string> _labels = new()
     {
-        {"urls", "Sources"},
+        {"urls", "Sources*"},
         {"labels", "Labels"},
-        {"tag", "Tag"}
+        {"tag", "Tag*"}
     };
 
     /// <summary>

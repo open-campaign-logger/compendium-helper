@@ -38,6 +38,21 @@ namespace CampaignKit.Compendium.Helper.Shared{
         [Inject]        private DialogService DialogService { get; set; }
 
         /// <summary>
+        /// Gets a value indicating whether the URLs property and Tag property are not null or empty.
+        /// </summary>
+        /// <returns>
+        /// True if the URLs property and Tag property are not null or empty, otherwise false.
+        /// </returns>
+        private bool IsValid
+        {
+            get
+            {
+                // Return true if the URLs property is not null or empty and a Tag is selected.
+                return !string.IsNullOrEmpty(this.URLs) && !string.IsNullOrEmpty(this.Tag);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the labels for a specific object.
         /// </summary>
         /// <value>The labels.</value>
@@ -91,7 +106,9 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <summary>
         /// Closes the dialog.
         /// </summary>
-        public void OnCancel()        {            // Close the dialog.            this.DialogService.Close();        }
+        public void OnCancel()        {
+            // Close the dialog.
+            this.DialogService.Close();        }
 
         /// <summary>
         /// Shows a tooltip for the specified element reference with the given tooltip text and optional tooltip options.
