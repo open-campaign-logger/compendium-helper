@@ -73,7 +73,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             get
             {
-                return this.SelectedCompendium.SourceDataSetGroupings
+                return this.SelectedCompendium.LabelGroups
                         .SelectMany(s => s.SourceDataSets)
                         .Select(ds => ds.SourceDataSetName)
                         .Distinct();

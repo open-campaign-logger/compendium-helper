@@ -83,6 +83,40 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         }
 
         /// <summary>
+        /// Adds the new list of labels to the TemporaryLabels property of the SelectedCompendium if they are not already present in the UniqueLabels property.
+        /// </summary>
+        /// <param name="labels">The list of labels to be added.</param>
+        private void OnLabelsAdded(List<string> labels)
+        {
+            // Add the new list of labels to this.SelectedCompendium.TemporaryLabels if it's not in this.SelectedCompendium.UniqueLabels.
+            foreach (var label in labels)
+            {
+                if (!this.SelectedCompendium.UniqueLabels.Contains(label))
+                {
+                    this.SelectedCompendium.TemporaryLabels.Add(label);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Method to handle the event when the user selects to add labels.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnAddLables()
+        {
+            this.Logger.LogInformation("User selected to add labels..");
+
+            await this.DialogService.OpenAsync<AddLabelDialog>(
+                "Add Labels to Compendium",
+                new Dictionary<string, object>
+                {
+                    { "OnLabelsAdded", EventCallback.Factory.Create<List<string>>(this, this.OnLabelsAdded) },
+                });
+        }
+
+        /// <summary>
         /// Method to handle the event when the user selects to add sources.
         /// </summary>
         /// <returns>

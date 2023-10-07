@@ -84,15 +84,16 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
         /// </summary>
         public void OnAdd()        {
             // Assemble the label list from the provided values.
-            var labelList = this.Labels?.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>();
+            var labelList = this.Labels?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList() ?? new List<string>();
             labelList.Add("*New");
 
             // the urls property will have carriage returns in it, so we need to split on that
-            var urls = this.URLs.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);            var sourceNumber = 0;
-
-            foreach (var url in urls)            {
-                sourceNumber++;                var source = new SourceDataSet()                {
-                    SourceDataSetName = $"Source {sourceNumber}",
+            var urls = this.URLs.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var url in urls)            {                // Determine the next available source dataset name.                var sourceDataSetName = "Source";                var sourceDataSetNumber = 1;                while (this.Compendium.SourceDataSets.Any(sds => sds.SourceDataSetName.Equals($"{sourceDataSetName} {sourceDataSetNumber}")))
+                {
+                    sourceDataSetNumber++;
+                }                var source = new SourceDataSet()                {
+                    SourceDataSetName = $"{sourceDataSetName} {sourceDataSetNumber}",
                     SourceDataSetUri = url.Trim(), // Trim the URL to remove any leading or trailing whitespace
                     Labels = labelList,                    TagSymbol = this.Tag,                };                this.Compendium.SourceDataSets.Add(source); // Add the SourceDataSet instance to the list
             }

@@ -116,21 +116,21 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         /// </summary>
         /// <param name="labelName">The name of the collapsed label.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnLabelCollapsed(string labelName)        {            this.Logger.LogInformation("Label collapsed: {LabelName}", labelName);            await this.SelectedLabelGroupChanged.InvokeAsync(this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null));            await this.SelectedSourceDataSetChanged.InvokeAsync(null);            this.SelectedIndex = 1;        }
+        private async Task OnLabelCollapsed(string labelName)        {            this.Logger.LogInformation("Label collapsed: {LabelName}", labelName);            await this.SelectedLabelGroupChanged.InvokeAsync(this.SelectedCompendium.LabelGroups.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null));            await this.SelectedSourceDataSetChanged.InvokeAsync(null);            this.SelectedIndex = 1;        }
 
         /// <summary>
         /// Event handler for when a label is expanded.
         /// </summary>
         /// <param name="labelName">The name of the label that was expanded.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnLabelExpanded(string labelName)        {            this.Logger.LogInformation("Label expanded: {LabelName}", labelName);            await this.SelectedLabelGroupChanged.InvokeAsync(this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null));            await this.SelectedSourceDataSetChanged.InvokeAsync(null);            this.SelectedIndex = 1;        }
+        private async Task OnLabelExpanded(string labelName)        {            this.Logger.LogInformation("Label expanded: {LabelName}", labelName);            await this.SelectedLabelGroupChanged.InvokeAsync(this.SelectedCompendium.LabelGroups.FirstOrDefault(sdsg => sdsg.LabelName.Equals(labelName), null));            await this.SelectedSourceDataSetChanged.InvokeAsync(null);            this.SelectedIndex = 1;        }
 
         /// <summary>
         /// Event handler for when a source data set is selected.
         /// </summary>
         /// <param name="values">A tuple containing the source data set name and label name.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSourceDataSetSelected((string sourceDataSetName, string labelName) values)        {            this.Logger.LogInformation("Selected LabelGroup: {SourceDataSetName}", values.sourceDataSetName);            await this.SelectedLabelGroupChanged.InvokeAsync(this.SelectedCompendium.SourceDataSetGroupings.FirstOrDefault(sdsg => sdsg.LabelName.Equals(values.labelName), null));            await this.SelectedSourceDataSetChanged.InvokeAsync(this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null));            this.SelectedIndex = 2;        }
+        private async Task OnSourceDataSetSelected((string sourceDataSetName, string labelName) values)        {            this.Logger.LogInformation("Selected LabelGroup: {SourceDataSetName}", values.sourceDataSetName);            await this.SelectedLabelGroupChanged.InvokeAsync(this.SelectedCompendium.LabelGroups.FirstOrDefault(sdsg => sdsg.LabelName.Equals(values.labelName), null));            await this.SelectedSourceDataSetChanged.InvokeAsync(this.SelectedCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(values.sourceDataSetName), null));            this.SelectedIndex = 2;        }
 
         /// <summary>
         /// Event handler for when the title of the selected SourceDataSet changes.
