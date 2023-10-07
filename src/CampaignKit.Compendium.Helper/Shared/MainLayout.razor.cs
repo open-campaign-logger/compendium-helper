@@ -86,7 +86,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
             }
 
             var json = this.CompendiumService.SaveCompendium(this.SelectedCompendium);
-            await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "campaign-logger.json");
+            await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "compendium-helper.json");
         }
 
         private async Task OnAdd()

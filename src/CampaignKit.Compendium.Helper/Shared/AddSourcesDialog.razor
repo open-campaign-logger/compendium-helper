@@ -12,7 +12,7 @@
                 <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["urls"]))" />
             </End>
             <ChildContent>
-                <RadzenTextArea Class="noWrapTextArea" Cols="60" Rows="10" Value="@URLs"></RadzenTextArea>
+                <RadzenTextArea Class="noWrapTextArea" Cols="60" Rows="10" @bind-Value="@URLs"></RadzenTextArea>
             </ChildContent>
         </RadzenFormField>
     </RadzenStack>
@@ -28,11 +28,40 @@
         </RadzenFormField>
     </RadzenStack>
 
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenFormField Text="@_labels["tag"]" Variant="@_variant" Style="width: 100%">
+            <End>
+                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["tag"]))" />
+            </End>
+            <ChildContent>
+                <RadzenDropDown @bind-Value="@Tag" Data="@Tags" />
+            </ChildContent>
+        </RadzenFormField>
+    </RadzenStack>
+
     <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="@OnAdd"></RadzenButton>
     <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Click="@OnCancel"></RadzenButton>
 </RadzenStack>
 
 @code {
+
+
+    private readonly List<string> Tags = new List<string>
+    {
+        "~",
+        "@​",
+        "^",
+        "#",
+        "$",
+        "!",
+        "%",
+        "*",
+        "§​",
+        "+",
+        "-",
+        "&",
+    };
+
     /// <summary>
     /// Sets the variant of the object to Outlined.
     /// </summary>
@@ -44,7 +73,8 @@
     private Dictionary<string, string> _labels = new()
     {
         {"urls", "Sources"},
-        {"labels", "Labels"}
+        {"labels", "Labels"},
+        {"tag", "Tag"}
     };
 
     /// <summary>
@@ -53,6 +83,7 @@
     private Dictionary<string, string> _tooltips = new()
     {
         {"urls", "Provide a list of URLs to add as compendium sources.  One entry per line."},
-        {"labels", "Provide a comma separated list of labels to apply to the sources. (Optional)"}
+        {"labels", "Provide a comma separated list of labels to apply to the sources. (Optional)"},
+        {"tag", "Provide a tag to apply to the sources."}
     };
 }

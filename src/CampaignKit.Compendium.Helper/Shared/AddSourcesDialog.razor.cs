@@ -44,6 +44,11 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private string Labels { get; set; }
 
         /// <summary>
+        /// Gets or sets the tag to apply to the sources.
+        /// </summary>
+        private string Tag { get; set; }
+
+        /// <summary>
         /// Gets or sets the TooltipService used for hover-over help popups.
         /// </summary>
         [Inject] // TooltipService
@@ -63,23 +68,30 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// Adds the "SourceDataSet" instance to the list.
         /// Performs further operations with the "sourceDataSets" list.
         /// </summary>
-        public void OnAdd()        {            var labels = this.Labels.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        public void OnAdd()        {
+            // Assemble the label list from the provided values.
+            var labelList = this.Labels?.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>();
+            labelList.Add("*New");
 
             // the urls property will have carriage returns in it, so we need to split on that
-            var urls = this.URLs.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);            var urlList = new List<string>();            urlList.AddRange(urls);            urlList.Add("*New");            var sourceNumber = 0;
+            var urls = this.URLs.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);            var sourceNumber = 0;
 
             foreach (var url in urls)            {
                 sourceNumber++;                var source = new SourceDataSet()                {
                     SourceDataSetName = $"Source {sourceNumber}",
                     SourceDataSetUri = url.Trim(), // Trim the URL to remove any leading or trailing whitespace
-                    Labels = urlList,                };                this.Compendium.SourceDataSets.Add(source); // Add the SourceDataSet instance to the list
+                    Labels = labelList,                    TagSymbol = this.Tag,                };                this.Compendium.SourceDataSets.Add(source); // Add the SourceDataSet instance to the list
             }
+
+            // Close the dialog.
+            this.DialogService.Close();
+
         }
 
         /// <summary>
         /// Closes the dialog.
         /// </summary>
-        public void OnCancel()        {            this.DialogService.Close();        }
+        public void OnCancel()        {            // Close the dialog.            this.DialogService.Close();        }
 
         /// <summary>
         /// Shows a tooltip for the specified element reference with the given tooltip text and optional tooltip options.
