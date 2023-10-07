@@ -100,19 +100,23 @@ namespace CampaignKit.Compendium.Helper.Services
             }
 
             // Create a dictionary of objects to serialize.
-            Dictionary<string, List<Compendium>> dictionary
-                = new ()
+            Dictionary<string, List<Compendium>> dictionary = new ()
+            {
                 {
+                    "WebScraperPublicCompendiums", new List<Compendium>
                     {
-                        "WebScraperPublicCompendiums", new List<Compendium>
-                        {
-                            (Compendium)compendium,
-                        }
-                    },
-                };
+                        (Compendium)compendium,
+                    }
+                },
+            };
 
-            // Serialize compendium into a JSON string using Newtonsoft.Json.
-            string json = JsonConvert.SerializeObject(dictionary);
+            // Serialize compendium into a JSON string using Newtonsoft.Json and the custom contract resolver.
+            string json = JsonConvert.SerializeObject(dictionary, new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+            });
+
             return json;
         }
     }

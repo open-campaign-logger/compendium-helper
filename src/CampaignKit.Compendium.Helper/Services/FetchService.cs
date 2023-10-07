@@ -38,10 +38,12 @@ namespace CampaignKit.Compendium.Helper.Services
         }
 
         /// <summary>
-        /// Asynchronously retrieves the contents of a web page from the specified URL.
+        /// Asynchronously downloads a web page from the specified URL.
         /// </summary>
-        /// <param name="url">The URL of the web page.</param>
-        /// <returns>The contents of the web page.</returns>
+        /// <param name="url">The url to download the web page from.</param>
+        /// <returns>The HTML contents of the webpage.</returns>
+        /// <exception cref="ArgumentNullException">If a null URL is provided.</exception>
+        /// <exception cref="FetchException">If the HTTP request failed.</exception>
         public async Task<string> GetWebPageAync(string url)
         {
             // Validate parameters
@@ -90,11 +92,8 @@ namespace CampaignKit.Compendium.Helper.Services
             }
             catch (HttpRequestException httpEx)
             {
-                // Log the exception
-                this.logger.LogError(httpEx, "Unable to download web page from URL: {}. Error: {}.", url, httpEx.Message);
-
-                // Provide a generic error message
-                content = $"Failed to download data source content.  Error:{httpEx.Message}";
+                // Throw the exception
+                throw new FetchException($"Unable to download web page from URL: {url}. Error: {httpEx.Message}", httpEx);
             }
 
             // Log the response

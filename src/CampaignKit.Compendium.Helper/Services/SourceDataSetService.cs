@@ -17,7 +17,6 @@
 namespace CampaignKit.Compendium.Helper.Services
 {
     using CampaignKit.Compendium.Helper.Configuration;
-    using CampaignKit.Compendium.Helper.Data;
 
     using HtmlAgilityPack;
 
@@ -69,57 +68,43 @@ namespace CampaignKit.Compendium.Helper.Services
         /// Loads the response data set and set the HTML and Markdown properties.
         /// </summary>
         /// <param name="source">The source data set to load.</param>
+        /// <param name="forceReload">A value indicating whether to force a reload of the source data set.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task LoadSourceDataSetAsync(SourceDataSet source)
+        public async Task LoadSourceDataSetAsync(SourceDataSet source, bool forceReload = false)
         {
-            this.Logger.LogInformation("Loading source data set: {Source}", source);
+            this.Logger.LogInformation("Loading source data set: {Source}, Force reload: {Force}", source, forceReload);
 
-            try
+            // If the source data set already has a Markdown property, then it has already been loaded.
+            if (!string.IsNullOrEmpty(source.Markdown) && !forceReload)
             {
-                if (!string.IsNullOrEmpty(source.Markdown))
-                {
-                    return;
-                }
-                else
-                {
-                    // Otherwise, download the HTML from the source's SourceDataSetURI property.
-                    var response = await this.DownloadService.GetWebPageAync(source.SourceDataSetUri);
-
-                    // If response is null or empty, set the Markdown property to a message indicating that the source data set could not be loaded.
-                    if (string.IsNullOrEmpty(response) || response.StartsWith("Failed to download data"))
-                    {
-                        this.Logger.LogError("Unable to download content for source data set: {Source}", source.SourceDataSetName);
-                        source.Markdown = response;
-                        return;
-                    }
-
-                    // If the source's XPath is not null or empty navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
-                    if (!string.IsNullOrEmpty(source.XPath))
-                    {
-                        // Load the HTML into an HtmlAgilityPack HtmlDocument object.
-                        var doc = new HtmlDocument();
-                        doc.LoadHtml(response);
-
-                        // Navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
-                        try
-                        {
-                            var node = doc.DocumentNode.SelectSingleNode(source.XPath);
-                            response = node.OuterHtml;
-                        }
-                        catch (Exception ex)
-                        {
-                            response = $"Unable to find node corresponding to XPath: {source.XPath}";
-                        }
-                    }
-
-                    // Convert to markdown
-                    source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(response);
-                }
+                return;
             }
-            catch (Exception ex)
+            else
             {
-                this.Logger.LogError(ex, "Error loading response data set.");
-                source.Markdown = "Unable to load source data.";
+                // Otherwise, download the HTML from the source's SourceDataSetURI property.
+                var response = await this.DownloadService.GetWebPageAync(source.SourceDataSetUri);
+
+                // If the source's XPath is not null or empty navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
+                if (!string.IsNullOrEmpty(source.XPath))
+                {
+                    // Load the HTML into an HtmlAgilityPack HtmlDocument object.
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(response);
+
+                    // Navigate to the starting XPath denoted by the SourceDataSetXPath property using the HtmlAgilityPack.
+                    try
+                    {
+                        var node = doc.DocumentNode.SelectSingleNode(source.XPath);
+                        response = node.OuterHtml;
+                    }
+                    catch (Exception ex)
+                    {
+                        response = $"Unable to find node corresponding to XPath: {source.XPath}";
+                    }
+                }
+
+                // Convert to markdown
+                source.Markdown = this.MarkdownService.ConvertHtmlToMarkdown(response);
             }
         }
     }

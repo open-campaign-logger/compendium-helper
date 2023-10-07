@@ -17,9 +17,8 @@
 namespace CampaignKit.Compendium.Helper.Configuration
 {
     using System.Data;
-    using System.Text.Json.Serialization;
-
     using CampaignKit.Compendium.Helper.Data;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Represents the configuration of an open-source compendium within the application.
@@ -74,7 +73,7 @@ namespace CampaignKit.Compendium.Helper.Configuration
         {
             get
             {
-                // SelectedSource for SourceDataSets with labels
+                // LabelGroup for SourceDataSets with labels
                 var labeledGroupings = this.SourceDataSets
                     .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
                     .GroupBy(pair => pair.Label)
@@ -85,7 +84,7 @@ namespace CampaignKit.Compendium.Helper.Configuration
                         SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                     });
 
-                // SelectedSource for SourceDataSets without labels
+                // LabelGroup for SourceDataSets without labels
                 var noLabelGrouping = new LabelGroup
                 {
                     LabelName = "No Label",

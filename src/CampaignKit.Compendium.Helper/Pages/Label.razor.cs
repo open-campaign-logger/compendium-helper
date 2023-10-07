@@ -43,10 +43,10 @@ namespace CampaignKit.Compendium.Helper.Pages
         public EventCallback<string> LabelAssignmentChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets the SelectedSource parameter.
+        /// Gets or sets the LabelGroup parameter.
         /// </summary>
         [Parameter]
-        public LabelGroup SelectedSource { get; set; }
+        public LabelGroup LabelGroup { get; set; }
 
         /// <summary>
         /// Gets or sets the TooltipService.
@@ -80,11 +80,11 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.AllSources.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
 
             // Sort the source data sets associated with the grouping.
-            this.SelectedSource.SourceDataSets.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
+            this.LabelGroup.SourceDataSets.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
 
             // Get the list of selected data sets, convert them to a list of strings, sort them and then assign them to SelectedDataSets.
             this.SelectedDataSets
-                = this.SelectedSource.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
+                = this.LabelGroup.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
         }
 
         /// <summary>
@@ -94,32 +94,35 @@ namespace CampaignKit.Compendium.Helper.Pages
         private void OnChange(object selected)
         {
             // Log the method entry
-            this.Logger.LogInformation("Source data set association changed.");
+            this.Logger.LogInformation("Label association changed.");
 
             // Case selected to List<string> to simplify working with it.
-            var selectedSourceDataSets = (IEnumerable<string>)selected;
+            var selectedSourceDataSets = ((IEnumerable<string>)selected).ToList();
             var toBeAdded = new List<string>();
 
-            // Iterate through SelectedSource.SourceDataSets to see if any of them have been removed.  selected is a List<string>
-            var toBeRemoved = (from sourceDataSet in this.SelectedSource.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
+            // Iterate through LabelGroup.SourceDataSets to see if any of them have been removed.  selected is a List<string>
+            var toBeRemoved = (from sourceDataSet in this.LabelGroup.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
 
-            // Cycle through toBeRemoved list and remove the appropriate sourcedatasets from the SelectedSource.SourceDataSets list.
+            // Cycle through toBeRemoved list and remove the appropriate sourcedatasets from the LabelGroup.SourceDataSets list.
             foreach (var tbr in toBeRemoved)
             {
-                // Find the object in the SelectedSource.SourceDataSets lists
-                var sourceDataSet = this.SelectedSource.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
+                // Find the object in the LabelGroup.SourceDataSets lists
+                var sourceDataSet = this.LabelGroup.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
 
                 // Remove the label from the sourceDataSet.
-                sourceDataSet.Labels.Remove(this.SelectedSource.LabelName);
+                sourceDataSet.Labels.Remove(this.LabelGroup.LabelName);
 
                 // Remove the label from the source data set grouping.
-                this.SelectedSource.SourceDataSets.Remove(sourceDataSet);
+                this.LabelGroup.SourceDataSets.Remove(sourceDataSet);
+
+                // Remove the label from the source data set.
+                this.AllSources.First(x => x.SourceDataSetName.Equals(tbr)).Labels.Remove(this.LabelGroup.LabelName);
             }
 
             // Iterate through selected to see if any new labels have been added.
             foreach (var sourceDataSetName in selectedSourceDataSets)
             {
-                // If the sourceDataSetName is not in the SelectedSource.SourceDataSets list, add it.
+                // If the sourceDataSetName is not in the LabelGroup.SourceDataSets list, add it.
                 {
                     // Get the SourceDataSet object from AllSources.
                     var sourceDataSet = this.AllSources.FirstOrDefault(x => x.SourceDataSetName == sourceDataSetName);
@@ -127,16 +130,20 @@ namespace CampaignKit.Compendium.Helper.Pages
                     // Add the label to the sourceDataSet.
                     if (sourceDataSet != null)
                     {
-                        sourceDataSet.Labels.Add(this.SelectedSource.LabelName);
+                        // Add the label to the sourceDataSet if it doesn't already exist.
+                        if (!sourceDataSet.Labels.Contains(this.LabelGroup.LabelName))
+                        {
+                            sourceDataSet.Labels.Add(this.LabelGroup.LabelName);
+                        }
 
-                        // Add the sourceDataSet to the SelectedSource.SourceDataSets list.
-                        this.SelectedSource.SourceDataSets.Add(sourceDataSet);
+                        // Add the sourceDataSet to the LabelGroup.SourceDataSets list.
+                        this.LabelGroup.SourceDataSets.Add(sourceDataSet);
                     }
                 }
             }
 
             // Fire an event to notify the parent component that the label assignment has changed.
-            this.LabelAssignmentChanged.InvokeAsync(this.SelectedSource.LabelName);
+            this.LabelAssignmentChanged.InvokeAsync(this.LabelGroup.LabelName);
         }
 
         /// <summary>
