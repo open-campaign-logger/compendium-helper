@@ -25,6 +25,8 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
 
     using Radzen;
 
+    using System.Reflection.Emit;
+
     /// <summary>
     /// Represents the main layout of the application.
     /// </summary>
@@ -32,7 +34,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <summary>
         /// Gets or sets the list of temporary labels.
         /// </summary>
-        public List<string> TemporaryLabels { get; set; }
+        public List<string> TemporaryLabels { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the BrowserService dependency.
@@ -184,11 +186,52 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         }
 
         /// <summary>
+        /// Removes the specified labels from any SourceDataSets referencing them and from the TemporaryLabels collection.
+        /// </summary>
+        /// <param name="labels">The labels to be removed.</param>
+        private void OnLabelsRemoved(List<string> labels)
+        {
+            // Remove these labels from any SourceDataSets referencing them.
+            foreach (var label in labels)
+            {
+                // Find all SourceDataSets that contain the label and remove it.
+                this.SelectedCompendium.SourceDataSets.ForEach(sds => sds.Labels.Remove(label));
+            }
+
+            // Remove these labels from the TemporaryLabels collection.
+            this.TemporaryLabels = this.TemporaryLabels.Except(labels).ToList();
+        }
+
+        /// <summary>
         /// Handles the event when a new compendium selection is made by the user.
         /// </summary>
         /// <param name="selection">The selection made by the user.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected to create a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
+
+        /// <summary>
+        /// Method to handle the event when the user selects to remove labels.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnRemoveLabels()
+        {
+            this.Logger.LogInformation("User selected to remove labels...");
+
+            // Retrieve a list of labels being referenced by a SourceDataSet in the SelectedCompendium
+            var labelsInUse = this.SelectedCompendium.SourceDataSets.SelectMany(sds => sds.Labels).Distinct().ToList();
+
+            // Add labels to TemporaryLabels if they are not already in the collection
+            var allLabels = this.TemporaryLabels.Union(labelsInUse).OrderBy(label => label).ToList();
+
+            await this.DialogService.OpenAsync<RemoveLabelsDialog>(
+                "Remove Labels from Compendium",
+                new Dictionary<string, object>
+                {
+                    { "AllLabels", allLabels },
+                });
+        }
 
         /// <summary>
         /// Method to handle the event when the user selects to remove sources.

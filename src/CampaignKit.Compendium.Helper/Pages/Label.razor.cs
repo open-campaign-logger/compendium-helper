@@ -92,7 +92,6 @@ namespace CampaignKit.Compendium.Helper.Pages
 
             // Case selected to List<string> to simplify working with it.
             var selectedSourceDataSets = ((IEnumerable<string>)selected).ToList();
-            var toBeAdded = new List<string>();
 
             // Iterate through SelectedLabelGroup.SourceDataSets to see if any of them have been removed.  selected is a List<string>
             var toBeRemoved = (from sourceDataSet in this.SelectedLabelGroup.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
@@ -122,10 +121,10 @@ namespace CampaignKit.Compendium.Helper.Pages
                     if (!sourceDataSet.Labels.Contains(this.SelectedLabelGroup.LabelName))
                     {
                         sourceDataSet.Labels.Add(this.SelectedLabelGroup.LabelName);
-                    }
 
-                    // Add the sourceDataSet to the SelectedLabelGroup.SourceDataSets list.
-                    this.SelectedLabelGroup.SourceDataSets.Add(sourceDataSet);
+                        // Add the sourceDataSet to the SelectedLabelGroup.SourceDataSets list.
+                        this.SelectedLabelGroup.SourceDataSets.Add(sourceDataSet);
+                    }
                 }
             }
 

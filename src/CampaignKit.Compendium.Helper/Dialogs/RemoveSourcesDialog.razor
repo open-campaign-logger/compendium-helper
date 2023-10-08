@@ -1,18 +1,20 @@
 ﻿<RadzenStack>
-    <RadzenStack Orientation="Orientation.Horizontal">     
-        <RadzenLabel Text="@_labels["prompt"]"></RadzenLabel>
-    </RadzenStack>
     <RadzenStack Orientation="Orientation.Horizontal">
-        <RadzenFieldset Text="@_labels["sources"]">
-            <RadzenListBox AllowFiltering="true"
-                           FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                           Multiple="true"
-                           Data="AllSources"
-                           TextProperty="SourceDataSetName"
-                           ValueProperty="SourceDataSetName"
-            @bind-Value="SelectedDataSets"
-                           Style="width:100%; height:300px;" />
-        </RadzenFieldset>
+        <RadzenFormField Text="@_labels["sources"]" Variant="@_variant" Style="width: 100%">
+            <End>
+                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["sources"]))" />
+            </End>
+            <ChildContent>
+                <RadzenListBox AllowFiltering="true"
+                               FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                               Multiple="true"
+                               Data="AllSources"
+                               TextProperty="SourceDataSetName"
+                               ValueProperty="SourceDataSetName"
+                @bind-Value="SelectedDataSets"
+                               Style="width:100%; height:300px;" />
+            </ChildContent>
+        </RadzenFormField>
     </RadzenStack>
     <RadzenStack>
         <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Remove" Click="OnRemove" Disabled="!IsValid"></RadzenButton>
@@ -20,13 +22,16 @@
 </RadzenStack>
 
 @code {
+    /// <summary>
+    /// Sets the variant of the object to Outlined.
+    /// </summary>
+    private Variant _variant = Variant.Outlined;
 
     /// <summary>
     /// Dictionary containing tooltips for form fields.
     /// </summary>
     Dictionary<string, string> _tooltips = new()
     {
-        {"labelName", "A unique name for the label."},
         {"sources", "A list of sources associated with this label."},
     };
 
@@ -35,7 +40,6 @@
     /// </summary>
     Dictionary<string, string> _labels = new()
     {
-        {"prompt", "Select sources to remove from the compendium."},
         {"sources", "Sources"},
     };
 }

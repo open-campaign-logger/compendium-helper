@@ -66,6 +66,12 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         private IEnumerable<string> SelectedDataSets { get; set; }
 
         /// <summary>
+        /// Gets or sets the TooltipService dependency.
+        /// </summary>
+        [Inject]
+        private TooltipService TooltipService { get; set; }
+
+        /// <summary>
         /// Sorts the source data sets and gets the list of selected data sets.
         /// </summary>
         /// <returns>
@@ -93,6 +99,17 @@ namespace CampaignKit.Compendium.Helper.Dialogs
 
             // Close the dialog box.
             this.DialogService.Close();
+        }
+
+        /// <summary>
+        /// Shows a tooltip for the specified element reference with the given tooltip text and optional tooltip options.
+        /// </summary>
+        /// <param name="elementReference">The reference to the element for which the tooltip should be shown.</param>
+        /// <param name="tooltip">The text to be displayed in the tooltip.</param>
+        /// <param name="options">Optional tooltip options to customize the appearance and behavior of the tooltip.</param>
+        private void ShowTooltip(ElementReference elementReference, string tooltip, TooltipOptions options = null)
+        {
+            this.TooltipService.Open(elementReference, tooltip, options);
         }
     }
 }
