@@ -37,16 +37,16 @@ namespace CampaignKit.Compendium.Helper.Pages
         public List<SourceDataSet> AllSources { get; set; }
 
         /// <summary>
-        /// Gets or sets the EventCallback for the label assignment change event.
+        /// Gets or sets the EventCallback for the label group change event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> LabelAssignmentChanged { get; set; }
+        public EventCallback<LabelGroup> LabelGroupChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets the LabelGroup parameter.
+        /// Gets or sets the SelectedLabelGroup parameter.
         /// </summary>
         [Parameter]
-        public LabelGroup LabelGroup { get; set; }
+        public LabelGroup SelectedLabelGroup { get; set; }
 
         /// <summary>
         /// Gets or sets the Logger.
@@ -76,15 +76,9 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("OnParametersSetAsync");
             await base.OnParametersSetAsync();
 
-            // Sort the source data sets.
-            this.AllSources.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
-
-            // Sort the source data sets associated with the grouping.
-            this.LabelGroup.SourceDataSets.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
-
             // Get the list of selected data sets, convert them to a list of strings, sort them and then assign them to SelectedDataSets.
             this.SelectedDataSets
-                = this.LabelGroup.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
+                = this.SelectedLabelGroup.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
         }
 
         /// <summary>
@@ -100,47 +94,43 @@ namespace CampaignKit.Compendium.Helper.Pages
             var selectedSourceDataSets = ((IEnumerable<string>)selected).ToList();
             var toBeAdded = new List<string>();
 
-            // Iterate through LabelGroup.SourceDataSets to see if any of them have been removed.  selected is a List<string>
-            var toBeRemoved = (from sourceDataSet in this.LabelGroup.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
+            // Iterate through SelectedLabelGroup.SourceDataSets to see if any of them have been removed.  selected is a List<string>
+            var toBeRemoved = (from sourceDataSet in this.SelectedLabelGroup.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
 
-            // Cycle through toBeRemoved list and remove the appropriate sourcedatasets from the LabelGroup.SourceDataSets list.
+            // Cycle through toBeRemoved list and remove the appropriate sourcedatasets from the SelectedLabelGroup.SourceDataSets list.
             foreach (var tbr in toBeRemoved)
             {
-                // Find the object in the LabelGroup.SourceDataSets lists
-                var sourceDataSet = this.LabelGroup.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
+                // Find the object in the SelectedLabelGroup.SourceDataSets lists
+                var sourceDataSet = this.SelectedLabelGroup.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
 
                 // Remove the label from the sourceDataSet.
-                sourceDataSet.Labels.Remove(this.LabelGroup.LabelName);
+                sourceDataSet.Labels.Remove(this.SelectedLabelGroup.LabelName);
 
-                // Remove the label from the source data set.
-                this.AllSources.First(x => x.SourceDataSetName.Equals(tbr)).Labels.Remove(this.LabelGroup.LabelName);
+                // Remove the source data set from the SelectedLabelGroup
+                this.SelectedLabelGroup.SourceDataSets.Remove(sourceDataSet);
             }
 
             // Iterate through selected to see if any new labels have been added.
             foreach (var sourceDataSetName in selectedSourceDataSets)
             {
-                // If the sourceDataSetName is not in the LabelGroup.SourceDataSets list, add it.
+                // If the sourceDataSetName is not in the SelectedLabelGroup.SourceDataSets list, add it.
                 {
                     // Get the SourceDataSet object from AllSources.
-                    var sourceDataSet = this.AllSources.FirstOrDefault(x => x.SourceDataSetName == sourceDataSetName);
+                    var sourceDataSet = this.AllSources.First(x => x.SourceDataSetName == sourceDataSetName);
 
-                    // Add the label to the sourceDataSet.
-                    if (sourceDataSet != null)
+                    // Add the label to the sourceDataSet if it doesn't already exist.
+                    if (!sourceDataSet.Labels.Contains(this.SelectedLabelGroup.LabelName))
                     {
-                        // Add the label to the sourceDataSet if it doesn't already exist.
-                        if (!sourceDataSet.Labels.Contains(this.LabelGroup.LabelName))
-                        {
-                            sourceDataSet.Labels.Add(this.LabelGroup.LabelName);
-                        }
-
-                        // Add the sourceDataSet to the LabelGroup.SourceDataSets list.
-                        this.LabelGroup.SourceDataSets.Add(sourceDataSet);
+                        sourceDataSet.Labels.Add(this.SelectedLabelGroup.LabelName);
                     }
+
+                    // Add the sourceDataSet to the SelectedLabelGroup.SourceDataSets list.
+                    this.SelectedLabelGroup.SourceDataSets.Add(sourceDataSet);
                 }
             }
 
             // Fire an event to notify the parent component that the label assignment has changed.
-            this.LabelAssignmentChanged.InvokeAsync(this.LabelGroup.LabelName);
+            this.LabelGroupChanged.InvokeAsync(this.SelectedLabelGroup);
         }
 
         /// <summary>

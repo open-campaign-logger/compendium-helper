@@ -22,9 +22,9 @@
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Label" Visible="SelectedLabelGroup !=null" >
-                    <Label LabelGroup="SelectedLabelGroup"
+                    <Label SelectedLabelGroup="SelectedLabelGroup"
                            AllSources="SelectedCompendium.SourceDataSets"
-                           LabelAssignmentChanged="OnLabelAssignmentChanged"></Label>
+                           LabelGroupChanged="OnLabelGroupChanged"></Label>
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Source" Visible="SelectedSourceDataSet != null" >

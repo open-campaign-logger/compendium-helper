@@ -28,9 +28,9 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Source
     {
         /// <summary>
-        /// Gets or sets the LabelGroup property.
+        /// Gets or sets the SelectedLabelGroup property.
         /// </summary>
-        /// <returns>The LabelGroup object.</returns>
+        /// <returns>The SelectedLabelGroup object.</returns>
         [Parameter]
         public SourceDataSet SelectedSource { get; set; } = new ();
 

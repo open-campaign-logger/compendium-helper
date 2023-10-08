@@ -75,7 +75,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the list of temporary labels that have no corresponding SourceDataSets.
         /// </summary>
         [Parameter]
-        public List<string> TemporaryLabels { get; set; } = new ();
+        public List<string> TemporaryLabels { get; set; } = new();
 
         /// <summary>
         /// Gets the unique list of labels from the SourceDataSets and the TemporaryLabels sorted alphabetically.
@@ -181,6 +181,12 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.FilterTree();
         }
 
+        /// <summary>
+        /// Handles the event when a source data set is selected from a menu item.
+        /// </summary>
+        /// <param name="args">The event arguments containing the selected menu item.</param>
+        /// <param name="labelGroup">The label group associated with the selected source data set.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnSourceDataSetSelected(MenuItemEventArgs args, LabelGroup labelGroup)
         {
             // Retrieve the SourceDataSet from the compendium by its name
@@ -195,7 +201,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         private void UpdateLabelGroups()
         {
-            // LabelGroup for SourceDataSets with labels
+            // SelectedLabelGroup for SourceDataSets with labels
             var labeledGroupings = this.FilteredCompendium.SourceDataSets
                 .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
                 .GroupBy(pair => pair.Label)
@@ -220,7 +226,7 @@ namespace CampaignKit.Compendium.Helper.Pages
                     SourceDataSets = new List<SourceDataSet>(),
                 }));
 
-            // LabelGroup for SourceDataSets without labels
+            // SelectedLabelGroup for SourceDataSets without labels
             var noLabelGrouping = new LabelGroup
             {
                 LabelName = "No Label",

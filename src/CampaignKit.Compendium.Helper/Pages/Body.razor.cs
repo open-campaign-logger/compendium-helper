@@ -105,11 +105,11 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         private async void OnCompendiumTitleChanged(string title)        {            this.Logger.LogInformation("SelectedCompendium title changed: {Title}", title);            await this.UpdateTitle();        }
 
         /// <summary>
-        /// Event handler for when the label assignment changes.
-        /// Logs the label name and updates the state.
+        /// Event handler for when the label group is changed.
         /// </summary>
-        /// <param name="labelName">The name of the label that was assigned.</param>
-        private void OnLabelAssignmentChanged(string labelName)        {            this.Logger.LogInformation("Label assignment changed: {LabelName}", labelName);        }
+        /// <param name="labelGroup">The new label group.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task OnLabelGroupChanged(LabelGroup labelGroup)        {            this.Logger.LogInformation("Label assignment changed: {LabelName}", labelGroup.LabelName);            await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);            await this.SelectedSourceDataSetChanged.InvokeAsync(null);        }
 
         /// <summary>
         /// Event handler for when a label is collapsed.
@@ -130,7 +130,7 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         /// </summary>
         /// <param name="values">A tuple containing the source data set name and label name.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSourceDataSetSelected((SourceDataSet sourceDataSet, LabelGroup labelGroup) values)        {            this.Logger.LogInformation("Selected LabelGroup: {SourceDataSetName}", values.sourceDataSet.SourceDataSetName);            await this.SelectedLabelGroupChanged.InvokeAsync(values.labelGroup);            await this.SelectedSourceDataSetChanged.InvokeAsync(values.sourceDataSet);            this.SelectedIndex = 2;        }
+        private async Task OnSourceDataSetSelected((SourceDataSet sourceDataSet, LabelGroup labelGroup) values)        {            this.Logger.LogInformation("Selected SelectedLabelGroup: {SourceDataSetName}", values.sourceDataSet.SourceDataSetName);            await this.SelectedLabelGroupChanged.InvokeAsync(values.labelGroup);            await this.SelectedSourceDataSetChanged.InvokeAsync(values.sourceDataSet);            this.SelectedIndex = 2;        }
 
         /// <summary>
         /// Event handler for when the title of the selected SourceDataSet changes.

@@ -11,7 +11,7 @@
                         <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["labelName"]))" />
                     </End>
                     <ChildContent>
-                        <RadzenTextBox @bind-Value="@LabelGroup.LabelName" Disabled="true"/>
+                        <RadzenTextBox @bind-Value="@SelectedLabelGroup.LabelName" Disabled="true"/>
                     </ChildContent>
                 </RadzenFormField>
                 <RadzenFieldset Text="@_labels["sources"]">
