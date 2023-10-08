@@ -6,7 +6,7 @@
     <RadzenRow>
             <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="@SelectedCompendium.Title" Expanded="true" Icon="book" ExpandedChanged="@((isExpanded) => OnCompendiumExpandedChanged(isExpanded, SelectedCompendium.Title))">
-                @foreach (var grouping in SelectedCompendium.LabelGroups)
+                @foreach (var grouping in LabelGroups)
                 {
                     <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping.LabelName))">
                         @foreach (var dataSet in grouping.SourceDataSets)

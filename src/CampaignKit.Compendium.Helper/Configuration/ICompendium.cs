@@ -16,10 +16,6 @@
 
 namespace CampaignKit.Compendium.Helper.Configuration
 {
-    using System.Text.Json.Serialization;
-
-    using CampaignKit.Compendium.Helper.Data;
-
     /// <summary>
     /// Represents the configuration of a compendium within the application.
     /// These should be defined and shared in the appsettings.json and secrets.json files.
@@ -57,13 +53,6 @@ namespace CampaignKit.Compendium.Helper.Configuration
         bool IsActive { get; set; }
 
         /// <summary>
-        /// Gets a list of LabelGroups from the SourceDataSets.
-        /// </summary>
-        /// <returns>A list of LabelGroups.</returns>
-        [JsonIgnore]
-        public List<LabelGroup> LabelGroups { get; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether a new compendium should be created if one already exists.
         /// </summary>
         bool OverwriteExisting { get; set; }
@@ -80,23 +69,11 @@ namespace CampaignKit.Compendium.Helper.Configuration
         /// </summary>
         List<SourceDataSet> SourceDataSets { get; set; }
 
-
-        /// <summary>
-        /// Gets or sets the list of temporary labels that have no corresponding SourceDataSets.
-        /// </summary>
-        List<string> TemporaryLabels { get; set; }
-
         /// <summary>
         /// Gets or sets the title of the SelectedCompendium.
         /// This property is typically used to provide a succinct name for the SelectedCompendium.
         /// </summary>
         string Title { get; set; }
 
-        /// <summary>
-        /// Gets a list of unique labels from all source datasets.
-        /// </summary>
-        /// <returns>A list of unique labels.</returns>
-        [JsonIgnore]
-        public List<string> UniqueLabels { get; }
     }
 }

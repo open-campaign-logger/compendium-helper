@@ -19,6 +19,7 @@ namespace CampaignKit.Compendium.Helper.Pages
     using System;
 
     using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     using Microsoft.AspNetCore.Components;
 
@@ -54,6 +55,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         public EventCallback<string> LabelExpanded { get; set; }
 
         /// <summary>
+        /// Gets or sets the list of label groups.
+        /// </summary>
+        public List<LabelGroup> LabelGroups { get; set; }
+
+        /// <summary>
         /// Gets or sets the ICompendium object.
         /// </summary>
         [Parameter]
@@ -66,6 +72,26 @@ namespace CampaignKit.Compendium.Helper.Pages
         public EventCallback<(string, string)> SourceSelected { get; set; }
 
         /// <summary>
+        /// Gets or sets the list of temporary labels that have no corresponding SourceDataSets.
+        /// </summary>
+        public List<string> TemporaryLabels { get; set; } = new ();
+
+        /// <summary>
+        /// Gets the unique list of labels from the SourceDataSets and the TemporaryLabels sorted alphabetically.
+        /// </summary>
+        /// <returns>
+        /// A list of strings representing the unique labels.
+        /// </returns>
+        public List<string> UniqueLabels
+        {
+            get
+            {
+                // Return a list of distinct labels found in the LabelGroups sorted alphabetically.
+                return this.LabelGroups.Select(group => group.LabelName).Distinct().OrderBy(label => label).ToList();
+            }
+        }
+
+        /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
         /// </summary>
         /// <returns>A list of distinct source data set names.</returns>
@@ -73,10 +99,8 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             get
             {
-                return this.SelectedCompendium.LabelGroups
-                        .SelectMany(s => s.SourceDataSets)
-                        .Select(ds => ds.SourceDataSetName)
-                        .Distinct();
+                // Return a list of distinct source data set names from the compendium ordered alphabetically.
+                return this.SelectedCompendium.SourceDataSets.Select(sds => sds.SourceDataSetName).Distinct().OrderBy(sds => sds);
             }
         }
 
@@ -102,6 +126,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             this.SearchTerm = string.Empty;
             this.FilterTree();
+        }
+
+        protected async override Task OnParametersSetAsync()
+        {
+            await base.OnParametersSetAsync();
+            this.UpdateLabelGroups();
         }
 
         /// <summary>
@@ -176,6 +206,49 @@ namespace CampaignKit.Compendium.Helper.Pages
         private async Task OnSourceDataSetSelected(MenuItemEventArgs args, string label)
         {
             await this.SourceSelected.InvokeAsync((args.Text, label));
+        }
+
+        private void UpdateLabelGroups()
+        {
+            // LabelGroup for SourceDataSets with labels
+            var labeledGroupings = this.SelectedCompendium.SourceDataSets
+                .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
+                .GroupBy(pair => pair.Label)
+                .Where(group => !string.IsNullOrEmpty(group.Key))
+                .Select(group => new LabelGroup
+                {
+                    LabelName = group.Key,
+                    SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
+                });
+
+            // Retrieve the distinct list of labels that are associated with SourceDataSets
+            var labelsInUse = labeledGroupings.Select(group => group.LabelName).Distinct().ToList();
+
+            // Remove labels that are in use from the list of temporary labels
+            this.TemporaryLabels = this.TemporaryLabels.Except(labelsInUse).ToList();
+
+            // Add the temporary labels to the list of LabelGroups
+            labeledGroupings = labeledGroupings.Concat(
+                this.TemporaryLabels.Select(label => new LabelGroup
+                {
+                    LabelName = label,
+                    SourceDataSets = new List<SourceDataSet>(),
+                }));
+
+            // LabelGroup for SourceDataSets without labels
+            var noLabelGrouping = new LabelGroup
+            {
+                LabelName = "No Label",
+                SourceDataSets = this.SelectedCompendium.SourceDataSets
+                    .Where(ds => !ds.Labels.Any())
+                    .OrderBy(sds => sds.SourceDataSetName)
+                    .ToList(),
+            };
+
+            // Merge the two groupings and order them by LabelName
+            this.LabelGroups = labeledGroupings.Concat(new[] { noLabelGrouping })
+                .OrderBy(group => group.LabelName)
+                .ToList();
         }
     }
 }
