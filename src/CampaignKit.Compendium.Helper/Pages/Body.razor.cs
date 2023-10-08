@@ -57,6 +57,12 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         [Parameter]        public EventCallback<SourceDataSet> SelectedSourceDataSetChanged { get; set; }
 
         /// <summary>
+        /// Gets or sets the list of temporary labels.
+        /// </summary>
+        [Parameter]
+        public List<string> TemporaryLabels { get; set; }
+
+        /// <summary>
         /// Gets or sets the BrowserService dependency.
         /// </summary>
         [Inject]        private BrowserService BrowserService { get; set; }
@@ -105,13 +111,6 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         private async void OnCompendiumTitleChanged(string title)        {            this.Logger.LogInformation("SelectedCompendium title changed: {Title}", title);            await this.UpdateTitle();        }
 
         /// <summary>
-        /// Event handler for when the label group is changed.
-        /// </summary>
-        /// <param name="labelGroup">The new label group.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnLabelGroupChanged(LabelGroup labelGroup)        {            this.Logger.LogInformation("Label assignment changed: {LabelName}", labelGroup.LabelName);            await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);            await this.SelectedSourceDataSetChanged.InvokeAsync(null);        }
-
-        /// <summary>
         /// Event handler for when a label is collapsed.
         /// </summary>
         /// <param name="labelGroup">The label group that was collapsed.</param>
@@ -125,6 +124,12 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnLabelExpanded(LabelGroup labelGroup)        {            this.Logger.LogInformation("Label expanded: {LabelName}", labelGroup.LabelName);            await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);            await this.SelectedSourceDataSetChanged.InvokeAsync(null);            this.SelectedIndex = 1;        }
 
+        /// <summary>
+        /// Event handler for when the label group is changed.
+        /// </summary>
+        /// <param name="labelGroup">The new label group.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task OnLabelGroupChanged(LabelGroup labelGroup)        {            this.Logger.LogInformation("Label assignment changed: {LabelName}", labelGroup.LabelName);            await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);            await this.SelectedSourceDataSetChanged.InvokeAsync(null);        }
         /// <summary>
         /// Event handler for when a source data set is selected.
         /// </summary>

@@ -75,7 +75,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the list of temporary labels that have no corresponding SourceDataSets.
         /// </summary>
         [Parameter]
-        public List<string> TemporaryLabels { get; set; } = new();
+        public List<string> TemporaryLabels { get; set; } = new ();
 
         /// <summary>
         /// Gets the unique list of labels from the SourceDataSets and the TemporaryLabels sorted alphabetically.

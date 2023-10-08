@@ -30,6 +30,11 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
     /// </summary>
     public partial class MainLayout    {
         /// <summary>
+        /// Gets or sets the list of temporary labels.
+        /// </summary>
+        public List<string> TemporaryLabels { get; set; }
+
+        /// <summary>
         /// Gets or sets the BrowserService dependency.
         /// </summary>
         [Inject]
@@ -80,14 +85,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         {
             this.Logger.LogInformation("Creating default compendium.");
             this.SelectedCompendium = new Configuration.Compendium();
-        }
-
-        /// <summary>
-        /// Adds the new list of labels to the TemporaryLabels property of the SelectedCompendium if they are not already present in the UniqueLabels property.
-        /// </summary>
-        /// <param name="labels">The list of labels to be added.</param>
-        private void OnLabelsAdded(List<string> labels)
-        {
+            this.TemporaryLabels = new List<string>();
         }
 
         /// <summary>
@@ -164,6 +162,25 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
                 new Dictionary<string, object>                {
                     { "SelectedCompendium", this.SelectedCompendium },
                 });
+        }
+
+        /// <summary>
+        /// Adds the new list of labels to the TemporaryLabels property of the SelectedCompendium if they are not already present in the UniqueLabels property.
+        /// </summary>
+        /// <param name="labels">The list of labels to be added.</param>
+        private void OnLabelsAdded(List<string> labels)
+        {
+            // Retrieve a list of labels being referenced by a SourceDataSet in the SelectedCompendium
+            var uniqueLabels = this.SelectedCompendium.SourceDataSets.SelectMany(sds => sds.Labels).Distinct().ToList();
+
+            // Trim all labels and remove any empty labels
+            labels = labels.Select(label => label.Trim()).Where(label => !string.IsNullOrEmpty(label)).ToList();
+
+            // Add labels to TemporaryLabels if they are not already in the collection
+            this.TemporaryLabels = this.TemporaryLabels.Union(labels).ToList();
+
+            // Remove any labels from TemporaryLabels that are already in the UniqueLabels list
+            this.TemporaryLabels = this.TemporaryLabels.Except(uniqueLabels).ToList();
         }
 
         /// <summary>
