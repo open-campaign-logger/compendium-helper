@@ -5,13 +5,13 @@
     </RadzenRow>
     <RadzenRow>
             <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="@SelectedCompendium.Title" Expanded="true" Icon="book" ExpandedChanged="@((isExpanded) => OnCompendiumExpandedChanged(isExpanded, SelectedCompendium.Title))">
+            <RadzenPanelMenuItem Text="@SelectedCompendium.Title" Expanded="true" Icon="book" ExpandedChanged="@((isExpanded) => OnCompendiumExpandedChanged(isExpanded, SelectedCompendium))">
                 @foreach (var grouping in LabelGroups)
                 {
-                    <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping.LabelName))">
+                    <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping))">
                         @foreach (var dataSet in grouping.SourceDataSets)
                         {
-                            <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceDataSetSelected(args, grouping.LabelName)" />
+                            <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceDataSetSelected(args, grouping)" />
                         }
                     </RadzenPanelMenuItem>
                 }

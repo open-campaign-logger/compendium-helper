@@ -74,6 +74,5 @@ namespace CampaignKit.Compendium.Helper.Configuration
         /// This property is typically used to provide a succinct name for the SelectedCompendium.
         /// </summary>
         string Title { get; set; }
-
     }
 }

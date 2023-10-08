@@ -88,14 +88,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <param name="labels">The list of labels to be added.</param>
         private void OnLabelsAdded(List<string> labels)
         {
-            // Add the new list of labels to this.SelectedCompendium.TemporaryLabels if it's not in this.SelectedCompendium.UniqueLabels.
-            foreach (var label in labels)
-            {
-                if (!this.SelectedCompendium.UniqueLabels.Contains(label))
-                {
-                    this.SelectedCompendium.TemporaryLabels.Add(label);
-                }
-            }
         }
 
         /// <summary>

@@ -34,25 +34,25 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the EventCallback for the compendium collapsed event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> CompendiumCollapsed { get; set; }
+        public EventCallback<ICompendium> CompendiumCollapsed { get; set; }
 
         /// <summary>
         /// Gets or sets the EventCallback for the compendium expansion event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> CompendiumExpanded { get; set; }
+        public EventCallback<ICompendium> CompendiumExpanded { get; set; }
 
         /// <summary>
         /// Gets or sets the EventCallback for the label collapsed event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> LabelCollapsed { get; set; }
+        public EventCallback<LabelGroup> LabelCollapsed { get; set; }
 
         /// <summary>
         /// Gets or sets the EventCallback for the label expansion event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> LabelExpanded { get; set; }
+        public EventCallback<LabelGroup> LabelExpanded { get; set; }
 
         /// <summary>
         /// Gets or sets the list of label groups.
@@ -69,11 +69,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the EventCallback for source selection.
         /// </summary>
         [Parameter]
-        public EventCallback<(string, string)> SourceSelected { get; set; }
+        public EventCallback<(SourceDataSet, LabelGroup)> SourceSelected { get; set; }
 
         /// <summary>
         /// Gets or sets the list of temporary labels that have no corresponding SourceDataSets.
         /// </summary>
+        [Parameter]
         public List<string> TemporaryLabels { get; set; } = new ();
 
         /// <summary>
@@ -128,9 +129,16 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.FilterTree();
         }
 
+        /// <summary>
+        /// Overrides the OnParametersSetAsync method to update the label groups.
+        /// </summary>
+        /// <returns>
+        /// A Task representing the asynchronous operation.
+        /// </returns>
         protected async override Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
+            this.FilterTree();
             this.UpdateLabelGroups();
         }
 
@@ -153,40 +161,15 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.StateHasChanged();
         }
 
-        /// <summary>
-        /// Invokes the CompendiumExpanded event when the compendium is expanded or collapsed.
-        /// </summary>
-        /// <param name="isExpanded">A boolean value indicating whether the compendium is expanded or collapsed.</param>
-        /// <param name="compendiumName">The name of the compendium.</param>
-        /// <returns>A Task that represents the asynchronous operation.</returns>
-        private async Task OnCompendiumExpandedChanged(bool isExpanded, string compendiumName)
+        private async Task OnCompendiumExpandedChanged(bool isExpanded, ICompendium compendium)
         {
-            if (isExpanded)
-            {
-                await this.CompendiumExpanded.InvokeAsync(compendiumName);
-            }
-            else
-            {
-                await this.CompendiumCollapsed.InvokeAsync(compendiumName);
-            }
+            await this.CompendiumExpanded.InvokeAsync(compendium);
         }
 
-        /// <summary>
-        /// Invokes the LabelExpanded event when the label is expanded or collapsed.
-        /// </summary>
-        /// <param name="isExpanded">A boolean value indicating whether the label is expanded or collapsed.</param>
-        /// <param name="labelName">The name of the label.</param>
-        /// <returns>A Task that represents the asynchronous operation.</returns>
-        private async Task OnLabelExpandedChanged(bool isExpanded, string labelName)
+        private async Task OnLabelExpandedChanged(bool isExpanded, LabelGroup labelGroup)
         {
-            if (isExpanded)
-            {
-                await this.LabelExpanded.InvokeAsync(labelName);
-            }
-            else
-            {
-                await this.LabelCollapsed.InvokeAsync(labelName);
-            }
+            // Retrieve the label group that contains the label
+            await this.LabelExpanded.InvokeAsync(labelGroup);
         }
 
         /// <summary>
@@ -194,24 +177,26 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         private void OnSearchChanged(object value)
         {
+            this.UpdateLabelGroups();
             this.FilterTree();
         }
 
-        /// <summary>
-        /// Event handler for when a data set is selected in the menu.
-        /// </summary>
-        /// <param name="args">The menu item event arguments.</param>
-        /// <param name="label">The label name.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        private async Task OnSourceDataSetSelected(MenuItemEventArgs args, string label)
+        private async Task OnSourceDataSetSelected(MenuItemEventArgs args, LabelGroup labelGroup)
         {
-            await this.SourceSelected.InvokeAsync((args.Text, label));
+            // Retrieve the SourceDataSet from the compendium by its name
+            var sourceDataSet = this.FilteredCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));
+
+            // Invoke the SourceSelected event
+            await this.SourceSelected.InvokeAsync((sourceDataSet, labelGroup));
         }
 
+        /// <summary>
+        /// Updates the label groups based on the source data sets and temporary labels.
+        /// </summary>
         private void UpdateLabelGroups()
         {
             // LabelGroup for SourceDataSets with labels
-            var labeledGroupings = this.SelectedCompendium.SourceDataSets
+            var labeledGroupings = this.FilteredCompendium.SourceDataSets
                 .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
                 .GroupBy(pair => pair.Label)
                 .Where(group => !string.IsNullOrEmpty(group.Key))
@@ -239,7 +224,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             var noLabelGrouping = new LabelGroup
             {
                 LabelName = "No Label",
-                SourceDataSets = this.SelectedCompendium.SourceDataSets
+                SourceDataSets = this.FilteredCompendium.SourceDataSets
                     .Where(ds => !ds.Labels.Any())
                     .OrderBy(sds => sds.SourceDataSetName)
                     .ToList(),
