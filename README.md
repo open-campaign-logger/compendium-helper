@@ -115,7 +115,7 @@ classDiagram
     }
     MainLayout "1" --> "0..1" AddLabelsDialog : Opens    
 
-    class RemoveLabeslDialog{
+    class RemoveLabelsDialog{
         +List<LabelGroup> LabelGroups
 		+EventCallback<List<LabelGroup>> LabelGroupsRemoved
 		-OnLabelGroupsRemoved()
