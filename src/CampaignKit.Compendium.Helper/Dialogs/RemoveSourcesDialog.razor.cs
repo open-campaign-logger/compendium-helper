@@ -31,7 +31,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         /// Gets or sets the list of all available SourceDataSet objects.
         /// </summary>
         [Parameter]
-        public List<SourceDataSet> AllSources { get; set; }
+        public List<SourceDataSet> Sources { get; set; }
 
         /// <summary>
         /// Gets or sets the DialogService dependency.
@@ -40,16 +40,16 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         private DialogService DialogService { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether the SelectedLabels property is not null or empty.
+        /// Gets a value indicating whether the SelectedLabelGroups property is not null or empty.
         /// </summary>
         /// <returns>
-        /// Returns true if SelectedLabels is not null or empty, otherwise false.
+        /// Returns true if SelectedLabelGroups is not null or empty, otherwise false.
         /// </returns>
         private bool IsValid
         {
             get
             {
-                // return true if SelectedLabels is not null or empty.
+                // return true if SelectedLabelGroups is not null or empty.
                 return this.SelectedDataSets != null && this.SelectedDataSets.Any();
             }
         }
@@ -83,7 +83,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs
             await base.OnParametersSetAsync();
 
             // Sort the source data sets.
-            this.AllSources.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
+            this.Sources.Sort((x, y) => string.Compare(x.SourceDataSetName, y.SourceDataSetName, StringComparison.InvariantCultureIgnoreCase));
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         private async Task OnRemove()
         {
             // Remove the selected data sets from the list of all sources.
-            this.AllSources.RemoveAll(x => this.SelectedDataSets.Contains(x.SourceDataSetName));
+            this.Sources.RemoveAll(x => this.SelectedDataSets.Contains(x.SourceDataSetName));
 
             // Close the dialog box.
             this.DialogService.Close();

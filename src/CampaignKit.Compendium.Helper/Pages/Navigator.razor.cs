@@ -56,12 +56,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         public EventCallback<(SourceDataSet, LabelGroup)> SelectedSourceChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of temporary labels that have no corresponding Sources.
-        /// </summary>
-        [Parameter]
-        public List<string> TemporaryLabels { get; set; }
-
-        /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
         /// </summary>
         /// <returns>A list of distinct source data set names.</returns>
@@ -148,7 +142,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         /// <param name="labelGroup">The label group that contains the label.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnLabelGroupSelected(LabelGroup labelGroup)
+        private async Task OnSelectedLabelGroupChanged(LabelGroup labelGroup)
         {
             await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);
         }
@@ -167,7 +161,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="args">The event arguments containing the selected menu item.</param>
         /// <param name="labelGroup">The label group associated with the selected source data set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSourceSelected(MenuItemEventArgs args, LabelGroup labelGroup)
+        private async Task OnSelectedSourceChanged(MenuItemEventArgs args, LabelGroup labelGroup)
         {
             // Retrieve the SourceDataSet from the compendium by its name
             var sourceDataSet = this.FilteredSourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));

@@ -64,12 +64,6 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         [Parameter]        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of temporary labels.
-        /// </summary>
-        /// <value>The temporary labels.</value>
-        [Parameter]        public List<string> TemporaryLabels { get; set; }
-
-        /// <summary>
         /// Gets or sets the ILogger dependency.
         /// </summary>
         [Inject]        private ILogger<Body> Logger { get; set; }

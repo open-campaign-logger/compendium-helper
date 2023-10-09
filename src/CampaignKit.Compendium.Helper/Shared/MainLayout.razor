@@ -20,8 +20,8 @@
                 <RadzenMenuItem Text="Compendium" Icon="library_books" Visible="(SelectedCompendium != null)">
                     <RadzenMenuItem Text="Add Sources..." Icon="add_link" Click="OnAddSources"/>
                     <RadzenMenuItem Text="Remove Sources..." Icon="link_off" Click="OnRemoveSources"/>
-                    <RadzenMenuItem Text="Add Labels..." Icon="new_label" Click="OnAddLables" />
-                    <RadzenMenuItem Text="Remove Labels..." Icon="label_off" Click="OnRemoveLabels"/>
+                    <RadzenMenuItem Text="Add Labels..." Icon="new_label" Click="OnShowAddLabelsDialog" />
+                    <RadzenMenuItem Text="Remove Labels..." Icon="label_off" Click="OnShowRemoveLabelsDialog"/>
                     <hr class="separator mx-2 text-dark">
                     <RadzenMenuItem Text="Generate" Icon="loop" Click="OnGenerate" />
                 </RadzenMenuItem>                
@@ -33,10 +33,9 @@
             SelectedLabelGroup="SelectedLabelGroup"
             SelectedSource="SelectedSource"
             LabelGroups="LabelGroups"
-            TemporaryLabels="TemporaryLabels"
-            SelectedCompendiumChanged="OnSelectedCompendiumChanged"
-            SelectedLabelGroupChanged="OnSelectedLabelGroupChanged"
-            SelectedSourceChanged="OnSelectedSourceDataSetChanged"></Body>
+            SelectedCompendiumChanged="SelectedCompendiumChanged"
+            SelectedLabelGroupChanged="SelectedLabelGroupChanged"
+            SelectedSourceChanged="SelectedSourceDataSetChanged"></Body>
     </RadzenBody>
 </RadzenLayout>
 

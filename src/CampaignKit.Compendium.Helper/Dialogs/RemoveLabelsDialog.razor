@@ -8,14 +8,16 @@
                 <RadzenListBox AllowFiltering="true"
                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                Multiple="true"
-                               Data="@AllLabels"
-                               @bind-Value="SelectedLabels"
+                               Data="@LabelGroups"
+                               TextProperty="LabelName"
+                               ValueProperty="LabelName"
+                               @bind-Value="SelectedLabelGroups"
                                Style="width:100%; height:300px;" />
             </ChildContent>
         </RadzenFormField>
     </RadzenStack>
     <RadzenStack>
-        <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="OnRemove" Disabled="!IsValid"></RadzenButton>
+        <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="OnLabelGroupsRemoved" Disabled="!IsValid"></RadzenButton>
     </RadzenStack>
 </RadzenStack>
 

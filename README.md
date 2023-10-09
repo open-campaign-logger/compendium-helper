@@ -19,34 +19,44 @@ classDiagram
         -List<LabelGroup> LabelGroups
         -ICompendium SelectedCompendium
         -LabelGroup SelectedLabelGroup
-        -SourceDataSet SelectedSource        
-        -List<string> TemporaryLabels
-        -OnCompendiumLoaded()
-        -OnSelectedCompendiumChanged()
-        -OnSelectedLabelGroupChanged()
-        -OnSelectedSourceChanged()
+        -SourceDataSet SelectedSource
+        -CompendiumLoaded(ICompendium)
+        -SelectedCompendiumChanged(ICompendium)
+        -SelectedLabelGroupChanged(LabelGroup)
+        -SelectedSourceChanged(SourceDataSet)
+        -LabelGroupsAdded(List<LabelGroup>)
+        -LabelGroupsRemoved(List<LabelGroup>)
         -OnShowLoadDialog()
         -OnShowUploadDialog()
-        -UpdatePageTitle()
-        -OnSelectedCompendiumChanged(ICompendium)
-        -OnSelectedLabelGroupChanged(LabelGroup)
-        -OnSelectedSourceChanged(SourceDataSet)
+        -OnShowAddLabelsDialog()
+        -OnShowRemoveLabelsDialog()
     }
     class LoadCompendiumDialog{
         +string CompendiumUrl
 	    +EventCallback<ICompendium> CompendiumLoaded
 	}
-    MainLayout "1" --> "0..1" LoadCompendiumDialog : Contains
+    MainLayout "1" --> "0..1" LoadCompendiumDialog : Opens
     class UploadCompendiumDialog{
 	    +EventCallback<ICompendium> CompendiumLoaded
     }
-    MainLayout "1" --> "0..1" UploadCompendiumDialog : Contains
+    MainLayout "1" --> "0..1" UploadCompendiumDialog : Opens
+    class AddLabelDialog{
+        +List<LabelGroup> LabelGroups
+        +EventCallback<List<LabelGroup>> LabelGroupsAdded
+        -OnLabelGroupsAdded()
+    }
+    MainLayout "1" --> "0..1" AddLabelDialog : Opens    
+    class RemoveLabelDialog{
+        +List<LabelGroup> LabelGroups
+		+EventCallback<List<LabelGroup>> LabelGroupsRemoved
+		-OnLabelGroupsRemoved()
+    }
+    MainLayout "1" --> "0..1" RemoveLabelDialog : Opens
     class Body{
         +List<LabelGroup> LabelGroups
         +ICompendium SelectedCompendium        
         +LabelGroup SelectedLabelGroup        
         +SourceDataSet SelectedSource
-        +List<string> TemporaryLabels
         +EventCallback<ICompendium> SelectedCompendiumChanged
         +EventCallback<LabelGroup> SelectedLabelGroupChanged
         +EventCallback<SourceDataSet> SelectedSourceChanged
@@ -60,34 +70,36 @@ classDiagram
         +List<SourceDataSet> Sources
         +EventCallback<LabelGroup> SelectedLabelGroupChanged
         +EventCallback<(SourceDataSet, LabelGroup> SelectedSourceChanged
-        -OnLabelGroupSelected(LabelGroup)
-        -OnSourceSelected(MenuItemEventArgs, LabelGroup)
-        -OnSearchChanged(object)        
+        -OnSelectedLabelGroupChanged(LabelGroup)
+        -OnSelectedSourceChanged((SourceDataSet, LabelGroup))
     }
     Body "1" --> "0..1" Navigation : Contains
     class Compendium{
 		+ICompendium SelectedCompendium
         +EventCallback<ICompendium> SelectedCompendiumChanged
+        -OnSelectedCompendiumChanged()
 	}
     Body "1" --> "0..1" Compendium : Contains
     class Label{
         +LabelGroup SelectedLabelGroup
         +List<SourceDataSet> Sources
         +EventCallback<LabelGroup> SelectedLabelGroupChanged     
-        -OnSelectedLabelGroupChanged(object)
+        -OnSelectedLabelGroupChanged()
     }
     Body "1" --> "0..1" Label : Contains
     class Source{
         +SourceDataSet SelectedSource
 		+EventCallback<SourceDataSet> SelectedSourceChanged
-        -OnSelectedSourceChanged(object)
+        -OnSelectedSourceChanged()
 	}
+    Body "1" --> "0..1" Source : Contains
     class Editor{
 		+SourceDataSet SelectedSource
 		+EventCallback<SourceDataSet> SelectedSourceChanged
 		-OnSelectedSourceChanged(object)
 	}
-    Body "1" --> "0..1" Source : Contains
+    Body "1" --> "0..1" Editor : Contains
+
 ```
 
 ## Getting Started

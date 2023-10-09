@@ -14,17 +14,31 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Dialogs{    using Microsoft.AspNetCore.Components;    using Microsoft.AspNetCore.Components.Web;    using Radzen;
+namespace CampaignKit.Compendium.Helper.Dialogs{
+    using CampaignKit.Compendium.Helper.Data;
+
+    using Microsoft.AspNetCore.Components;    using Radzen;
 
     /// <summary>
     /// Represents a dialog for adding a label.
     /// </summary>
     public partial class AddLabelDialog    {
         /// <summary>
+        /// Gets or sets the LabelGroups parameter.
+        /// </summary>
+        [Parameter]
+        public List<LabelGroup> LabelGroups { get; set; }
+
+        /// <summary>
         /// Gets or sets the event callback for when a label is added.
         /// The event callback takes a list of strings as a parameter.
         /// </summary>
-        [Parameter]        public EventCallback<List<string>> OnLabelsAdded { get; set; }
+        [Parameter]        public EventCallback<List<LabelGroup>> LabelGroupsAdded { get; set; }
+
+        /// <summary>
+        /// Gets or sets the DialogService dependency.
+        /// </summary>
+        [Inject]        private DialogService DialogService { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether the Labels property is not null or empty.
@@ -33,7 +47,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs{    using Microsoft.AspNetCore
         /// True if the Labels property is not null or empty, otherwise false.
         /// </returns>
         private bool IsValid        {            get            {
-                // return true if SelectedLabels is not null or empty.
+                // return true if SelectedLabelGroups is not null or empty.
                 return this.Labels != null && this.Labels.Split(',', StringSplitOptions.RemoveEmptyEntries).Any();            }        }
 
         /// <summary>
@@ -53,14 +67,21 @@ namespace CampaignKit.Compendium.Helper.Dialogs{    using Microsoft.AspNetCore
         [Inject]        private TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Gets or sets the DialogService dependency.
+        /// Event handler for adding labels. Logs the event, invokes the LabelGroupsAdded event with the list of labels, and closes the dialog.
         /// </summary>
-        [Inject]        private DialogService DialogService { get; set; }
+        private async Task OnLabelGroupsAdded()        {            this.Logger.LogInformation("OnLabelGroupsAdded");            // Split label selections into a list of strings.            var labels = this.Labels.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-        /// <summary>
-        /// Event handler for adding labels. Logs the event, invokes the OnLabelsAdded event with the list of labels, and closes the dialog.
-        /// </summary>
-        private void OnAdd(MouseEventArgs args)        {            this.Logger.LogInformation("OnAdd");            this.OnLabelsAdded.InvokeAsync(this.Labels.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());            this.DialogService.Close();        }
+            // Remove any labels that are already associated with a collection of source data sets in Sources.
+            labels.RemoveAll(label => this.LabelGroups.Any(group => group.LabelName.Equals(labels)));
+
+            // Create the required label groups
+            var labelGroups = labels.Select(label => new LabelGroup
+            {
+                LabelName = label,
+                SourceDataSets = new List<Configuration.SourceDataSet>(),
+            }).ToList();
+
+            await this.LabelGroupsAdded.InvokeAsync(labelGroups);            this.DialogService.Close();        }
 
         /// <summary>
         /// Shows a tooltip for the specified element reference with the given tooltip text and optional tooltip options.

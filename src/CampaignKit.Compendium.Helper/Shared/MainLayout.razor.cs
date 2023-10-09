@@ -87,9 +87,14 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private SourceDataSet SelectedSource { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of temporary labels.
+        /// Method called when the upload of a compendium is complete.
         /// </summary>
-        private List<string> TemporaryLabels { get; set; } = new ();
+        /// <param name="compendium">The uploaded compendium.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task CompendiumLoaded(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
+            this.SelectedSource = null;
+            this.SelectedLabelGroup = null;
+            this.UpdateLabelGroups();        }
 
         /// <summary>
         /// Instantiates a new, blank compendium and assigns it to the SelectedCompendium property.
@@ -100,26 +105,28 @@ namespace CampaignKit.Compendium.Helper.Shared{
             this.SelectedCompendium = new Configuration.Compendium();
             this.SelectedSource = null;
             this.SelectedLabelGroup = null;
-            this.TemporaryLabels = new List<string>();
             this.UpdateLabelGroups();
         }
 
         /// <summary>
-        /// Method to handle the event when the user selects to add labels.
+        /// Adds the given list of label groups to the LabelGroups collection and sorts them alphabetically.
         /// </summary>
-        /// <returns>
-        /// Task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnAddLables()
+        /// <param name="labelGroups">The list of label groups to be added.</param>
+        private void LabelGroupsAdded(List<LabelGroup> labelGroups)
         {
-            this.Logger.LogInformation("User selected to add labels..");
+            // Add the labelGroops to the LabeGroups collection and sort them alphabetically.
+            this.LabelGroups.AddRange(labelGroups);
+            this.LabelGroups = this.LabelGroups.OrderBy(labelGroup => labelGroup.LabelName).ToList();
+        }
 
-            await this.DialogService.OpenAsync<AddLabelDialog>(
-                "Add Labels to Compendium",
-                new Dictionary<string, object>
-                {
-                    { "OnLabelsAdded", EventCallback.Factory.Create<List<string>>(this, this.OnLabelsAdded) },
-                });
+        /// <summary>
+        /// Removes the given list of label groups to the LabelGroups collection.
+        /// </summary>
+        /// <param name="labelGroups">The list of label groups to be removed.</param>
+        private void LabelGroupsRemoved(List<LabelGroup> labelGroups)
+        {
+            // Remove the labelGroops to the LabeGroups collection and sort them alphabetically.
+            this.LabelGroups.RemoveAll(labelGroup => labelGroups.Contains(labelGroup));
         }
 
         /// <summary>
@@ -138,17 +145,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
                     { "Compendium", this.SelectedCompendium },
                 });
         }
-
-        /// <summary>
-        /// Method called when the upload of a compendium is complete.
-        /// </summary>
-        /// <param name="compendium">The uploaded compendium.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnCompendiumLoaded(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
-            this.SelectedSource = null;
-            this.SelectedLabelGroup = null;
-            this.TemporaryLabels = new List<string>();
-            this.UpdateLabelGroups();        }
 
         /// <summary>
         /// Method to handle the event of downloading a selected compendium.
@@ -192,71 +188,11 @@ namespace CampaignKit.Compendium.Helper.Shared{
         }
 
         /// <summary>
-        /// Adds the new list of labels to the TemporaryLabels property of the SelectedCompendium if they are not already present in the UniqueLabels property.
-        /// </summary>
-        /// <param name="labels">The list of labels to be added.</param>
-        private void OnLabelsAdded(List<string> labels)
-        {
-            // Retrieve a list of labels being referenced by a SourceDataSet in the SelectedCompendium
-            var uniqueLabels = this.SelectedCompendium.SourceDataSets.SelectMany(sds => sds.Labels).Distinct().ToList();
-
-            // Trim all labels and remove any empty labels
-            labels = labels.Select(label => label.Trim()).Where(label => !string.IsNullOrEmpty(label)).ToList();
-
-            // Add labels to TemporaryLabels if they are not already in the collection
-            this.TemporaryLabels = this.TemporaryLabels.Union(labels).ToList();
-
-            // Remove any labels from TemporaryLabels that are already in the UniqueLabels list
-            this.TemporaryLabels = this.TemporaryLabels.Except(uniqueLabels).ToList();
-        }
-
-        /// <summary>
-        /// Removes the specified labels from any Sources referencing them and from the TemporaryLabels collection.
-        /// </summary>
-        /// <param name="labels">The labels to be removed.</param>
-        private void OnLabelsRemoved(List<string> labels)
-        {
-            // Remove these labels from any Sources referencing them.
-            foreach (var label in labels)
-            {
-                // Find all Sources that contain the label and remove it.
-                this.SelectedCompendium.SourceDataSets.ForEach(sds => sds.Labels.Remove(label));
-            }
-
-            // Remove these labels from the TemporaryLabels collection.
-            this.TemporaryLabels = this.TemporaryLabels.Except(labels).ToList();
-        }
-
-        /// <summary>
         /// Handles the event when a new compendium selection is made by the user.
         /// </summary>
         /// <param name="selection">The selection made by the user.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected to create a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
-
-        /// <summary>
-        /// Method to handle the event when the user selects to remove labels.
-        /// </summary>
-        /// <returns>
-        /// Task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnRemoveLabels()
-        {
-            this.Logger.LogInformation("User selected to remove labels...");
-
-            // Retrieve a list of labels being referenced by a SourceDataSet in the SelectedCompendium
-            var labelsInUse = this.SelectedCompendium.SourceDataSets.SelectMany(sds => sds.Labels).Distinct().ToList();
-
-            // Add labels to TemporaryLabels if they are not already in the collection
-            var allLabels = this.TemporaryLabels.Union(labelsInUse).OrderBy(label => label).ToList();
-
-            await this.DialogService.OpenAsync<RemoveLabelsDialog>(
-                "Remove Labels from Compendium",
-                new Dictionary<string, object>
-                {
-                    { "AllLabels", allLabels },
-                });
-        }
 
         /// <summary>
         /// Method to handle the event when the user selects to remove sources.
@@ -277,30 +213,22 @@ namespace CampaignKit.Compendium.Helper.Shared{
         }
 
         /// <summary>
-        /// Event handler for when the selected compendium changes.
+        /// Method to handle the event when the user selects to add labelGroups.
         /// </summary>
-        /// <param name="compendium">The new selected compendium.</param>
-        private async Task OnSelectedCompendiumChanged(ICompendium compendium)
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnShowAddLabelsDialog()
         {
-            await this.UpdatePageTitle();
-        }
+            this.Logger.LogInformation("User selected to add labelGroups..");
 
-        /// <summary>
-        /// Event handler for when the selected label group changes.
-        /// </summary>
-        /// <param name="labelGroup">The new selected label group.</param>
-        private void OnSelectedLabelGroupChanged(LabelGroup labelGroup)
-        {
-            this.SelectedLabelGroup = labelGroup;
-        }
-
-        /// <summary>
-        /// Event handler for when the selected source data set changes.
-        /// </summary>
-        /// <param name="sourceDataSet">The new selected source data set.</param>
-        private void OnSelectedSourceDataSetChanged(SourceDataSet sourceDataSet)
-        {
-            this.SelectedSource = sourceDataSet;
+            await this.DialogService.OpenAsync<AddLabelDialog>(
+                "Add Labels to Compendium",
+                new Dictionary<string, object>
+                {
+                    { "LabelGroups", this.LabelGroups },
+                    { "LabelGroupsAdded", EventCallback.Factory.Create<List<LabelGroup>>(this, this.LabelGroupsAdded) },
+                });
         }
 
         /// <summary>
@@ -315,7 +243,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 "Load Sample Compendium",
                 new Dictionary<string, object>
                 {                    { "Prompt", $"Load the {sampleName} sample compendium?" },                    { "CompendiumUrl", sampleUrl },
-                    { "CompendiumLoaded",  EventCallback.Factory.Create<ICompendium>(this, this.OnCompendiumLoaded) },
+                    { "CompendiumLoaded",  EventCallback.Factory.Create<ICompendium>(this, this.CompendiumLoaded) },
                 });        }
 
         /// <summary>
@@ -331,16 +259,62 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 });        }
 
         /// <summary>
+        /// Method to handle the event when the user selects to remove labelGroups.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnShowRemoveLabelsDialog()
+        {
+            this.Logger.LogInformation("User selected to remove labelGroups...");
+
+            await this.DialogService.OpenAsync<RemoveLabelsDialog>(
+                "Remove Labels from Compendium",
+                new Dictionary<string, object>
+                {
+                    { "LabelGroups", this.LabelGroups },
+                    { "LabelGroupsRemoved", EventCallback.Factory.Create<List<LabelGroup>>(this, this.LabelGroupsRemoved) },
+                });
+        }
+
+        /// <summary>
         /// Shows an "Upload File" dialog asynchronously and passes the CompendiumLoaded callback method as a parameter.
         /// </summary>
         private async void OnShowUploadDialog()        {
             this.Logger.LogInformation("Show upload dialog.");
 
             await this.DialogService.OpenAsync<UploadConfigurationDialog>(                "Upload Compendium",                new Dictionary<string, object>
-                {                    { "Prompt", "Select an existing compendium configuration." },                    { "CompendiumLoaded",  EventCallback.Factory.Create<ICompendium>(this, this.OnCompendiumLoaded) },                });        }
+                {                    { "Prompt", "Select an existing compendium configuration." },                    { "CompendiumLoaded",  EventCallback.Factory.Create<ICompendium>(this, this.CompendiumLoaded) },                });        }
 
         /// <summary>
-        /// Updates the label groups based on the source data sets and temporary labels.
+        /// Event handler for when the selected compendium changes.
+        /// </summary>
+        /// <param name="compendium">The new selected compendium.</param>
+        private async Task SelectedCompendiumChanged(ICompendium compendium)
+        {
+            await this.UpdatePageTitle();
+        }
+
+        /// <summary>
+        /// Event handler for when the selected label group changes.
+        /// </summary>
+        /// <param name="labelGroup">The new selected label group.</param>
+        private void SelectedLabelGroupChanged(LabelGroup labelGroup)
+        {
+            this.SelectedLabelGroup = labelGroup;
+        }
+
+        /// <summary>
+        /// Event handler for when the selected source data set changes.
+        /// </summary>
+        /// <param name="sourceDataSet">The new selected source data set.</param>
+        private void SelectedSourceDataSetChanged(SourceDataSet sourceDataSet)
+        {
+            this.SelectedSource = sourceDataSet;
+        }
+
+        /// <summary>
+        /// Updates the label groups based on the source data sets and temporary labelGroups.
         /// </summary>
         private void UpdateLabelGroups()
         {
@@ -356,12 +330,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
                     LabelName = group.Key,
                     SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                 })
-                .Concat(this.TemporaryLabels.Select(label => new LabelGroup
-                {
-                    LabelName = label,
-                    SourceDataSets = new List<SourceDataSet>(),
-                }))
-                .OrderBy(group => group.LabelName)
                 .ToList();
         }
 

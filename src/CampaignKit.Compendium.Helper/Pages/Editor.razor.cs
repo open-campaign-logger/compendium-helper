@@ -87,7 +87,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         [JSInvokable]
         public void OnContentChanged(string content)
         {
-            this.Logger.LogInformation("OnSelectedLabelGroupChanged with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
+            this.Logger.LogInformation("SelectedLabelGroupChanged with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
             this.SelectedSource.Markdown = content;
             this.SelectedSourceChanged.InvokeAsync((this.SelectedSource, null));
         }
