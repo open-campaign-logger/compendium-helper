@@ -89,7 +89,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             this.Logger.LogInformation("SelectedLabelGroupChanged with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
             this.SelectedSource.Markdown = content;
-            this.SelectedSourceChanged.InvokeAsync((this.SelectedSource, null));
         }
 
         /// <summary>
@@ -137,7 +136,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         protected override async Task OnParametersSetAsync()
         {
             this.Logger.LogInformation("OnParametersSetAsync");
-            await base.OnParametersSetAsync();
             await this.LoadContent();
         }
 
@@ -152,14 +150,13 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             try
             {
-                // Download the web page source data
                 if (this.SelectedSource != null)
                 {
                     // Load the source data set
                     await this.SourceDataSetService.LoadSourceDataSetAsync(this.SelectedSource, forceReload);
 
                     // Log the markdown
-                    this.Logger.LogInformation("SelectedSource data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.SelectedSource.Markdown));
+                    this.Logger.LogInformation("SelectedSource data loaded and converted to markdown: {}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.SelectedSource.Markdown));
                 }
             }
             catch (FetchException fe)
@@ -169,8 +166,6 @@ namespace CampaignKit.Compendium.Helper.Pages
                     new Dictionary<string, object>                    {                        { "Prompt", fe.Message },
                     });
             }
-
-            await this.SelectedSourceChanged.InvokeAsync((this.SelectedSource, null));
         }
     }
 }

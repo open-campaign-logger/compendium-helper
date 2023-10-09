@@ -75,7 +75,7 @@ namespace CampaignKit.Compendium.Helper.Services
             this.Logger.LogInformation("Loading source data set: {SelectedSource}, Force reload: {Force}", source, forceReload);
 
             // If the source data set already has a Markdown property, then it has already been loaded.
-            if (!string.IsNullOrEmpty(source.Markdown) && !forceReload)
+            if (source == null || (!string.IsNullOrEmpty(source.Markdown) && !forceReload))
             {
                 return;
             }

@@ -17,6 +17,7 @@
 namespace CampaignKit.Compendium.Helper.Dialogs
 {
     using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     using Microsoft.AspNetCore.Components;
 
@@ -32,6 +33,13 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         /// </summary>
         [Parameter]
         public List<SourceDataSet> Sources { get; set; }
+
+        /// <summary>
+        /// Gets or sets the event callback for when sources are removed.
+        /// </summary>
+        /// <value>The event callback for when sources are removed.</value>
+        [Parameter]
+        public EventCallback<List<SourceDataSet>> SourcesRemoved { get; set; }
 
         /// <summary>
         /// Gets or sets the DialogService dependency.
@@ -92,10 +100,13 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         /// <returns>
         /// A task representing the asynchronous operation.
         /// </returns>
-        private async Task OnRemove()
+        private async Task OnSourcesRemoved()
         {
-            // Remove the selected data sets from the list of all sources.
-            this.Sources.RemoveAll(x => this.SelectedDataSets.Contains(x.SourceDataSetName));
+            // Get a list of sources to be removed.
+            var sources = this.Sources.Where(source => this.SelectedDataSets.Contains(source.SourceDataSetName)).ToList();
+
+            // Raise the SourcesRemoved event.
+            await this.SourcesRemoved.InvokeAsync(sources);
 
             // Close the dialog box.
             this.DialogService.Close();

@@ -26,32 +26,21 @@ classDiagram
         -SelectedSourceChanged(SourceDataSet)
         -LabelGroupsAdded(List<LabelGroup>)
         -LabelGroupsRemoved(List<LabelGroup>)
-        -OnShowLoadDialog()
-        -OnShowUploadDialog()
-        -OnShowAddLabelsDialog()
-        -OnShowRemoveLabelsDialog()
+        -SourcesAdded(List<SourceDataSet>)
+        -SourcesRemoved(List<SourceDataSet>)
     }
+
     class LoadCompendiumDialog{
         +string CompendiumUrl
 	    +EventCallback<ICompendium> CompendiumLoaded
 	}
     MainLayout "1" --> "0..1" LoadCompendiumDialog : Opens
+
     class UploadCompendiumDialog{
 	    +EventCallback<ICompendium> CompendiumLoaded
     }
     MainLayout "1" --> "0..1" UploadCompendiumDialog : Opens
-    class AddLabelDialog{
-        +List<LabelGroup> LabelGroups
-        +EventCallback<List<LabelGroup>> LabelGroupsAdded
-        -OnLabelGroupsAdded()
-    }
-    MainLayout "1" --> "0..1" AddLabelDialog : Opens    
-    class RemoveLabelDialog{
-        +List<LabelGroup> LabelGroups
-		+EventCallback<List<LabelGroup>> LabelGroupsRemoved
-		-OnLabelGroupsRemoved()
-    }
-    MainLayout "1" --> "0..1" RemoveLabelDialog : Opens
+
     class Body{
         +List<LabelGroup> LabelGroups
         +ICompendium SelectedCompendium        
@@ -65,6 +54,7 @@ classDiagram
         -OnSelectedSourceChanged((SourceDataSet, LabelGroup))
     }
     MainLayout --> "1" Body : Contains
+
     class Navigation{
         +List<LabelGroup> LabelGroups
         +List<SourceDataSet> Sources
@@ -74,12 +64,14 @@ classDiagram
         -OnSelectedSourceChanged((SourceDataSet, LabelGroup))
     }
     Body "1" --> "0..1" Navigation : Contains
+
     class Compendium{
 		+ICompendium SelectedCompendium
         +EventCallback<ICompendium> SelectedCompendiumChanged
         -OnSelectedCompendiumChanged()
 	}
     Body "1" --> "0..1" Compendium : Contains
+
     class Label{
         +LabelGroup SelectedLabelGroup
         +List<SourceDataSet> Sources
@@ -87,12 +79,14 @@ classDiagram
         -OnSelectedLabelGroupChanged()
     }
     Body "1" --> "0..1" Label : Contains
+
     class Source{
         +SourceDataSet SelectedSource
 		+EventCallback<SourceDataSet> SelectedSourceChanged
         -OnSelectedSourceChanged()
 	}
     Body "1" --> "0..1" Source : Contains
+
     class Editor{
 		+SourceDataSet SelectedSource
 		+EventCallback<SourceDataSet> SelectedSourceChanged
@@ -100,6 +94,33 @@ classDiagram
 	}
     Body "1" --> "0..1" Editor : Contains
 
+    class AddSourceDialog{
+		+List<SourceDatatSet> Sources
+		+EventCallback<List<SourceDataSet>> SourcesAdded
+		-OnSourcesAdded()
+	}
+    MainLayout "1" --> "0..1" AddSourceDialog : Opens
+
+    class RemoveSourceDialog{
+        +List<SourceDataSet> Sources
+        +EventCallback<List<SourceDataSet>> SourcesRemoved
+        -OnSourcesRemoved()
+	}
+    MainLayout "1" --> "0..1" RemoveSourceDialog : Opens
+
+    class AddLabelDialog{
+        +List<LabelGroup> LabelGroups
+        +EventCallback<List<LabelGroup>> LabelGroupsAdded
+        -OnLabelGroupsAdded()
+    }
+    MainLayout "1" --> "0..1" AddLabelDialog : Opens    
+
+    class RemoveLabelDialog{
+        +List<LabelGroup> LabelGroups
+		+EventCallback<List<LabelGroup>> LabelGroupsRemoved
+		-OnLabelGroupsRemoved()
+    }
+    MainLayout "1" --> "0..1" RemoveLabelDialog : Opens
 ```
 
 ## Getting Started

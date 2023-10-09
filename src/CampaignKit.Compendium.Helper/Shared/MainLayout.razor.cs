@@ -114,9 +114,9 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="labelGroups">The list of label groups to be added.</param>
         private void LabelGroupsAdded(List<LabelGroup> labelGroups)
         {
-            // Add the labelGroops to the LabeGroups collection and sort them alphabetically.
             this.LabelGroups.AddRange(labelGroups);
             this.LabelGroups = this.LabelGroups.OrderBy(labelGroup => labelGroup.LabelName).ToList();
+            this.UpdateLabelGroups();
         }
 
         /// <summary>
@@ -125,25 +125,8 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="labelGroups">The list of label groups to be removed.</param>
         private void LabelGroupsRemoved(List<LabelGroup> labelGroups)
         {
-            // Remove the labelGroops to the LabeGroups collection and sort them alphabetically.
             this.LabelGroups.RemoveAll(labelGroup => labelGroups.Contains(labelGroup));
-        }
-
-        /// <summary>
-        /// Method to handle the event when the user selects to add sources.
-        /// </summary>
-        /// <returns>
-        /// Task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnAddSources()
-        {
-            this.Logger.LogInformation("User selected to add sources..");
-
-            await this.DialogService.OpenAsync<AddSourcesDialog>(
-                "Add Sources to Compendium",
-                new Dictionary<string, object>                {
-                    { "Compendium", this.SelectedCompendium },
-                });
+            this.UpdateLabelGroups();
         }
 
         /// <summary>
@@ -195,24 +178,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected to create a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
 
         /// <summary>
-        /// Method to handle the event when the user selects to remove sources.
-        /// </summary>
-        /// <returns>
-        /// Task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnRemoveSources()
-        {
-            this.Logger.LogInformation("User selected to remove sources..");
-
-            await this.DialogService.OpenAsync<RemoveSourcesDialog>(
-                "Remove Sources from Compendium",
-                new Dictionary<string, object>
-                {
-                    { "Sources", this.SelectedCompendium.SourceDataSets },
-                });
-        }
-
-        /// <summary>
         /// Method to handle the event when the user selects to add labelGroups.
         /// </summary>
         /// <returns>
@@ -228,6 +193,24 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 {
                     { "LabelGroups", this.LabelGroups },
                     { "LabelGroupsAdded", EventCallback.Factory.Create<List<LabelGroup>>(this, this.LabelGroupsAdded) },
+                });
+        }
+
+        /// <summary>
+        /// Method to handle the event when the user selects to add sources.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnShowAddSourcesDialog()
+        {
+            this.Logger.LogInformation("User selected to add sources..");
+
+            await this.DialogService.OpenAsync<AddSourcesDialog>(
+                "Add Sources to Compendium",
+                new Dictionary<string, object>                {
+                    { "Sources", this.SelectedCompendium.SourceDataSets },
+                    { "SourcesAdded", EventCallback.Factory.Create<List<SourceDataSet>>(this, this.SourcesAdded) },
                 });
         }
 
@@ -278,6 +261,25 @@ namespace CampaignKit.Compendium.Helper.Shared{
         }
 
         /// <summary>
+        /// Method to handle the event when the user selects to remove sources.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnShowRemoveSourcesDialog()
+        {
+            this.Logger.LogInformation("User selected to remove sources..");
+
+            await this.DialogService.OpenAsync<RemoveSourcesDialog>(
+                "Remove Sources from Compendium",
+                new Dictionary<string, object>
+                {
+                    { "Sources", this.SelectedCompendium.SourceDataSets },
+                    { "SourcesRemoved", EventCallback.Factory.Create<List<SourceDataSet>>(this, this.SourcesRemoved) },
+                });
+        }
+
+        /// <summary>
         /// Shows an "Upload File" dialog asynchronously and passes the CompendiumLoaded callback method as a parameter.
         /// </summary>
         private async void OnShowUploadDialog()        {
@@ -314,6 +316,27 @@ namespace CampaignKit.Compendium.Helper.Shared{
         }
 
         /// <summary>
+        /// Adds a list of SourceDataSet objects to the SelectedCompendium's SourceDataSets collection,
+        /// orders the collection by SourceDataSetName, and updates the label groups.
+        /// </summary>
+        private void SourcesAdded(List<SourceDataSet> sources)
+        {
+            this.SelectedCompendium.SourceDataSets.AddRange(sources);
+            this.SelectedCompendium.SourceDataSets = this.SelectedCompendium.SourceDataSets.OrderBy(source => source.SourceDataSetName).ToList();
+            this.UpdateLabelGroups();
+        }
+
+        /// <summary>
+        /// Removes the specified sources from the SelectedCompendium's SourceDataSets list and updates the label groups.
+        /// </summary>
+        /// <param name="sources">The list of SourceDataSet objects to be removed.</param>
+        private void SourcesRemoved(List<SourceDataSet> sources)
+        {
+            this.SelectedCompendium.SourceDataSets.RemoveAll(source => sources.Contains(source));
+            this.UpdateLabelGroups();
+        }
+
+        /// <summary>
         /// Updates the label groups based on the source data sets and temporary labelGroups.
         /// </summary>
         private void UpdateLabelGroups()
@@ -330,6 +353,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
                     LabelName = group.Key,
                     SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                 })
+                .OrderBy(group => group.LabelName)
                 .ToList();
         }
 
