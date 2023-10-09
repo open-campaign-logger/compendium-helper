@@ -97,7 +97,7 @@ namespace CampaignKit.Compendium.Helper.Services
                         var node = doc.DocumentNode.SelectSingleNode(source.XPath);
                         response = node.OuterHtml;
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         response = $"Unable to find node corresponding to XPath: {source.XPath}";
                     }

@@ -152,11 +152,12 @@ namespace CampaignKit.Compendium.Helper.Pages
             {
                 if (this.SelectedSource != null)
                 {
-                    // Load the source data set
                     await this.SourceDataSetService.LoadSourceDataSetAsync(this.SelectedSource, forceReload);
+                }
 
-                    // Log the markdown
-                    this.Logger.LogInformation("SelectedSource data loaded and converted to markdown: {}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.SelectedSource.Markdown));
+                if (forceReload)
+                {
+                    await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.SelectedSource.Markdown, this.ObjectReference);
                 }
             }
             catch (FetchException fe)

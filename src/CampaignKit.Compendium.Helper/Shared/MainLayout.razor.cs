@@ -114,9 +114,14 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="labelGroups">The list of label groups to be added.</param>
         private void LabelGroupsAdded(List<LabelGroup> labelGroups)
         {
-            this.LabelGroups.AddRange(labelGroups);
-            this.LabelGroups = this.LabelGroups.OrderBy(labelGroup => labelGroup.LabelName).ToList();
-            this.UpdateLabelGroups();
+            if (labelGroups != null && labelGroups.Any())
+            {
+                // Add the required label groups
+                this.LabelGroups.AddRange(labelGroups);
+
+                // Update the label groups
+                this.UpdateLabelGroups();
+            }
         }
 
         /// <summary>
@@ -125,8 +130,24 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="labelGroups">The list of label groups to be removed.</param>
         private void LabelGroupsRemoved(List<LabelGroup> labelGroups)
         {
-            this.LabelGroups.RemoveAll(labelGroup => labelGroups.Contains(labelGroup));
-            this.UpdateLabelGroups();
+            // If there are labelGroups to be removed, process them.
+            if (labelGroups != null && labelGroups.Any())
+            {
+                // For each labelGroupToBeRemoved, remove the label from all associated SourceDataSets
+                labelGroups.ForEach(labelGroup =>
+                {
+                    labelGroup.SourceDataSets.ForEach(source =>
+                    {
+                        source.Labels.Remove(labelGroup.LabelName);
+                    });
+                });
+
+                // Remove the label groups from the LabelGroups collection.
+                this.LabelGroups.RemoveAll(labelGroup => labelGroups.Contains(labelGroup));
+
+                // Update the label groups
+                this.UpdateLabelGroups();
+            }
         }
 
         /// <summary>
@@ -187,7 +208,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         {
             this.Logger.LogInformation("User selected to add labelGroups..");
 
-            await this.DialogService.OpenAsync<AddLabelDialog>(
+            await this.DialogService.OpenAsync<AddLabelsDialog>(
                 "Add Labels to Compendium",
                 new Dictionary<string, object>
                 {
@@ -298,21 +319,27 @@ namespace CampaignKit.Compendium.Helper.Shared{
         }
 
         /// <summary>
-        /// Event handler for when the selected label group changes.
+        /// Updates the selected label group if it is different from the current selected label group.
         /// </summary>
-        /// <param name="labelGroup">The new selected label group.</param>
+        /// <param name="labelGroup">The new label group to be selected.</param>
         private void SelectedLabelGroupChanged(LabelGroup labelGroup)
         {
-            this.SelectedLabelGroup = labelGroup;
+            if (labelGroup != null && (!this.SelectedLabelGroup?.Equals(labelGroup) ?? true))
+            {
+                this.SelectedLabelGroup = labelGroup;
+            }
         }
 
         /// <summary>
-        /// Event handler for when the selected source data set changes.
+        /// Updates the selected source data set if it is different from the current selected source.
         /// </summary>
-        /// <param name="sourceDataSet">The new selected source data set.</param>
+        /// <param name="sourceDataSet">The new source data set to be selected.</param>
         private void SelectedSourceDataSetChanged(SourceDataSet sourceDataSet)
         {
-            this.SelectedSource = sourceDataSet;
+            if (sourceDataSet != null && (!this.SelectedSource?.Equals(sourceDataSet) ?? true))
+            {
+                this.SelectedSource = sourceDataSet;
+            }
         }
 
         /// <summary>
@@ -341,6 +368,10 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </summary>
         private void UpdateLabelGroups()
         {
+            // Create a variable to hold label groups with no SourceDataSets
+            var emptyLabelGroups = this.LabelGroups?.Where(labelGroup => !labelGroup.SourceDataSets.Any()).ToList()
+                ?? new List<LabelGroup>();
+
             // Create LabelGroups for Labels in use by Sources
             this.LabelGroups = this.SelectedCompendium.SourceDataSets
                 .SelectMany(
@@ -353,6 +384,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
                     LabelName = group.Key,
                     SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                 })
+                .Concat(emptyLabelGroups)
                 .OrderBy(group => group.LabelName)
                 .ToList();
         }

@@ -72,12 +72,20 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
         /// <returns>
         /// A task representing the asynchronous operation.
         /// </returns>
-        private async Task OnLabelGroupsRemoved()        {            this.Logger.LogInformation("User selected OnLabelGroupsRemoved...");
+        private async Task OnLabelGroupsRemoved()
+        {
+            this.Logger.LogInformation("User selected OnLabelGroupsRemoved...");
 
             // Find LabelGroups that correspond to SelectedLabelGroups
             if (this.SelectedLabelGroups != null && this.SelectedLabelGroups.Any())
-            {                var labelGroupsToBeRemoved = this.LabelGroups.Where(labelGroup => this.SelectedLabelGroups.Contains(labelGroup.LabelName)).ToList();
-                await this.LabelGroupsRemoved.InvokeAsync(labelGroupsToBeRemoved);
+            {
+                // Create a collection of label groups to be removed.
+                var labelGroups = this.LabelGroups
+                    .Where(labelGroup => this.SelectedLabelGroups.Contains(labelGroup.LabelName))
+                    .ToList();
+
+                // Invoke the callback.
+                await this.LabelGroupsRemoved.InvokeAsync(labelGroups);
             }
 
             this.DialogService.Close();

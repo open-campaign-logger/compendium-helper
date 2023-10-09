@@ -108,19 +108,19 @@ classDiagram
 	}
     MainLayout "1" --> "0..1" RemoveSourceDialog : Opens
 
-    class AddLabelDialog{
+    class AddLabelsDialog{
         +List<LabelGroup> LabelGroups
         +EventCallback<List<LabelGroup>> LabelGroupsAdded
         -OnLabelGroupsAdded()
     }
-    MainLayout "1" --> "0..1" AddLabelDialog : Opens    
+    MainLayout "1" --> "0..1" AddLabelsDialog : Opens    
 
-    class RemoveLabelDialog{
+    class RemoveLabeslDialog{
         +List<LabelGroup> LabelGroups
 		+EventCallback<List<LabelGroup>> LabelGroupsRemoved
 		-OnLabelGroupsRemoved()
     }
-    MainLayout "1" --> "0..1" RemoveLabelDialog : Opens
+    MainLayout "1" --> "0..1" RemoveLabelsDialog : Opens
 ```
 
 ## Getting Started

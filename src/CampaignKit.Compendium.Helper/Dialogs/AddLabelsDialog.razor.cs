@@ -1,4 +1,4 @@
-﻿// <copyright file="AddLabelDialog.razor.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="AddLabelsDialog.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
     /// <summary>
     /// Represents a dialog for adding a label.
     /// </summary>
-    public partial class AddLabelDialog    {
+    public partial class AddLabelsDialog    {
         /// <summary>
         /// Gets or sets the LabelGroups parameter.
         /// </summary>
@@ -59,7 +59,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
         /// <summary>
         /// Gets or sets injects the ILogger dependency.
         /// </summary>
-        [Inject]        private ILogger<AddLabelDialog> Logger { get; set; }
+        [Inject]        private ILogger<AddLabelsDialog> Logger { get; set; }
 
         /// <summary>
         /// Gets or sets the TooltipService dependency.
@@ -69,19 +69,27 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
         /// <summary>
         /// Event handler for adding labels. Logs the event, invokes the LabelGroupsAdded event with the list of labels, and closes the dialog.
         /// </summary>
-        private async Task OnLabelGroupsAdded()        {            this.Logger.LogInformation("OnLabelGroupsAdded");            // Split label selections into a list of strings.            var labels = this.Labels.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+        private async Task OnLabelGroupsAdded()        {            this.Logger.LogInformation("User selected OnLabelGroupsAdded...");
 
-            // Remove any labels that are already associated with a collection of source data sets in Sources.
-            labels.RemoveAll(label => this.LabelGroups.Any(group => group.LabelName.Equals(labels)));
-
-            // Create the required label groups
-            var labelGroups = labels.Select(label => new LabelGroup
+            if (!string.IsNullOrEmpty(this.Labels))
             {
-                LabelName = label,
-                SourceDataSets = new List<Configuration.SourceDataSet>(),
-            }).ToList();
+                // Split label selections into a list of strings.
+                var labels = this.Labels.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
-            await this.LabelGroupsAdded.InvokeAsync(labelGroups);            this.DialogService.Close();        }
+                // Remove any labels that are already associated with a collection of source data sets in Sources.
+                labels.RemoveAll(label => this.LabelGroups.Any(group => group.LabelName.Equals(label)));
+
+                // Create the required label groups
+                var labelGroups = labels.Select(label => new LabelGroup
+                {
+                    LabelName = label,
+                    SourceDataSets = new List<Configuration.SourceDataSet>(),
+                }).ToList();
+
+                // Invoke the callback
+                await this.LabelGroupsAdded.InvokeAsync(labelGroups);
+            }
+            // Close the dialog.            this.DialogService.Close();        }
 
         /// <summary>
         /// Shows a tooltip for the specified element reference with the given tooltip text and optional tooltip options.

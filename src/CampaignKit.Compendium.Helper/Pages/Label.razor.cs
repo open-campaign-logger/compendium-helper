@@ -75,11 +75,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         protected override async Task OnParametersSetAsync()
         {
             this.Logger.LogInformation("OnParametersSetAsync");
-            await base.OnParametersSetAsync();
-
-            // Get the list of selected data sets, convert them to a list of strings, sort them and then assign them to SelectedLabelGroups.
-            this.SelectedDataSets
-                = this.SelectedLabelGroup.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
+            if (this.SelectedLabelGroup != null && this.SelectedLabelGroup.SourceDataSets != null)
+            {
+                this.SelectedDataSets
+                    = this.SelectedLabelGroup.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
+            }
         }
 
         /// <summary>
@@ -128,6 +128,9 @@ namespace CampaignKit.Compendium.Helper.Pages
                     }
                 }
             }
+
+            // Sort the SelectedLabelGroup.Sources list.
+            this.SelectedLabelGroup.SourceDataSets = this.SelectedLabelGroup.SourceDataSets.OrderBy(x => x.SourceDataSetName).ToList();
 
             // Fire an event to notify the parent component that the label assignment has changed.
             this.SelectedLabelGroupChanged.InvokeAsync(this.SelectedLabelGroup);
