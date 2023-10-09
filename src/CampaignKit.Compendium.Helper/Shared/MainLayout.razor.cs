@@ -25,17 +25,12 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
 
     using Radzen;
 
-    using System.Reflection.Emit;
+    using System.Data;
 
     /// <summary>
     /// Represents the main layout of the application.
     /// </summary>
     public partial class MainLayout    {
-        /// <summary>
-        /// Gets or sets the list of temporary labels.
-        /// </summary>
-        public List<string> TemporaryLabels { get; set; } = new ();
-
         /// <summary>
         /// Gets or sets the BrowserService dependency.
         /// </summary>
@@ -60,6 +55,11 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private IJSRuntime JSRuntime { get; set; }
 
         /// <summary>
+        /// Gets or sets the list of LabelGroup objects.
+        /// </summary>
+        private List<LabelGroup> LabelGroups { get; set; }
+
+        /// <summary>
         /// Gets or sets the ILogger into the Logger property.
         /// </summary>
         [Inject]        private ILogger<MainLayout> Logger { get; set; }
@@ -81,13 +81,47 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         private SourceDataSet SelectedSourceDataSet { get; set; }
 
         /// <summary>
+        /// Gets or sets the list of temporary labels.
+        /// </summary>
+        private List<string> TemporaryLabels { get; set; } = new ();
+
+        /// <summary>
         /// Instantiates a new, blank compendium and assigns it to the SelectedCompendium property.
         /// </summary>
         private void CreateDefaultCompendium()
         {
             this.Logger.LogInformation("Creating default compendium.");
             this.SelectedCompendium = new Configuration.Compendium();
+            this.SelectedSourceDataSet = null;
+            this.SelectedLabelGroup = null;
             this.TemporaryLabels = new List<string>();
+            this.UpdateLabelGroups();
+        }
+
+        /// <summary>
+        /// Updates the label groups based on the source data sets and temporary labels.
+        /// </summary>
+        private void UpdateLabelGroups()
+        {
+            // Create AllLabelGroups for Labels in use by SourceDataSets
+            this.LabelGroups = this.SelectedCompendium.SourceDataSets
+                .SelectMany(
+                    ds => ds.Labels.Any()
+                        ? ds.Labels.Select(label => new { Label = label, DataSet = ds })
+                        : new[] { new { Label = "*No Label", DataSet = new SourceDataSet() } })
+                .GroupBy(pair => pair.Label)
+                .Select(group => new LabelGroup
+                {
+                    LabelName = group.Key,
+                    SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
+                })
+                .Concat(this.TemporaryLabels.Select(label => new LabelGroup
+                {
+                    LabelName = label,
+                    SourceDataSets = new List<SourceDataSet>(),
+                }))
+                .OrderBy(group => group.LabelName)
+                .ToList();
         }
 
         /// <summary>
@@ -283,7 +317,11 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// </summary>
         /// <param name="compendium">The uploaded compendium.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnUploadComplete(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;        }
+        private async Task OnUploadComplete(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
+            this.SelectedSourceDataSet = null;
+            this.SelectedLabelGroup = null;
+            this.TemporaryLabels = new List<string>();
+            this.UpdateLabelGroups();        }
 
         /// <summary>
         /// Shows a new dialog asynchronously and waits for the user's selection. The dialog is opened using the DialogService with the specified title and prompt. The OnSelection event is subscribed to the OnNewCompendiumSelection method. The result of the dialog is displayed as an info notification.

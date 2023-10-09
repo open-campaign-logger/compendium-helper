@@ -1,5 +1,43 @@
-﻿<h3>RemoveLabels</h3>
+﻿<RadzenStack>
+    <RadzenStack>
+        <RadzenFormField Variant="@_variant" Style="width: 100%">
+            <End>
+                <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["labels"]))" />
+            </End>
+            <ChildContent>
+                <RadzenListBox AllowFiltering="true"
+                               FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                               Multiple="true"
+                               Data="@AllLabels"
+                               @bind-Value="SelectedLabels"
+                               Style="width:100%; height:300px;" />
+            </ChildContent>
+        </RadzenFormField>
+    </RadzenStack>
+    <RadzenStack>
+        <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="OnRemove" Disabled="!IsValid"></RadzenButton>
+    </RadzenStack>
+</RadzenStack>
 
 @code {
+    /// <summary>
+    /// Sets the variant of the object to Outlined.
+    /// </summary>
+    private Variant _variant = Variant.Outlined;
 
+    /// <summary>
+    /// Dictionary containing tooltips for form fields.
+    /// </summary>
+    Dictionary<string, string> _tooltips = new()
+    {
+        {"labels", "Select which labels to remove from the compendium."},
+    };
+
+    /// <summary>
+    /// Dictionary containing labels for form fields.
+    /// </summary>
+    Dictionary<string, string> _labels = new()
+    {
+        {"labels", "Labels"},
+    };
 }

@@ -3,13 +3,14 @@
         <RadzenStack Gap="1rem">
             <RadzenCard Visible="@(SelectedCompendium != null)">
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
-                <Navigator SelectedCompendium="SelectedCompendium"
+                <Navigator AllLabelGroups="AllLabelGroups"
+                           AllSourceDataSets="SelectedCompendium.SourceDataSets"
+                           TemporaryLabels="TemporaryLabels"
                            CompendiumExpanded="OnCompendiumExpanded"
                            CompendiumCollapsed="OnCompendiumCollapsed"
                            LabelExpanded="OnLabelExpanded"
                            LabelCollapsed="OnLabelCollapsed"
-                           SourceSelected="OnSourceDataSetSelected" 
-                           TemporaryLabels="TemporaryLabels"/>
+                           SourceSelected="OnSourceDataSetSelected" />
             </RadzenCard>
         </RadzenStack>
     </RadzenColumn>
@@ -17,24 +18,24 @@
         <RadzenTabs SelectedIndex="SelectedIndex">
             <Tabs>
 
-                <RadzenTabsItem Text="Compendium" Visible="SelectedCompendium !=null" >
-                    <Compendium SelectedCompendium="SelectedCompendium" 
-                        CompendiumTitleChanged="OnCompendiumTitleChanged"/>
+                <RadzenTabsItem Text="Compendium" Visible="SelectedCompendium !=null">
+                    <Compendium SelectedCompendium="SelectedCompendium"
+                                CompendiumTitleChanged="OnCompendiumTitleChanged" />
                 </RadzenTabsItem>
 
-                <RadzenTabsItem Text="Label" Visible="SelectedLabelGroup !=null" >
+                <RadzenTabsItem Text="Label" Visible="SelectedLabelGroup !=null">
                     <Label SelectedLabelGroup="SelectedLabelGroup"
                            AllSources="SelectedCompendium.SourceDataSets"
                            LabelGroupChanged="OnLabelGroupChanged"></Label>
                 </RadzenTabsItem>
 
-                <RadzenTabsItem Text="Source" Visible="SelectedSourceDataSet != null" >
-                    <Source SelectedSource="SelectedSourceDataSet" 
-                        SourceDataSetTitleChanged="OnSourceDataSetTitleChanged"/>
+                <RadzenTabsItem Text="Source" Visible="SelectedSourceDataSet != null">
+                    <Source SelectedSource="SelectedSourceDataSet"
+                            SourceDataSetTitleChanged="OnSourceDataSetTitleChanged" />
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Editor" Visible="SelectedSourceDataSet != null">
-                    <Editor Source="SelectedSourceDataSet"/>
+                    <Editor Source="SelectedSourceDataSet" />
                 </RadzenTabsItem>
 
             </Tabs>

@@ -21,6 +21,7 @@ namespace CampaignKit.Compendium.Helper.Pages
 
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
+
     using Microsoft.AspNetCore.Components;
 
     using Radzen;
@@ -76,7 +77,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("OnParametersSetAsync");
             await base.OnParametersSetAsync();
 
-            // Get the list of selected data sets, convert them to a list of strings, sort them and then assign them to SelectedDataSets.
+            // Get the list of selected data sets, convert them to a list of strings, sort them and then assign them to SelectedLabels.
             this.SelectedDataSets
                 = this.SelectedLabelGroup.SourceDataSets.Select(x => x.SourceDataSetName.ToString()).OrderBy(x => x);
         }

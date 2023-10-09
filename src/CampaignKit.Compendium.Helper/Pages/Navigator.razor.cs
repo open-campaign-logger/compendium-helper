@@ -17,6 +17,7 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using System;
+    using System.Runtime.CompilerServices;
 
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
@@ -30,6 +31,18 @@ namespace CampaignKit.Compendium.Helper.Pages
     /// </summary>
     public partial class Navigator
     {
+        /// <summary>
+        /// Gets or sets the AllLabelGroups parameter.
+        /// </summary>
+        [Parameter]
+        public List<LabelGroup> AllLabelGroups { get; set; }
+
+        /// <summary>
+        /// Gets or sets the AllSourceDataSets parameter.
+        /// </summary>
+        [Parameter]
+        public List<SourceDataSet> AllSourceDataSets { get; set; }
+
         /// <summary>
         /// Gets or sets the EventCallback for the compendium collapsed event.
         /// </summary>
@@ -55,17 +68,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         public EventCallback<LabelGroup> LabelExpanded { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of label groups.
-        /// </summary>
-        public List<LabelGroup> LabelGroups { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ICompendium object.
-        /// </summary>
-        [Parameter]
-        public ICompendium SelectedCompendium { get; set; }
-
-        /// <summary>
         /// Gets or sets the EventCallback for source selection.
         /// </summary>
         [Parameter]
@@ -75,22 +77,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the list of temporary labels that have no corresponding SourceDataSets.
         /// </summary>
         [Parameter]
-        public List<string> TemporaryLabels { get; set; } = new ();
-
-        /// <summary>
-        /// Gets the unique list of labels from the SourceDataSets and the TemporaryLabels sorted alphabetically.
-        /// </summary>
-        /// <returns>
-        /// A list of strings representing the unique labels.
-        /// </returns>
-        public List<string> UniqueLabels
-        {
-            get
-            {
-                // Return a list of distinct labels found in the LabelGroups sorted alphabetically.
-                return this.LabelGroups.Select(group => group.LabelName).Distinct().OrderBy(label => label).ToList();
-            }
-        }
+        public List<string> TemporaryLabels { get; set; }
 
         /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
@@ -101,17 +88,22 @@ namespace CampaignKit.Compendium.Helper.Pages
             get
             {
                 // Return a list of distinct source data set names from the compendium ordered alphabetically.
-                return this.SelectedCompendium.SourceDataSets.Select(sds => sds.SourceDataSetName).Distinct().OrderBy(sds => sds);
+                return this.AllSourceDataSets.Select(sds => sds.SourceDataSetName).Distinct().OrderBy(sds => sds);
             }
         }
 
         /// <summary>
-        /// Gets or sets the filtered compendium.
+        /// Gets or sets the filtered list of LabelGroups.
+        /// </summary>
+        private List<LabelGroup> FilteredLabelGroups { get; set; } = new ();
+
+        /// <summary>
+        /// Gets or sets the filtered source data sets.
         /// </summary>
         /// <value>
-        /// The filtered compendium.
+        /// The filtered source data sets.
         /// </value>
-        private ICompendium FilteredCompendium { get; set; }
+        private List<SourceDataSet> FilteredSourceDataSets { get; set; } = new ();
 
         /// <summary>
         /// Gets or sets the search term.
@@ -119,18 +111,20 @@ namespace CampaignKit.Compendium.Helper.Pages
         private string SearchTerm { get; set; } = string.Empty;
 
         /// <summary>
-        /// This method is called when the component receives new parameters. Any initialization or
-        /// data fetching logic should be placed here. The StateHasChanged() method is called to
-        /// cause the Navigator to re-render.
+        /// Initializes the component asynchronously.
         /// </summary>
-        protected override void OnParametersSet()
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// </returns>
+        protected async override Task OnInitializedAsync()
         {
+            await base.OnInitializedAsync();
             this.SearchTerm = string.Empty;
             this.FilterTree();
         }
 
         /// <summary>
-        /// Overrides the OnParametersSetAsync method to update the label groups.
+        /// Overrides the OnParametersSetAsync method to perform additional logic before the component's parameters are set.
         /// </summary>
         /// <returns>
         /// A Task representing the asynchronous operation.
@@ -139,7 +133,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             await base.OnParametersSetAsync();
             this.FilterTree();
-            this.UpdateLabelGroups();
         }
 
         /// <summary>
@@ -149,23 +142,42 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             if (string.IsNullOrWhiteSpace(this.SearchTerm))
             {
-                this.FilteredCompendium = this.SelectedCompendium;
+                this.FilteredSourceDataSets.Clear();
+                this.FilteredSourceDataSets.AddRange(this.AllSourceDataSets);
+                this.FilteredLabelGroups.Clear();
+                this.FilteredLabelGroups.AddRange(this.AllLabelGroups);
             }
             else
             {
-                this.FilteredCompendium.SourceDataSets =
-                    this.SelectedCompendium.SourceDataSets
+                // Filter source data sets based on search criteria
+                this.FilteredSourceDataSets =
+                    this.AllSourceDataSets
                     .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-            }
 
-            this.StateHasChanged();
+                // Filter label groups based on search criteria.  If a label group contains a source data set that has a SourceDataSetName matching the search criteria, add the label group to the filtered list.
+                this.FilteredLabelGroups =
+                    this.AllLabelGroups
+                    .Where(lg => lg.SourceDataSets.Any(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase))).ToList();
+            }
         }
 
+        /// <summary>
+        /// Event handler for the CompendiumExpandedChanged event. Invokes the CompendiumExpanded event with the specified compendium.
+        /// </summary>
+        /// <param name="isExpanded">A boolean indicating whether the compendium is expanded or collapsed.</param>
+        /// <param name="compendium">The compendium that was expanded or collapsed.</param>
+        /// <returns>A Task representing the asynchronous operation.</returns>
         private async Task OnCompendiumExpandedChanged(bool isExpanded, ICompendium compendium)
         {
             await this.CompendiumExpanded.InvokeAsync(compendium);
         }
 
+        /// <summary>
+        /// Event handler for when the expanded state of a label changes.
+        /// </summary>
+        /// <param name="isExpanded">The new expanded state of the label.</param>
+        /// <param name="labelGroup">The label group that contains the label.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnLabelExpandedChanged(bool isExpanded, LabelGroup labelGroup)
         {
             // Retrieve the label group that contains the label
@@ -177,7 +189,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         private void OnSearchChanged(object value)
         {
-            this.UpdateLabelGroups();
             this.FilterTree();
         }
 
@@ -190,56 +201,10 @@ namespace CampaignKit.Compendium.Helper.Pages
         private async Task OnSourceDataSetSelected(MenuItemEventArgs args, LabelGroup labelGroup)
         {
             // Retrieve the SourceDataSet from the compendium by its name
-            var sourceDataSet = this.FilteredCompendium.SourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));
+            var sourceDataSet = this.FilteredSourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));
 
             // Invoke the SourceSelected event
             await this.SourceSelected.InvokeAsync((sourceDataSet, labelGroup));
-        }
-
-        /// <summary>
-        /// Updates the label groups based on the source data sets and temporary labels.
-        /// </summary>
-        private void UpdateLabelGroups()
-        {
-            // SelectedLabelGroup for SourceDataSets with labels
-            var labeledGroupings = this.FilteredCompendium.SourceDataSets
-                .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
-                .GroupBy(pair => pair.Label)
-                .Where(group => !string.IsNullOrEmpty(group.Key))
-                .Select(group => new LabelGroup
-                {
-                    LabelName = group.Key,
-                    SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
-                });
-
-            // Retrieve the distinct list of labels that are associated with SourceDataSets
-            var labelsInUse = labeledGroupings.Select(group => group.LabelName).Distinct().ToList();
-
-            // Remove labels that are in use from the list of temporary labels
-            this.TemporaryLabels = this.TemporaryLabels.Except(labelsInUse).ToList();
-
-            // Add the temporary labels to the list of LabelGroups
-            labeledGroupings = labeledGroupings.Concat(
-                this.TemporaryLabels.Select(label => new LabelGroup
-                {
-                    LabelName = label,
-                    SourceDataSets = new List<SourceDataSet>(),
-                }));
-
-            // SelectedLabelGroup for SourceDataSets without labels
-            var noLabelGrouping = new LabelGroup
-            {
-                LabelName = "No Label",
-                SourceDataSets = this.FilteredCompendium.SourceDataSets
-                    .Where(ds => !ds.Labels.Any())
-                    .OrderBy(sds => sds.SourceDataSetName)
-                    .ToList(),
-            };
-
-            // Merge the two groupings and order them by LabelName
-            this.LabelGroups = labeledGroupings.Concat(new[] { noLabelGrouping })
-                .OrderBy(group => group.LabelName)
-                .ToList();
         }
     }
 }

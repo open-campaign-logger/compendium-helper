@@ -40,16 +40,16 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         private DialogService DialogService { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether the SelectedDataSets property is not null or empty.
+        /// Gets a value indicating whether the SelectedLabels property is not null or empty.
         /// </summary>
         /// <returns>
-        /// Returns true if SelectedDataSets is not null or empty, otherwise false.
+        /// Returns true if SelectedLabels is not null or empty, otherwise false.
         /// </returns>
         private bool IsValid
         {
             get
             {
-                // return true if SelectedDataSets is not null or empty.
+                // return true if SelectedLabels is not null or empty.
                 return this.SelectedDataSets != null && this.SelectedDataSets.Any();
             }
         }

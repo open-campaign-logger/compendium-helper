@@ -33,7 +33,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs{    using Microsoft.AspNetCore
         /// True if the Labels property is not null or empty, otherwise false.
         /// </returns>
         private bool IsValid        {            get            {
-                // return true if SelectedDataSets is not null or empty.
+                // return true if SelectedLabels is not null or empty.
                 return this.Labels != null && this.Labels.Split(',', StringSplitOptions.RemoveEmptyEntries).Any();            }        }
 
         /// <summary>

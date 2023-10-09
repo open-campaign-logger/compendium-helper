@@ -21,6 +21,12 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
     /// </summary>
     public partial class Body    {
         /// <summary>
+        /// Gets or sets the AllLabelGroups parameter.
+        /// </summary>
+        [Parameter]
+        public List<LabelGroup> AllLabelGroups { get; set; }
+
+        /// <summary>
         /// Gets or sets the selected compendium.
         /// </summary>
         /// <value>The selected compendium.</value>
@@ -130,6 +136,7 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         /// <param name="labelGroup">The new label group.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnLabelGroupChanged(LabelGroup labelGroup)        {            this.Logger.LogInformation("Label assignment changed: {LabelName}", labelGroup.LabelName);            await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);            await this.SelectedSourceDataSetChanged.InvokeAsync(null);        }
+
         /// <summary>
         /// Event handler for when a source data set is selected.
         /// </summary>
