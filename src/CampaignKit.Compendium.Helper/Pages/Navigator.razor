@@ -7,7 +7,7 @@
             <RadzenPanelMenu>
                 @foreach (var grouping in FilteredLabelGroups)
                 {
-                    <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelSelected(isExpanded, grouping))">
+                    <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelGroupSelected(grouping))">
                         @foreach (var dataSet in grouping.SourceDataSets)
                         {
                             <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceSelected(args, grouping)" />

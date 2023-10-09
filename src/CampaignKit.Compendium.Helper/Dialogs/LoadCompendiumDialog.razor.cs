@@ -1,4 +1,4 @@
-﻿// <copyright file="LoadConfigurationDialog.razor.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="LoadCompendiumDialog.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,22 +24,22 @@ namespace CampaignKit.Compendium.Helper.Dialogs
     using Radzen;
 
     /// <summary>
-    /// Code behind class for LoadConfigurationDialog.
+    /// Code behind class for LoadCompendiumDialog.
     /// </summary>
-    public partial class LoadConfigurationDialog
+    public partial class LoadCompendiumDialog
     {
         /// <summary>
         /// Gets or sets the event callback for when the upload is complete.
         /// The event callback takes an ICompendium parameter.
         /// </summary>
         [Parameter]
-        public EventCallback<ICompendium> OnUploadComplete { get; set; }
+        public EventCallback<ICompendium> CompendiumLoaded { get; set; }
 
         /// <summary>
-        /// Gets or sets the package filename.
+        /// Gets or sets the compendium URL.
         /// </summary>
         [Parameter]
-        public string SampleConfigurationName { get; set; }
+        public string CompendiumUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the prompt for the parameter.
@@ -70,7 +70,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         /// Gets or sets injects an ILogger dependency into the Logger property.
         /// </summary>
         [Inject]
-        private ILogger<LoadConfigurationDialog> Logger { get; set; }
+        private ILogger<LoadCompendiumDialog> Logger { get; set; }
 
         /// <summary>
         /// Handles the event when the "Yes" option is selected.
@@ -81,9 +81,9 @@ namespace CampaignKit.Compendium.Helper.Dialogs
         private async Task OnYes()
         {
             this.Logger.LogInformation("User selected Yes.");
-            var json = await this.FileService.ReadPackageFileAsync(this.SampleConfigurationName);
+            var json = await this.FileService.ReadPackageFileAsync(this.CompendiumUrl);
             var compendium = this.CompendiumService.LoadCompendium(json);
-            await this.OnUploadComplete.InvokeAsync(compendium);
+            await this.CompendiumLoaded.InvokeAsync(compendium);
             this.DialogService.Close();
         }
     }

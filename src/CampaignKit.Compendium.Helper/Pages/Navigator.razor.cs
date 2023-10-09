@@ -17,7 +17,6 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using System;
-    using System.Runtime.CompilerServices;
 
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
@@ -43,14 +42,18 @@ namespace CampaignKit.Compendium.Helper.Pages
         [Parameter]
         public List<SourceDataSet> Sources { get; set; }
 
+        /// <summary>
+        /// Gets or sets the event callback for when a label group is changed.
+        /// </summary>
+        /// <value>The event callback for when a label group is changed.</value>
         [Parameter]
-        public EventCallback<LabelGroup> LabelGroupSelected { get; set; }
+        public EventCallback<LabelGroup> SelectedLabelGroupChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the EventCallback for source selection.
         /// </summary>
         [Parameter]
-        public EventCallback<(SourceDataSet, LabelGroup)> SourceSelected { get; set; }
+        public EventCallback<(SourceDataSet, LabelGroup)> SelectedSourceChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the list of temporary labels that have no corresponding Sources.
@@ -143,13 +146,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <summary>
         /// Event handler for when the expanded state of a label changes.
         /// </summary>
-        /// <param name="isExpanded">The new expanded state of the label.</param>
         /// <param name="labelGroup">The label group that contains the label.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnLabelSelected(bool isExpanded, LabelGroup labelGroup)
+        private async Task OnLabelGroupSelected(LabelGroup labelGroup)
         {
-            // Retrieve the label group that contains the label
-            await this.LabelGroupSelected.InvokeAsync(labelGroup);
+            await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);
         }
 
         /// <summary>
@@ -172,7 +173,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             var sourceDataSet = this.FilteredSourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));
 
             // Invoke the SourceSelected event
-            await this.SourceSelected.InvokeAsync((sourceDataSet, labelGroup));
+            await this.SelectedSourceChanged.InvokeAsync((sourceDataSet, labelGroup));
         }
     }
 }

@@ -50,6 +50,11 @@ namespace CampaignKit.Compendium.Helper.Shared{
         [Inject]        private DialogService DialogService { get; set; }
 
         /// <summary>
+        /// Gets or sets the IJSRuntime dependency.
+        /// </summary>
+        [Inject]        private IJSRuntime JsRuntime { get; set; }
+
+        /// <summary>
         /// Gets or sets the JS runtime dependency.
         /// </summary>
         [Inject]
@@ -100,32 +105,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
         }
 
         /// <summary>
-        /// Updates the label groups based on the source data sets and temporary labels.
-        /// </summary>
-        private void UpdateLabelGroups()
-        {
-            // Create LabelGroups for Labels in use by Sources
-            this.LabelGroups = this.SelectedCompendium.SourceDataSets
-                .SelectMany(
-                    ds => ds.Labels.Any()
-                        ? ds.Labels.Select(label => new { Label = label, DataSet = ds })
-                        : new[] { new { Label = "*No Label", DataSet = new SourceDataSet() } })
-                .GroupBy(pair => pair.Label)
-                .Select(group => new LabelGroup
-                {
-                    LabelName = group.Key,
-                    SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
-                })
-                .Concat(this.TemporaryLabels.Select(label => new LabelGroup
-                {
-                    LabelName = label,
-                    SourceDataSets = new List<SourceDataSet>(),
-                }))
-                .OrderBy(group => group.LabelName)
-                .ToList();
-        }
-
-        /// <summary>
         /// Method to handle the event when the user selects to add labels.
         /// </summary>
         /// <returns>
@@ -159,6 +138,17 @@ namespace CampaignKit.Compendium.Helper.Shared{
                     { "Compendium", this.SelectedCompendium },
                 });
         }
+
+        /// <summary>
+        /// Method called when the upload of a compendium is complete.
+        /// </summary>
+        /// <param name="compendium">The uploaded compendium.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task OnCompendiumLoaded(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
+            this.SelectedSource = null;
+            this.SelectedLabelGroup = null;
+            this.TemporaryLabels = new List<string>();
+            this.UpdateLabelGroups();        }
 
         /// <summary>
         /// Method to handle the event of downloading a selected compendium.
@@ -290,9 +280,9 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// Event handler for when the selected compendium changes.
         /// </summary>
         /// <param name="compendium">The new selected compendium.</param>
-        private void OnSelectedCompendiumChanged(ICompendium compendium)
+        private async Task OnSelectedCompendiumChanged(ICompendium compendium)
         {
-            this.SelectedCompendium = compendium;
+            await this.UpdatePageTitle();
         }
 
         /// <summary>
@@ -314,20 +304,24 @@ namespace CampaignKit.Compendium.Helper.Shared{
         }
 
         /// <summary>
-        /// Method called when the upload of a compendium is complete.
+        /// Opens a dialog to confirm loading a package and replacing the current compendium configuration.
         /// </summary>
-        /// <param name="compendium">The uploaded compendium.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnUploadComplete(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
-            this.SelectedSource = null;
-            this.SelectedLabelGroup = null;
-            this.TemporaryLabels = new List<string>();
-            this.UpdateLabelGroups();        }
+        /// <param name="sampleName">The name of the package to load.</param>
+        /// <param name="sampleUrl">The URL of the package.</param>
+        private async void OnShowLoadDialog(string sampleName, string sampleUrl)        {
+            this.Logger.LogInformation("Show compendium load dialog.");
+
+            await this.DialogService.OpenAsync<LoadCompendiumDialog>(
+                "Load Sample Compendium",
+                new Dictionary<string, object>
+                {                    { "Prompt", $"Load the {sampleName} sample compendium?" },                    { "CompendiumUrl", sampleUrl },
+                    { "CompendiumLoaded",  EventCallback.Factory.Create<ICompendium>(this, this.OnCompendiumLoaded) },
+                });        }
 
         /// <summary>
         /// Shows a new dialog asynchronously and waits for the user's selection. The dialog is opened using the DialogService with the specified title and prompt. The OnSelection event is subscribed to the OnNewCompendiumSelection method. The result of the dialog is displayed as an info notification.
         /// </summary>
-        private async void ShowNewDialog()        {
+        private async void OnShowNewDialog()        {
             this.Logger.LogInformation("Show new compendium dialog.");
 
             await this.DialogService.OpenAsync<ConfirmationDialog>(
@@ -337,26 +331,45 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 });        }
 
         /// <summary>
-        /// Opens a dialog to confirm loading a package and replacing the current compendium configuration.
+        /// Shows an "Upload File" dialog asynchronously and passes the CompendiumLoaded callback method as a parameter.
         /// </summary>
-        /// <param name="sampleName">The name of the package to load.</param>
-        /// <param name="sampleUrl">The URL of the package.</param>
-        private async void ShowPackageDialog(string sampleName, string sampleUrl)        {
-            this.Logger.LogInformation("Show package dialog.");
-
-            await this.DialogService.OpenAsync<LoadConfigurationDialog>(
-                "Load Sample Configuration",
-                new Dictionary<string, object>
-                {                    { "Prompt", $"Load the {sampleName} sample configuration?" },                    { "SampleConfigurationName", sampleUrl },
-                    { "OnUploadComplete",  EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },
-                });        }
-
-        /// <summary>
-        /// Shows an "Upload File" dialog asynchronously and passes the OnUploadComplete callback method as a parameter.
-        /// </summary>
-        private async void ShowUploadDialog()        {
+        private async void OnShowUploadDialog()        {
             this.Logger.LogInformation("Show upload dialog.");
 
             await this.DialogService.OpenAsync<UploadConfigurationDialog>(                "Upload Compendium",                new Dictionary<string, object>
-                {                    { "Prompt", "Select an existing compendium configuration." },                    { "OnUploadComplete",  EventCallback.Factory.Create<ICompendium>(this, this.OnUploadComplete) },                });        }
+                {                    { "Prompt", "Select an existing compendium configuration." },                    { "CompendiumLoaded",  EventCallback.Factory.Create<ICompendium>(this, this.OnCompendiumLoaded) },                });        }
+
+        /// <summary>
+        /// Updates the label groups based on the source data sets and temporary labels.
+        /// </summary>
+        private void UpdateLabelGroups()
+        {
+            // Create LabelGroups for Labels in use by Sources
+            this.LabelGroups = this.SelectedCompendium.SourceDataSets
+                .SelectMany(
+                    ds => ds.Labels.Any()
+                        ? ds.Labels.Select(label => new { Label = label, DataSet = ds })
+                        : new[] { new { Label = "*No Label", DataSet = new SourceDataSet() } })
+                .GroupBy(pair => pair.Label)
+                .Select(group => new LabelGroup
+                {
+                    LabelName = group.Key,
+                    SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
+                })
+                .Concat(this.TemporaryLabels.Select(label => new LabelGroup
+                {
+                    LabelName = label,
+                    SourceDataSets = new List<SourceDataSet>(),
+                }))
+                .OrderBy(group => group.LabelName)
+                .ToList();
+        }
+
+        /// <summary>
+        /// Updates the title of the browser window with the title of the selected compendium, or sets it to "Compendium Helper" if no compendium is selected.
+        /// </summary>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// </returns>
+        private async Task UpdatePageTitle()        {            var title = string.IsNullOrEmpty(this.SelectedCompendium?.Title) ? "Compendium Helper" : this.SelectedCompendium.Title;            await this.BrowserService.SetTitle(this.JsRuntime, title);        }
     }}

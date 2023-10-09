@@ -86,7 +86,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Logs a message when the source data set association is changed.
         /// </summary>
         /// <param name="selected">The source data sets.</param>
-        private void OnChange(object selected)
+        private void OnSelectedLabelGroupChanged(object selected)
         {
             // Log the method entry
             this.Logger.LogInformation("Label association changed.");

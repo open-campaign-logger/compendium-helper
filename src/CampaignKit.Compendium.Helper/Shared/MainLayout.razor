@@ -11,11 +11,11 @@
             <RadzenImage Src="/images/logo.png" />
             <RadzenMenu>
                 <RadzenMenuItem Text="File" Icon="folder">
-                    <RadzenMenuItem Text="New.." Icon="add" Click="ShowNewDialog"/>
-                    <RadzenMenuItem Text="Load..." Icon="file_upload" Click="ShowUploadDialog" />
+                    <RadzenMenuItem Text="New.." Icon="add" Click="OnShowNewDialog"/>
+                    <RadzenMenuItem Text="Load..." Icon="file_upload" Click="OnShowUploadDialog" />
                     <RadzenMenuItem Text="Save..." Icon="file_download" Click="OnDownload" Visible="(SelectedCompendium != null)"/>
                     <hr class="separator mx-2 text-dark">
-                    <RadzenMenuItem Text="W.O.I.N." Icon="folder" Click="@(args => ShowPackageDialog(_packages["woin"][0], _packages["woin"][1]))" />
+                    <RadzenMenuItem Text="W.O.I.N." Icon="folder" Click="@(args => OnShowLoadDialog(_packages["woin"][0], _packages["woin"][1]))" />
                 </RadzenMenuItem>
                 <RadzenMenuItem Text="Compendium" Icon="library_books" Visible="(SelectedCompendium != null)">
                     <RadzenMenuItem Text="Add Sources..." Icon="add_link" Click="OnAddSources"/>
@@ -30,13 +30,13 @@
     </RadzenHeader>
     <RadzenBody>
         <Body SelectedCompendium="SelectedCompendium" 
-            SelectedCompendiumChanged="OnSelectedCompendiumChanged"
             SelectedLabelGroup="SelectedLabelGroup"
-            SelectedLabelGroupChanged="OnSelectedLabelGroupChanged"
-            SelectedSourceDataSet="SelectedSource"
-            SelectedSourceChanged="OnSelectedSourceDataSetChanged"
+            SelectedSource="SelectedSource"
+            LabelGroups="LabelGroups"
             TemporaryLabels="TemporaryLabels"
-            AllLabelGroups="LabelGroups"></Body>
+            SelectedCompendiumChanged="OnSelectedCompendiumChanged"
+            SelectedLabelGroupChanged="OnSelectedLabelGroupChanged"
+            SelectedSourceChanged="OnSelectedSourceDataSetChanged"></Body>
     </RadzenBody>
 </RadzenLayout>
 

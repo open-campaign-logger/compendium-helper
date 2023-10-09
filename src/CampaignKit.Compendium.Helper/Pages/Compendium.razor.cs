@@ -38,7 +38,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the EventCallback for the compendium change events.
         /// </summary>
         [Parameter]
-        public EventCallback SelectedCompendiumChanged { get; set; }
+        public EventCallback<ICompendium> SelectedCompendiumChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the TooltipService.
@@ -47,14 +47,14 @@ namespace CampaignKit.Compendium.Helper.Pages
         private TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Event handler for when the compendium title is changed.
+        /// Asynchronously invokes the SelectedCompendiumChanged event with the current SelectedCompendium value.
         /// </summary>
-        /// <param name="title">The new title of the compendium.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnCompendiumTitleChanged(string title)
+        /// <returns>
+        /// A Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnSelectedCompendiumChanged()
         {
-            // Invoke callback
-            await this.SelectedCompendiumChanged.InvokeAsync(title);
+            await this.SelectedCompendiumChanged.InvokeAsync(this.SelectedCompendium);
         }
 
         /// <summary>

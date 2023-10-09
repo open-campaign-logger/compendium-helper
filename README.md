@@ -21,25 +21,50 @@ classDiagram
         -LabelGroup SelectedLabelGroup
         -SourceDataSet SelectedSource        
         -List<string> TemporaryLabels
+        -OnCompendiumLoaded()
+        -OnSelectedCompendiumChanged()
+        -OnSelectedLabelGroupChanged()
+        -OnSelectedSourceChanged()
+        -OnShowLoadDialog()
+        -OnShowUploadDialog()
+        -UpdatePageTitle()
+        -OnSelectedCompendiumChanged(ICompendium)
+        -OnSelectedLabelGroupChanged(LabelGroup)
+        -OnSelectedSourceChanged(SourceDataSet)
     }
-    MainLayout --> "1" Body : Contains
+    class LoadCompendiumDialog{
+        +string CompendiumUrl
+	    +EventCallback<ICompendium> CompendiumLoaded
+	}
+    MainLayout "1" --> "0..1" LoadCompendiumDialog : Contains
+    class UploadCompendiumDialog{
+	    +EventCallback<ICompendium> CompendiumLoaded
+    }
+    MainLayout "1" --> "0..1" UploadCompendiumDialog : Contains
     class Body{
         +List<LabelGroup> LabelGroups
-        +ICompendium SelectedCompendium
-        +EventCallback<ICompendium> SelectedCompendiumChanged
-        +LabelGroup SelectedLabelGroup
-        +EventCallback<LabelGroup> SelectedLabelGroupChanged
+        +ICompendium SelectedCompendium        
+        +LabelGroup SelectedLabelGroup        
         +SourceDataSet SelectedSource
-        +EventCallback<SourceDataSet> SelectedSourceChanged
         +List<string> TemporaryLabels
+        +EventCallback<ICompendium> SelectedCompendiumChanged
+        +EventCallback<LabelGroup> SelectedLabelGroupChanged
+        +EventCallback<SourceDataSet> SelectedSourceChanged
+        -OnSelectedCompendiumChanged(ICompendium)
+        -OnSelectedLabelGroupChanged(LabelGroup)
+        -OnSelectedSourceChanged((SourceDataSet, LabelGroup))
     }
-    Body "1" --> "0..1" Navigation : Contains
+    MainLayout --> "1" Body : Contains
     class Navigation{
         +List<LabelGroup> LabelGroups
         +List<SourceDataSet> Sources
-        +EventCallback<LabelGroup> LabelGroupSelected
-        +EventCallback<SourceDataSet> SourceSeelected
+        +EventCallback<LabelGroup> SelectedLabelGroupChanged
+        +EventCallback<(SourceDataSet, LabelGroup> SelectedSourceChanged
+        -OnLabelGroupSelected(LabelGroup)
+        -OnSourceSelected(MenuItemEventArgs, LabelGroup)
+        -OnSearchChanged(object)        
     }
+    Body "1" --> "0..1" Navigation : Contains
     class Compendium{
 		+ICompendium SelectedCompendium
         +EventCallback<ICompendium> SelectedCompendiumChanged
@@ -47,13 +72,20 @@ classDiagram
     Body "1" --> "0..1" Compendium : Contains
     class Label{
         +LabelGroup SelectedLabelGroup
-        +EventCallback<LabelGroup> SelectedLabelGroupChanged        
         +List<SourceDataSet> Sources
+        +EventCallback<LabelGroup> SelectedLabelGroupChanged     
+        -OnSelectedLabelGroupChanged(object)
     }
     Body "1" --> "0..1" Label : Contains
     class Source{
         +SourceDataSet SelectedSource
 		+EventCallback<SourceDataSet> SelectedSourceChanged
+        -OnSelectedSourceChanged(object)
+	}
+    class Editor{
+		+SourceDataSet SelectedSource
+		+EventCallback<SourceDataSet> SelectedSourceChanged
+		-OnSelectedSourceChanged(object)
 	}
     Body "1" --> "0..1" Source : Contains
 ```

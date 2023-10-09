@@ -1,4 +1,4 @@
-﻿// <copyright file="Source.razor.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="SelectedSource.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,13 +17,14 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     using Microsoft.AspNetCore.Components;
 
     using Radzen;
 
     /// <summary>
-    /// Code behind for the Source component.
+    /// Code behind for the SelectedSource component.
     /// </summary>
     public partial class Source
     {
@@ -41,20 +42,21 @@ namespace CampaignKit.Compendium.Helper.Pages
         public TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Gets or sets the EventCallback for the source data set title change event.
+        /// Gets or sets the EventCallback for source selection.
         /// </summary>
         [Parameter]
-        public EventCallback<string> SelectedSourceChanged { get; set; }
+        public EventCallback<(SourceDataSet, LabelGroup)> SelectedSourceChanged { get; set; }
 
         /// <summary>
-        /// Event handler for when the source data set title is changed.
+        /// Method that is called when the selected source is changed.
         /// </summary>
-        /// <param name="title">The new title of the source data set.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSourceDataSetTitleChanged(string title)
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnSelectedSourceChanged()
         {
             // Invoke callback
-            await this.SelectedSourceChanged.InvokeAsync(title);
+            await this.SelectedSourceChanged.InvokeAsync((this.SelectedSource, null));
         }
 
         /// <summary>

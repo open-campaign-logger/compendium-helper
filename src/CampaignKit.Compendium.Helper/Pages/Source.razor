@@ -13,7 +13,7 @@
                             <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["sourceDataSetName"]))" />
                         </End>
                         <ChildContent>
-                            <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetName" id="sourceDataSetName" Change="OnSourceDataSetTitleChanged"/>
+                            <RadzenTextBox @bind-Value="@SelectedSource.SourceDataSetName" id="sourceDataSetName" Change="OnSelectedSourceChanged"/>
                         </ChildContent>
                     </RadzenFormField>
                 </RadzenStack>
@@ -114,7 +114,7 @@
         {"labels", "Labels"},
         {"overwriteExisting", "Overwrite Existing?"},
         {"sourceDataSetName", "Name"},
-        {"sourceDataSetURI", "Source URI"},
+        {"sourceDataSetURI", "SelectedSource URI"},
         {"tagSymbol", "Tag Symbol"},
         {"tagValuePrefix", "Tag Value Prefix"},
         {"xPath", "Starting XPath"},

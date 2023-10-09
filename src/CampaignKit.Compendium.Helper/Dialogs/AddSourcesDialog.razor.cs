@@ -89,7 +89,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
 
             // the urls property will have carriage returns in it, so we need to split on that
             var urls = this.URLs.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var url in urls)            {                // Determine the next available source dataset name.                var sourceDataSetName = "Source";                var sourceDataSetNumber = 1;                while (this.Compendium.SourceDataSets.Any(sds => sds.SourceDataSetName.Equals($"{sourceDataSetName} {sourceDataSetNumber}")))
+            foreach (var url in urls)            {                // Determine the next available source dataset name.                var sourceDataSetName = "SelectedSource";                var sourceDataSetNumber = 1;                while (this.Compendium.SourceDataSets.Any(sds => sds.SourceDataSetName.Equals($"{sourceDataSetName} {sourceDataSetNumber}")))
                 {
                     sourceDataSetNumber++;
                 }                var source = new SourceDataSet()                {

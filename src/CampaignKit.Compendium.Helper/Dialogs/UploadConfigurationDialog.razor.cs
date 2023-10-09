@@ -26,7 +26,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs{    using CampaignKit.Compendi
         /// Gets or sets the event callback for when the upload is complete.
         /// The event callback takes an ICompendium parameter.
         /// </summary>
-        [Parameter]        public EventCallback<ICompendium> OnUploadComplete { get; set; }
+        [Parameter]        public EventCallback<ICompendium> CompendiumLoaded { get; set; }
 
         /// <summary>
         /// Gets or sets the prompt for the parameter.
@@ -64,4 +64,4 @@ namespace CampaignKit.Compendium.Helper.Dialogs{    using CampaignKit.Compendi
         /// </summary>
         /// <param name="args">The event arguments containing the raw response.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task UploadComplete(UploadCompleteEventArgs args)        {            this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);            var json = args.RawResponse;            var compendium = this.CompendiumService.LoadCompendium(json);            await this.OnUploadComplete.InvokeAsync(compendium);            this.DialogService.Close();        }    }}
+        private async Task OnCompendiumLoaded(UploadCompleteEventArgs args)        {            this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);            var json = args.RawResponse;            var compendium = this.CompendiumService.LoadCompendium(json);            await this.CompendiumLoaded.InvokeAsync(compendium);            this.DialogService.Close();        }    }}
