@@ -32,40 +32,19 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Navigator
     {
         /// <summary>
-        /// Gets or sets the AllLabelGroups parameter.
+        /// Gets or sets the LabelGroups parameter.
         /// </summary>
         [Parameter]
-        public List<LabelGroup> AllLabelGroups { get; set; }
+        public List<LabelGroup> LabelGroups { get; set; }
 
         /// <summary>
-        /// Gets or sets the AllSourceDataSets parameter.
+        /// Gets or sets the Sources parameter.
         /// </summary>
         [Parameter]
-        public List<SourceDataSet> AllSourceDataSets { get; set; }
+        public List<SourceDataSet> Sources { get; set; }
 
-        /// <summary>
-        /// Gets or sets the EventCallback for the compendium collapsed event.
-        /// </summary>
         [Parameter]
-        public EventCallback<ICompendium> CompendiumCollapsed { get; set; }
-
-        /// <summary>
-        /// Gets or sets the EventCallback for the compendium expansion event.
-        /// </summary>
-        [Parameter]
-        public EventCallback<ICompendium> CompendiumExpanded { get; set; }
-
-        /// <summary>
-        /// Gets or sets the EventCallback for the label collapsed event.
-        /// </summary>
-        [Parameter]
-        public EventCallback<LabelGroup> LabelCollapsed { get; set; }
-
-        /// <summary>
-        /// Gets or sets the EventCallback for the label expansion event.
-        /// </summary>
-        [Parameter]
-        public EventCallback<LabelGroup> LabelExpanded { get; set; }
+        public EventCallback<LabelGroup> LabelGroupSelected { get; set; }
 
         /// <summary>
         /// Gets or sets the EventCallback for source selection.
@@ -74,7 +53,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         public EventCallback<(SourceDataSet, LabelGroup)> SourceSelected { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of temporary labels that have no corresponding SourceDataSets.
+        /// Gets or sets the list of temporary labels that have no corresponding Sources.
         /// </summary>
         [Parameter]
         public List<string> TemporaryLabels { get; set; }
@@ -88,7 +67,7 @@ namespace CampaignKit.Compendium.Helper.Pages
             get
             {
                 // Return a list of distinct source data set names from the compendium ordered alphabetically.
-                return this.AllSourceDataSets.Select(sds => sds.SourceDataSetName).Distinct().OrderBy(sds => sds);
+                return this.Sources.Select(sds => sds.SourceDataSetName).Distinct().OrderBy(sds => sds);
             }
         }
 
@@ -143,33 +122,22 @@ namespace CampaignKit.Compendium.Helper.Pages
             if (string.IsNullOrWhiteSpace(this.SearchTerm))
             {
                 this.FilteredSourceDataSets.Clear();
-                this.FilteredSourceDataSets.AddRange(this.AllSourceDataSets);
+                this.FilteredSourceDataSets.AddRange(this.Sources);
                 this.FilteredLabelGroups.Clear();
-                this.FilteredLabelGroups.AddRange(this.AllLabelGroups);
+                this.FilteredLabelGroups.AddRange(this.LabelGroups);
             }
             else
             {
                 // Filter source data sets based on search criteria
                 this.FilteredSourceDataSets =
-                    this.AllSourceDataSets
+                    this.Sources
                     .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
 
                 // Filter label groups based on search criteria.  If a label group contains a source data set that has a SourceDataSetName matching the search criteria, add the label group to the filtered list.
                 this.FilteredLabelGroups =
-                    this.AllLabelGroups
+                    this.LabelGroups
                     .Where(lg => lg.SourceDataSets.Any(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase))).ToList();
             }
-        }
-
-        /// <summary>
-        /// Event handler for the CompendiumExpandedChanged event. Invokes the CompendiumExpanded event with the specified compendium.
-        /// </summary>
-        /// <param name="isExpanded">A boolean indicating whether the compendium is expanded or collapsed.</param>
-        /// <param name="compendium">The compendium that was expanded or collapsed.</param>
-        /// <returns>A Task representing the asynchronous operation.</returns>
-        private async Task OnCompendiumExpandedChanged(bool isExpanded, ICompendium compendium)
-        {
-            await this.CompendiumExpanded.InvokeAsync(compendium);
         }
 
         /// <summary>
@@ -178,10 +146,10 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="isExpanded">The new expanded state of the label.</param>
         /// <param name="labelGroup">The label group that contains the label.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnLabelExpandedChanged(bool isExpanded, LabelGroup labelGroup)
+        private async Task OnLabelSelected(bool isExpanded, LabelGroup labelGroup)
         {
             // Retrieve the label group that contains the label
-            await this.LabelExpanded.InvokeAsync(labelGroup);
+            await this.LabelGroupSelected.InvokeAsync(labelGroup);
         }
 
         /// <summary>
@@ -198,7 +166,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <param name="args">The event arguments containing the selected menu item.</param>
         /// <param name="labelGroup">The label group associated with the selected source data set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSourceDataSetSelected(MenuItemEventArgs args, LabelGroup labelGroup)
+        private async Task OnSourceSelected(MenuItemEventArgs args, LabelGroup labelGroup)
         {
             // Retrieve the SourceDataSet from the compendium by its name
             var sourceDataSet = this.FilteredSourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));

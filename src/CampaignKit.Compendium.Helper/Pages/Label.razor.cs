@@ -35,13 +35,13 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the list of all available SourceDataSet objects.
         /// </summary>
         [Parameter]
-        public List<SourceDataSet> AllSources { get; set; }
+        public List<SourceDataSet> Sources { get; set; }
 
         /// <summary>
         /// Gets or sets the EventCallback for the label group change event.
         /// </summary>
         [Parameter]
-        public EventCallback<LabelGroup> LabelGroupChanged { get; set; }
+        public EventCallback<LabelGroup> SelectedLabelGroupChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the SelectedLabelGroup parameter.
@@ -94,13 +94,13 @@ namespace CampaignKit.Compendium.Helper.Pages
             // Case selected to List<string> to simplify working with it.
             var selectedSourceDataSets = ((IEnumerable<string>)selected).ToList();
 
-            // Iterate through SelectedLabelGroup.SourceDataSets to see if any of them have been removed.  selected is a List<string>
+            // Iterate through SelectedLabelGroup.Sources to see if any of them have been removed.  selected is a List<string>
             var toBeRemoved = (from sourceDataSet in this.SelectedLabelGroup.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
 
-            // Cycle through toBeRemoved list and remove the appropriate sourcedatasets from the SelectedLabelGroup.SourceDataSets list.
+            // Cycle through toBeRemoved list and remove the appropriate sourcedatasets from the SelectedLabelGroup.Sources list.
             foreach (var tbr in toBeRemoved)
             {
-                // Find the object in the SelectedLabelGroup.SourceDataSets lists
+                // Find the object in the SelectedLabelGroup.Sources lists
                 var sourceDataSet = this.SelectedLabelGroup.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
 
                 // Remove the label from the sourceDataSet.
@@ -113,24 +113,24 @@ namespace CampaignKit.Compendium.Helper.Pages
             // Iterate through selected to see if any new labels have been added.
             foreach (var sourceDataSetName in selectedSourceDataSets)
             {
-                // If the sourceDataSetName is not in the SelectedLabelGroup.SourceDataSets list, add it.
+                // If the sourceDataSetName is not in the SelectedLabelGroup.Sources list, add it.
                 {
-                    // Get the SourceDataSet object from AllSources.
-                    var sourceDataSet = this.AllSources.First(x => x.SourceDataSetName == sourceDataSetName);
+                    // Get the SourceDataSet object from Sources.
+                    var sourceDataSet = this.Sources.First(x => x.SourceDataSetName == sourceDataSetName);
 
                     // Add the label to the sourceDataSet if it doesn't already exist.
                     if (!sourceDataSet.Labels.Contains(this.SelectedLabelGroup.LabelName))
                     {
                         sourceDataSet.Labels.Add(this.SelectedLabelGroup.LabelName);
 
-                        // Add the sourceDataSet to the SelectedLabelGroup.SourceDataSets list.
+                        // Add the sourceDataSet to the SelectedLabelGroup.Sources list.
                         this.SelectedLabelGroup.SourceDataSets.Add(sourceDataSet);
                     }
                 }
             }
 
             // Fire an event to notify the parent component that the label assignment has changed.
-            this.LabelGroupChanged.InvokeAsync(this.SelectedLabelGroup);
+            this.SelectedLabelGroupChanged.InvokeAsync(this.SelectedLabelGroup);
         }
 
         /// <summary>

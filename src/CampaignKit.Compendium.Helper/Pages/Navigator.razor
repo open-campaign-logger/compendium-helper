@@ -1,4 +1,4 @@
-﻿@if (AllLabelGroups != null)
+﻿@if (LabelGroups != null)
 {
     <RadzenRow>
         <RadzenAutoComplete @bind-Value="SearchTerm" Data="AutoCompleteData" Placeholder="Search..." Change="OnSearchChanged" />
@@ -7,10 +7,10 @@
             <RadzenPanelMenu>
                 @foreach (var grouping in FilteredLabelGroups)
                 {
-                    <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping))">
+                    <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelSelected(isExpanded, grouping))">
                         @foreach (var dataSet in grouping.SourceDataSets)
                         {
-                            <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceDataSetSelected(args, grouping)" />
+                            <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceSelected(args, grouping)" />
                         }
                     </RadzenPanelMenuItem>
                 }

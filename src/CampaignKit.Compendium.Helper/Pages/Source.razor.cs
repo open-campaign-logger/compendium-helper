@@ -44,7 +44,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the EventCallback for the source data set title change event.
         /// </summary>
         [Parameter]
-        public EventCallback<string> SourceDataSetTitleChanged { get; set; }
+        public EventCallback<string> SelectedSourceChanged { get; set; }
 
         /// <summary>
         /// Event handler for when the source data set title is changed.
@@ -54,7 +54,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         private async Task OnSourceDataSetTitleChanged(string title)
         {
             // Invoke callback
-            await this.SourceDataSetTitleChanged.InvokeAsync(title);
+            await this.SelectedSourceChanged.InvokeAsync(title);
         }
 
         /// <summary>

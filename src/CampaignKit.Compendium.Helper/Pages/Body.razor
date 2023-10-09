@@ -3,7 +3,7 @@
         <RadzenStack Gap="1rem">
             <RadzenCard Visible="@(SelectedCompendium != null)">
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
-                <Navigator AllLabelGroups="AllLabelGroups"
+                <Navigator LabelGroups="AllLabelGroups"
                            AllSourceDataSets="SelectedCompendium.SourceDataSets"
                            TemporaryLabels="TemporaryLabels"
                            CompendiumExpanded="OnCompendiumExpanded"
@@ -20,12 +20,12 @@
 
                 <RadzenTabsItem Text="Compendium" Visible="SelectedCompendium !=null">
                     <Compendium SelectedCompendium="SelectedCompendium"
-                                CompendiumTitleChanged="OnCompendiumTitleChanged" />
+                                SelectedCompendiumChanged="OnCompendiumTitleChanged" />
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Label" Visible="SelectedLabelGroup !=null">
                     <Label SelectedLabelGroup="SelectedLabelGroup"
-                           AllSources="SelectedCompendium.SourceDataSets"
+                           Sources="SelectedCompendium.SourceDataSets"
                            LabelGroupChanged="OnLabelGroupChanged"></Label>
                 </RadzenTabsItem>
 

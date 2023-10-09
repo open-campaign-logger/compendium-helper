@@ -14,7 +14,10 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendium.Helper.Configuration;
+namespace CampaignKit.Compendium.Helper.Shared{
+    using System.Data;
+
+    using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
     using CampaignKit.Compendium.Helper.Dialogs;
     using CampaignKit.Compendium.Helper.Pages;
@@ -24,8 +27,6 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
     using Microsoft.JSInterop;
 
     using Radzen;
-
-    using System.Data;
 
     /// <summary>
     /// Represents the main layout of the application.
@@ -78,7 +79,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <summary>
         /// Gets or sets the selected source data set.
         /// </summary>
-        private SourceDataSet SelectedSourceDataSet { get; set; }
+        private SourceDataSet SelectedSource { get; set; }
 
         /// <summary>
         /// Gets or sets the list of temporary labels.
@@ -92,7 +93,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         {
             this.Logger.LogInformation("Creating default compendium.");
             this.SelectedCompendium = new Configuration.Compendium();
-            this.SelectedSourceDataSet = null;
+            this.SelectedSource = null;
             this.SelectedLabelGroup = null;
             this.TemporaryLabels = new List<string>();
             this.UpdateLabelGroups();
@@ -103,7 +104,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// </summary>
         private void UpdateLabelGroups()
         {
-            // Create AllLabelGroups for Labels in use by SourceDataSets
+            // Create LabelGroups for Labels in use by Sources
             this.LabelGroups = this.SelectedCompendium.SourceDataSets
                 .SelectMany(
                     ds => ds.Labels.Any()
@@ -220,15 +221,15 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         }
 
         /// <summary>
-        /// Removes the specified labels from any SourceDataSets referencing them and from the TemporaryLabels collection.
+        /// Removes the specified labels from any Sources referencing them and from the TemporaryLabels collection.
         /// </summary>
         /// <param name="labels">The labels to be removed.</param>
         private void OnLabelsRemoved(List<string> labels)
         {
-            // Remove these labels from any SourceDataSets referencing them.
+            // Remove these labels from any Sources referencing them.
             foreach (var label in labels)
             {
-                // Find all SourceDataSets that contain the label and remove it.
+                // Find all Sources that contain the label and remove it.
                 this.SelectedCompendium.SourceDataSets.ForEach(sds => sds.Labels.Remove(label));
             }
 
@@ -281,7 +282,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
                 "Remove Sources from Compendium",
                 new Dictionary<string, object>
                 {
-                    { "AllSources", this.SelectedCompendium.SourceDataSets },
+                    { "Sources", this.SelectedCompendium.SourceDataSets },
                 });
         }
 
@@ -309,7 +310,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <param name="sourceDataSet">The new selected source data set.</param>
         private void OnSelectedSourceDataSetChanged(SourceDataSet sourceDataSet)
         {
-            this.SelectedSourceDataSet = sourceDataSet;
+            this.SelectedSource = sourceDataSet;
         }
 
         /// <summary>
@@ -318,7 +319,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <param name="compendium">The uploaded compendium.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnUploadComplete(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
-            this.SelectedSourceDataSet = null;
+            this.SelectedSource = null;
             this.SelectedLabelGroup = null;
             this.TemporaryLabels = new List<string>();
             this.UpdateLabelGroups();        }

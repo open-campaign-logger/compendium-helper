@@ -10,6 +10,54 @@ websites.
 At is core, **Compendium Helper** is a web scraper; you provide the configuration and 
 it will scrape and format the content for import into the Campaign Logger application.
 
+```mermaid
+---
+title: UX Component Diagram
+---
+classDiagram
+    class MainLayout{
+        -List<LabelGroup> LabelGroups
+        -ICompendium SelectedCompendium
+        -LabelGroup SelectedLabelGroup
+        -SourceDataSet SelectedSource        
+        -List<string> TemporaryLabels
+    }
+    MainLayout --> "1" Body : Contains
+    class Body{
+        +List<LabelGroup> LabelGroups
+        +ICompendium SelectedCompendium
+        +EventCallback<ICompendium> SelectedCompendiumChanged
+        +LabelGroup SelectedLabelGroup
+        +EventCallback<LabelGroup> SelectedLabelGroupChanged
+        +SourceDataSet SelectedSource
+        +EventCallback<SourceDataSet> SelectedSourceChanged
+        +List<string> TemporaryLabels
+    }
+    Body "1" --> "0..1" Navigation : Contains
+    class Navigation{
+        +List<LabelGroup> LabelGroups
+        +List<SourceDataSet> Sources
+        +EventCallback<LabelGroup> LabelGroupSelected
+        +EventCallback<SourceDataSet> SourceSeelected
+    }
+    class Compendium{
+		+ICompendium SelectedCompendium
+        +EventCallback<ICompendium> SelectedCompendiumChanged
+	}
+    Body "1" --> "0..1" Compendium : Contains
+    class Label{
+        +LabelGroup SelectedLabelGroup
+        +EventCallback<LabelGroup> SelectedLabelGroupChanged        
+        +List<SourceDataSet> Sources
+    }
+    Body "1" --> "0..1" Label : Contains
+    class Source{
+        +SourceDataSet SelectedSource
+		+EventCallback<SourceDataSet> SelectedSourceChanged
+	}
+    Body "1" --> "0..1" Source : Contains
+```
+
 ## Getting Started
 
 ### Prerequisites
