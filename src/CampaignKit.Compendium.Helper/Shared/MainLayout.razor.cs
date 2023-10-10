@@ -55,12 +55,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
         [Inject]        private IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
-        /// Gets or sets the JS runtime dependency.
-        /// </summary>
-        [Inject]
-        private IJSRuntime JSRuntime { get; set; }
-
-        /// <summary>
         /// Gets or sets the list of LabelGroup objects.
         /// </summary>
         private List<LabelGroup> LabelGroups { get; set; }
@@ -166,7 +160,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
             }
 
             var json = this.CompendiumService.SaveCompendium(this.SelectedCompendium);
-            await this.BrowserService.DownloadTextFile(this.JSRuntime, json, "compendium-helper.json");
+            await this.BrowserService.DownloadTextFile(this.JsRuntime, json, "compendium-helper.json");
         }
 
         /// <summary>
@@ -324,7 +318,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="labelGroup">The new label group to be selected.</param>
         private void SelectedLabelGroupChanged(LabelGroup labelGroup)
         {
-            if (labelGroup != null && (!this.SelectedLabelGroup?.Equals(labelGroup) ?? true))
+            if (labelGroup != null)
             {
                 this.SelectedLabelGroup = labelGroup;
             }
@@ -334,9 +328,9 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// Updates the selected source data set if it is different from the current selected source.
         /// </summary>
         /// <param name="sourceDataSet">The new source data set to be selected.</param>
-        private void SelectedSourceDataSetChanged(SourceDataSet sourceDataSet)
+        private void SelectedSourceChanged(SourceDataSet sourceDataSet)
         {
-            if (sourceDataSet != null && (!this.SelectedSource?.Equals(sourceDataSet) ?? true))
+            if (sourceDataSet != null)
             {
                 this.SelectedSource = sourceDataSet;
             }
@@ -377,7 +371,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 .SelectMany(
                     ds => ds.Labels.Any()
                         ? ds.Labels.Select(label => new { Label = label, DataSet = ds })
-                        : new[] { new { Label = "*No Label", DataSet = new SourceDataSet() } })
+                        : new[] { new { Label = "*No Label", DataSet = ds } })
                 .GroupBy(pair => pair.Label)
                 .Select(group => new LabelGroup
                 {

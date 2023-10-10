@@ -37,12 +37,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         public List<LabelGroup> LabelGroups { get; set; }
 
         /// <summary>
-        /// Gets or sets the Sources parameter.
-        /// </summary>
-        [Parameter]
-        public List<SourceDataSet> Sources { get; set; }
-
-        /// <summary>
         /// Gets or sets the event callback for when a label group is changed.
         /// </summary>
         /// <value>The event callback for when a label group is changed.</value>
@@ -54,6 +48,12 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         [Parameter]
         public EventCallback<(SourceDataSet, LabelGroup)> SelectedSourceChanged { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Sources parameter.
+        /// </summary>
+        [Parameter]
+        public List<SourceDataSet> Sources { get; set; }
 
         /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
@@ -92,29 +92,29 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>
         /// A task representing the asynchronous operation.
         /// </returns>
-        protected async override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
             this.SearchTerm = string.Empty;
-            this.FilterTree();
+            this.FilterLabelGroups();
         }
 
         /// <summary>
-        /// Overrides the OnParametersSetAsync method to perform additional logic before the component's parameters are set.
+        /// Overrides the OnParametersSetAsync method and calls the base implementation before filtering the tree.
         /// </summary>
         /// <returns>
         /// A Task representing the asynchronous operation.
         /// </returns>
-        protected async override Task OnParametersSetAsync()
+        protected override async Task OnParametersSetAsync()
         {
             await base.OnParametersSetAsync();
-            this.FilterTree();
+            this.FilterLabelGroups();
         }
 
         /// <summary>
         /// Filters the tree based on the search term.
         /// </summary>
-        private void FilterTree()
+        private void FilterLabelGroups()
         {
             if (string.IsNullOrWhiteSpace(this.SearchTerm))
             {
@@ -128,13 +128,41 @@ namespace CampaignKit.Compendium.Helper.Pages
                 // Filter source data sets based on search criteria
                 this.FilteredSourceDataSets =
                     this.Sources
-                    .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+                    .Where(sds => sds.SourceDataSetName
+                        .Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
-                // Filter label groups based on search criteria.  If a label group contains a source data set that has a SourceDataSetName matching the search criteria, add the label group to the filtered list.
-                this.FilteredLabelGroups =
-                    this.LabelGroups
-                    .Where(lg => lg.SourceDataSets.Any(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase))).ToList();
+                // Create a variable to hold label groups with no SourceDataSets
+                var emptyLabelGroups = this.LabelGroups?
+                    .Where(labelGroup => !labelGroup.SourceDataSets.Any()).ToList()
+                        ?? new List<LabelGroup>();
+
+                // Create a list of label groups based on the filtered source data sets
+                // Create LabelGroups for Labels in use by Sources
+                this.FilteredLabelGroups = this.FilteredSourceDataSets
+                    .SelectMany(
+                        ds => ds.Labels.Any()
+                            ? ds.Labels.Select(label => new { Label = label, DataSet = ds })
+                            : new[] { new { Label = "*No Label", DataSet = new SourceDataSet() } })
+                    .GroupBy(pair => pair.Label)
+                    .Select(group => new LabelGroup
+                    {
+                        LabelName = group.Key,
+                        SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName)
+                            .ToList(),
+                    })
+                    .Concat(emptyLabelGroups)
+                    .OrderBy(group => group.LabelName)
+                    .ToList();
             }
+        }
+
+        /// <summary>
+        /// Handles the search input change event and filters the tree accordingly.
+        /// </summary>
+        private void OnSearchChanged(object value)
+        {
+            this.FilterLabelGroups();
         }
 
         /// <summary>
@@ -144,15 +172,9 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task OnSelectedLabelGroupChanged(LabelGroup labelGroup)
         {
-            await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);
-        }
-
-        /// <summary>
-        /// Handles the search input change event and filters the tree accordingly.
-        /// </summary>
-        private void OnSearchChanged(object value)
-        {
-            this.FilterTree();
+            // Retrieve the unfiltered label group from the LabelGroups list
+            var unfilteredLabelGroup = this.LabelGroups.FirstOrDefault(lg => lg.LabelName.Equals(labelGroup.LabelName));
+            await this.SelectedLabelGroupChanged.InvokeAsync(unfilteredLabelGroup);
         }
 
         /// <summary>
@@ -166,8 +188,11 @@ namespace CampaignKit.Compendium.Helper.Pages
             // Retrieve the SourceDataSet from the compendium by its name
             var sourceDataSet = this.FilteredSourceDataSets.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));
 
+            // Retrieve the unfiltered label group from the LabelGroups list
+            var unfilteredLabelGroup = this.LabelGroups.FirstOrDefault(lg => lg.LabelName.Equals(labelGroup.LabelName));
+
             // Invoke the SourceSelected event
-            await this.SelectedSourceChanged.InvokeAsync((sourceDataSet, labelGroup));
+            await this.SelectedSourceChanged.InvokeAsync((sourceDataSet, unfilteredLabelGroup));
         }
     }
 }

@@ -1,7 +1,13 @@
 ﻿@if (LabelGroups != null)
 {
     <RadzenRow>
-        <RadzenAutoComplete @bind-Value="SearchTerm" Data="AutoCompleteData" Placeholder="Search..." Change="OnSearchChanged" />
+        <RadzenAutoComplete
+            @bind-Value="SearchTerm"
+            Data="AutoCompleteData"
+            Placeholder="Search..."
+            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+            FilterOperator="StringFilterOperator.Contains"
+            Change="OnSearchChanged" />
     </RadzenRow>
     <RadzenRow>
             <RadzenPanelMenu>
