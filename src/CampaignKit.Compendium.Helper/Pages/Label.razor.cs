@@ -92,16 +92,16 @@ namespace CampaignKit.Compendium.Helper.Pages
             this.Logger.LogInformation("Label association changed.");
 
             // Case selected to List<string> to simplify working with it.
-            var selectedSourceDataSets = ((IEnumerable<string>)selected).ToList();
+            List<string> selectedSourceDataSets = ((IEnumerable<string>)selected).ToList();
 
             // Iterate through SelectedLabelGroup.Sources to see if any of them have been removed.  selected is a List<string>
-            var toBeRemoved = (from sourceDataSet in this.SelectedLabelGroup.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
+            List<string> toBeRemoved = (from sourceDataSet in this.SelectedLabelGroup.SourceDataSets where !selectedSourceDataSets.Contains(sourceDataSet.SourceDataSetName) select sourceDataSet.SourceDataSetName).ToList();
 
             // Cycle through toBeRemoved list and remove the appropriate sourcedatasets from the SelectedLabelGroup.Sources list.
-            foreach (var tbr in toBeRemoved)
+            foreach (string tbr in toBeRemoved)
             {
                 // Find the object in the SelectedLabelGroup.Sources lists
-                var sourceDataSet = this.SelectedLabelGroup.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
+                SourceDataSet sourceDataSet = this.SelectedLabelGroup.SourceDataSets.First(x => x.SourceDataSetName.Equals(tbr));
 
                 // Remove the label from the sourceDataSet.
                 sourceDataSet.Labels.Remove(this.SelectedLabelGroup.LabelName);
@@ -111,12 +111,12 @@ namespace CampaignKit.Compendium.Helper.Pages
             }
 
             // Iterate through selected to see if any new labels have been added.
-            foreach (var sourceDataSetName in selectedSourceDataSets)
+            foreach (string sourceDataSetName in selectedSourceDataSets)
             {
                 // If the sourceDataSetName is not in the SelectedLabelGroup.Sources list, add it.
                 {
                     // Get the SourceDataSet object from Sources.
-                    var sourceDataSet = this.Sources.First(x => x.SourceDataSetName == sourceDataSetName);
+                    SourceDataSet sourceDataSet = this.Sources.First(x => x.SourceDataSetName == sourceDataSetName);
 
                     // Add the label to the sourceDataSet if it doesn't already exist.
                     if (!sourceDataSet.Labels.Contains(this.SelectedLabelGroup.LabelName))

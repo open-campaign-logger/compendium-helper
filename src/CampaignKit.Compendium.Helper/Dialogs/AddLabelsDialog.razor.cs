@@ -79,6 +79,9 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
                 // Remove any labels that are already associated with a collection of source data sets in Sources.
                 labels.RemoveAll(label => this.LabelGroups.Any(group => group.LabelName.Equals(label)));
 
+                // Remove any labels that match "*No Label"
+                labels.RemoveAll(label => label.Equals("*No Label"));                
+
                 // Create the required label groups
                 var labelGroups = labels.Select(label => new LabelGroup
                 {

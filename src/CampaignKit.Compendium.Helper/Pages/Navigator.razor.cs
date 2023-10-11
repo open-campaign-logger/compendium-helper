@@ -120,8 +120,6 @@ namespace CampaignKit.Compendium.Helper.Pages
             {
                 this.FilteredSourceDataSets.Clear();
                 this.FilteredSourceDataSets.AddRange(this.Sources);
-                this.FilteredLabelGroups.Clear();
-                this.FilteredLabelGroups.AddRange(this.LabelGroups);
             }
             else
             {
@@ -131,30 +129,30 @@ namespace CampaignKit.Compendium.Helper.Pages
                     .Where(sds => sds.SourceDataSetName
                         .Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase))
                     .ToList();
-
-                // Create a variable to hold label groups with no SourceDataSets
-                var emptyLabelGroups = this.LabelGroups?
-                    .Where(labelGroup => !labelGroup.SourceDataSets.Any()).ToList()
-                        ?? new List<LabelGroup>();
-
-                // Create a list of label groups based on the filtered source data sets
-                // Create LabelGroups for Labels in use by Sources
-                this.FilteredLabelGroups = this.FilteredSourceDataSets
-                    .SelectMany(
-                        ds => ds.Labels.Any()
-                            ? ds.Labels.Select(label => new { Label = label, DataSet = ds })
-                            : new[] { new { Label = "*No Label", DataSet = new SourceDataSet() } })
-                    .GroupBy(pair => pair.Label)
-                    .Select(group => new LabelGroup
-                    {
-                        LabelName = group.Key,
-                        SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName)
-                            .ToList(),
-                    })
-                    .Concat(emptyLabelGroups)
-                    .OrderBy(group => group.LabelName)
-                    .ToList();
             }
+
+            // Create a variable to hold label groups with no SourceDataSets
+            var emptyLabelGroups = this.LabelGroups?
+                .Where(labelGroup => !labelGroup.SourceDataSets.Any()).ToList()
+                    ?? new List<LabelGroup>();
+
+            // Create a list of label groups based on the filtered source data sets
+            // Create LabelGroups for Labels in use by Sources
+            this.FilteredLabelGroups = this.FilteredSourceDataSets
+                .SelectMany(
+                    ds => ds.Labels.Any()
+                        ? ds.Labels.Select(label => new { Label = label, DataSet = ds })
+                        : new[] { new { Label = "*No Label", DataSet = ds } })
+                .GroupBy(pair => pair.Label)
+                .Select(group => new LabelGroup
+                {
+                    LabelName = group.Key,
+                    SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName)
+                        .ToList(),
+                })
+                .Concat(emptyLabelGroups)
+                .OrderBy(group => group.LabelName)
+                .ToList();
         }
 
         /// <summary>

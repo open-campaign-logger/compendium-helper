@@ -23,7 +23,8 @@
                                     ValueProperty="SourceDataSetName"
                                     @bind-Value="SelectedDataSets"
                                     Change="@(OnSelectedLabelGroupChanged)"
-                                    Style="width:100%; height:300px;" />
+                                    Style="width:100%; height:300px;" 
+                                    Disabled="@SelectedLabelGroup.LabelName.Equals("*No Label")"/>
                 </RadzenFieldset>
             </RadzenStack>
         </RadzenColumn>

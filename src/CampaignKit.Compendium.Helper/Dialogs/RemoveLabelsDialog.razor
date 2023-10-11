@@ -8,7 +8,7 @@
                 <RadzenListBox AllowFiltering="true"
                                FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                                Multiple="true"
-                               Data="@LabelGroups"
+                               Data="@LabelGroups.Where(labelGroup => !labelGroup.LabelName.Equals("*No Label"))"
                                TextProperty="LabelName"
                                ValueProperty="LabelName"
                                @bind-Value="SelectedLabelGroups"

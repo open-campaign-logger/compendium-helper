@@ -94,9 +94,11 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
             // the urls property will have carriage returns in it, so we need to split on that
             var urls = this.URLs.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);            var sources = new List<SourceDataSet>();
 
+            // We need to generate unique source data set names, so we'll start with a number and increment it for each source.
+            var sourceDataSetNumber = 1;
             foreach (var url in urls)            {
                 // Determine the next available source dataset name.
-                var sourceDataSetName = "SelectedSource";                var sourceDataSetNumber = 1;                while (this.Sources.Any(sds => sds.SourceDataSetName.Equals($"{sourceDataSetName} {sourceDataSetNumber}")))
+                var sourceDataSetName = "Compendium Source";                while (this.Sources.Any(sds => sds.SourceDataSetName.Equals($"{sourceDataSetName} {sourceDataSetNumber}")))
                 {
                     sourceDataSetNumber++;
                 }
@@ -106,6 +108,9 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
                     SourceDataSetName = $"{sourceDataSetName} {sourceDataSetNumber}",
                     SourceDataSetUri = url.Trim(), // Trim the URL to remove any leading or trailing whitespace
                     Labels = labelList,                    TagSymbol = this.Tag,                });
+
+                // Increment the source data set number.
+                sourceDataSetNumber++;
             }
 
             await this.SourcesAdded.InvokeAsync(sources);

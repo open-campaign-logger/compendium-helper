@@ -216,6 +216,14 @@ content more quickly.
 - ***Tag Symbol:*** The tag symbol to use when creating the entry for the Campaign Logger file.
 - ***Is Public:*** Indicates whether or not the content should be in the GM view (unchecked) or the player view (checked).
 
+### Editor
+
+- TODO
+
+### Menu Functions
+
+- TODO
+
 ## Dependencies
 
 1. **Microsoft.AspNetCore.Components**
