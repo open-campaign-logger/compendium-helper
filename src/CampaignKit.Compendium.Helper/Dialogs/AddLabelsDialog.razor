@@ -1,6 +1,6 @@
 ﻿<RadzenStack>
     <RadzenStack Orientation="Orientation.Horizontal">
-        <RadzenFormField Text="@_labels["labels"]" Variant="@_variant" Style="width: 100%">
+        <RadzenFormField Text="@_labels["labels"]" Variant="@Variant" Style="width: 100%">
             <End>
                 <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["labels"]))" />
             </End>
@@ -15,15 +15,16 @@
 </RadzenStack>
 
 @code {
+        
     /// <summary>
     /// Sets the variant of the object to Outlined.
     /// </summary>
-    private Variant _variant = Variant.Outlined;
+    private const Variant Variant = Radzen.Variant.Outlined;
 
     /// <summary>
     /// Dictionary containing tooltips for form fields.
     /// </summary>
-    Dictionary<string, string> _tooltips = new()
+    private readonly Dictionary<string, string> _tooltips = new ()
     {
         {"labels", "A comma separated list of labels to add."},
     };
@@ -31,7 +32,7 @@
     /// <summary>
     /// Dictionary containing labels for form fields.
     /// </summary>
-    Dictionary<string, string> _labels = new()
+    readonly Dictionary<string, string> _labels = new()
     {
         {"labels", "Labels"},
     };

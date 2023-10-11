@@ -24,6 +24,11 @@ namespace CampaignKit.Compendium.Helper.Data
     public class LabelGroup
     {
         /// <summary>
+        /// Default label to use for LabelGroups objects that have no source data sets.
+        /// </summary>
+        public static readonly string LabelEmpty = "*No Label";
+
+        /// <summary>
         /// Gets or sets the name of the grouping.
         /// </summary>
         public string LabelName { get; set; } = string.Empty;
@@ -35,15 +40,9 @@ namespace CampaignKit.Compendium.Helper.Data
         public List<SourceDataSet> SourceDataSets { get; set; } = new ();
 
         /// <summary>
-        /// Overrides the GetHashCode method to return the hash code of the LabelName property.
+        /// Gets the display label for the LabelGroup object.
         /// </summary>
-        /// <returns>
-        /// The hash code of the LabelName property.
-        /// </returns>
-        public override int GetHashCode()
-        {
-            return this.LabelName.GetHashCode();
-        }
+        public string DisplayLabel => $"{this.LabelName} ({this.SourceDataSets.Count})";
 
         /// <summary>
         /// Overrides the Equals method to compare the SelectedLabelGroup object with another object.
@@ -53,6 +52,17 @@ namespace CampaignKit.Compendium.Helper.Data
         public override bool Equals(object obj)
         {
             return obj is LabelGroup labelGroup && labelGroup.LabelName == this.LabelName;
+        }
+
+        /// <summary>
+        /// Overrides the GetHashCode method to return the hash code of the LabelName property.
+        /// </summary>
+        /// <returns>
+        /// The hash code of the LabelName property.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            return this.LabelName.GetHashCode();
         }
     }
 }

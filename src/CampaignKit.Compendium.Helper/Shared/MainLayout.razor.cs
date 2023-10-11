@@ -15,8 +15,6 @@
 // </copyright>
 
 namespace CampaignKit.Compendium.Helper.Shared{
-    using System.Data;
-
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
     using CampaignKit.Compendium.Helper.Dialogs;
@@ -85,7 +83,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </summary>
         /// <param name="compendium">The uploaded compendium.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task CompendiumLoaded(ICompendium compendium)        {            this.Logger.LogInformation("Upload complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
+        private async Task CompendiumLoaded(ICompendium compendium)        {            this.Logger.LogInformation("Compendium load complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
             this.SelectedSource = null;
             this.SelectedLabelGroup = null;
             this.UpdateLabelGroups();        }
@@ -108,14 +106,23 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="labelGroups">The list of label groups to be added.</param>
         private void LabelGroupsAdded(List<LabelGroup> labelGroups)
         {
-            if (labelGroups != null && labelGroups.Any())
-            {
-                // Add the required label groups
-                this.LabelGroups.AddRange(labelGroups);
+            // Create a comma separated list of labelGroups.LabelNames to be added
+            var labelNames = string.Join(
+                ", ",
+                labelGroups?.Select(labelGroup => labelGroup.LabelName) ?? new List<string>());
+            this.Logger.LogInformation("Adding label groups: {}", labelNames);
 
-                // Update the label groups
-                this.UpdateLabelGroups();
+            // If labelGroups is null or empty, return
+            if (labelGroups == null || !labelGroups.Any())
+            {
+                return;
             }
+
+            // Add the required label groups
+            this.LabelGroups.AddRange(labelGroups);
+
+            // Update the label groups
+            this.UpdateLabelGroups();
         }
 
         /// <summary>
@@ -124,24 +131,32 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="labelGroups">The list of label groups to be removed.</param>
         private void LabelGroupsRemoved(List<LabelGroup> labelGroups)
         {
+            // Create a comma separated list of labelGroups.LabelNames to be added
+            var labelNames = string.Join(
+                ", ",
+                labelGroups?.Select(labelGroup => labelGroup.LabelName) ?? new List<string>());
+            this.Logger.LogInformation("Removing label groups: {}", labelNames);
+
             // If there are labelGroups to be removed, process them.
-            if (labelGroups != null && labelGroups.Any())
+            if (labelGroups == null || !labelGroups.Any())
             {
-                // For each labelGroupToBeRemoved, remove the label from all associated SourceDataSets
-                labelGroups.ForEach(labelGroup =>
-                {
-                    labelGroup.SourceDataSets.ForEach(source =>
-                    {
-                        source.Labels.Remove(labelGroup.LabelName);
-                    });
-                });
-
-                // Remove the label groups from the LabelGroups collection.
-                this.LabelGroups.RemoveAll(labelGroup => labelGroups.Contains(labelGroup));
-
-                // Update the label groups
-                this.UpdateLabelGroups();
+                return;
             }
+
+            // For each labelGroupToBeRemoved, remove the label from all associated SourceDataSets
+            labelGroups.ForEach(labelGroup =>
+            {
+                labelGroup.SourceDataSets.ForEach(source =>
+                {
+                    source.Labels.Remove(labelGroup.LabelName);
+                });
+            });
+
+            // Remove the label groups from the LabelGroups collection.
+            this.LabelGroups.RemoveAll(labelGroups.Contains);
+
+            // Update the label groups
+            this.UpdateLabelGroups();
         }
 
         /// <summary>
@@ -152,7 +167,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </returns>
         private async Task OnDownload()
         {
-            this.Logger.LogInformation("User selected to download the current compendium.");
+            this.Logger.LogInformation("Downloading the current compendium.");
 
             if (this.SelectedCompendium == null)
             {
@@ -171,14 +186,14 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </returns>
         private async Task OnGenerate()
         {
-            this.Logger.LogInformation("User selected to generate a campaign JSON file.");
+            this.Logger.LogInformation("Showing Generator Dialog...");
 
             if (this.SelectedCompendium == null)
             {
                 return;
             }
 
-            await this.DialogService.OpenAsync<Generator>(
+            await this.DialogService.OpenAsync<GeneratorDialog>(
                 "Generate Campaign Logger File",
                 new Dictionary<string, object>                {
                     { "SelectedCompendium", this.SelectedCompendium },
@@ -190,7 +205,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </summary>
         /// <param name="selection">The selection made by the user.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("User selected to create a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
+        private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("Creating a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
 
         /// <summary>
         /// Method to handle the event when the user selects to add labelGroups.
@@ -200,7 +215,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </returns>
         private async Task OnShowAddLabelsDialog()
         {
-            this.Logger.LogInformation("User selected to add labelGroups..");
+            this.Logger.LogInformation("Showing Add Label Dialog...");
 
             await this.DialogService.OpenAsync<AddLabelsDialog>(
                 "Add Labels to Compendium",
@@ -219,7 +234,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </returns>
         private async Task OnShowAddSourcesDialog()
         {
-            this.Logger.LogInformation("User selected to add sources..");
+            this.Logger.LogInformation("Showing Add Sources Dialog...");
 
             await this.DialogService.OpenAsync<AddSourcesDialog>(
                 "Add Sources to Compendium",
@@ -235,7 +250,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="sampleName">The name of the package to load.</param>
         /// <param name="sampleUrl">The URL of the package.</param>
         private async void OnShowLoadDialog(string sampleName, string sampleUrl)        {
-            this.Logger.LogInformation("Show compendium load dialog.");
+            this.Logger.LogInformation("Showing Load Compendium Dialog...");
 
             await this.DialogService.OpenAsync<LoadCompendiumDialog>(
                 "Load Sample Compendium",
@@ -248,7 +263,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// Shows a new dialog asynchronously and waits for the user's selection. The dialog is opened using the DialogService with the specified title and prompt. The OnSelection event is subscribed to the OnNewCompendiumSelection method. The result of the dialog is displayed as an info notification.
         /// </summary>
         private async void OnShowNewDialog()        {
-            this.Logger.LogInformation("Show new compendium dialog.");
+            this.Logger.LogInformation("Showing New Compendium Dialog...");
 
             await this.DialogService.OpenAsync<ConfirmationDialog>(
                 "Create Compendium",
@@ -264,7 +279,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </returns>
         private async Task OnShowRemoveLabelsDialog()
         {
-            this.Logger.LogInformation("User selected to remove labelGroups...");
+            this.Logger.LogInformation("Showing Remove Labels Dialog...");
 
             await this.DialogService.OpenAsync<RemoveLabelsDialog>(
                 "Remove Labels from Compendium",
@@ -283,7 +298,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </returns>
         private async Task OnShowRemoveSourcesDialog()
         {
-            this.Logger.LogInformation("User selected to remove sources..");
+            this.Logger.LogInformation("Showing Remove Sources Dialog...");
 
             await this.DialogService.OpenAsync<RemoveSourcesDialog>(
                 "Remove Sources from Compendium",
@@ -298,7 +313,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// Shows an "Upload File" dialog asynchronously and passes the CompendiumLoaded callback method as a parameter.
         /// </summary>
         private async void OnShowUploadDialog()        {
-            this.Logger.LogInformation("Show upload dialog.");
+            this.Logger.LogInformation("Showing Compendium Upload Dialog.");
 
             await this.DialogService.OpenAsync<UploadConfigurationDialog>(                "Upload Compendium",                new Dictionary<string, object>
                 {                    { "Prompt", "Select an existing compendium configuration." },                    { "CompendiumLoaded",  EventCallback.Factory.Create<ICompendium>(this, this.CompendiumLoaded) },                });        }
@@ -309,6 +324,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="compendium">The new selected compendium.</param>
         private async Task SelectedCompendiumChanged(ICompendium compendium)
         {
+            this.Logger.LogInformation("SelectedCompendiumChanged: {}", compendium?.Title ?? "Null");
             await this.UpdatePageTitle();
         }
 
@@ -318,9 +334,11 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="labelGroup">The new label group to be selected.</param>
         private void SelectedLabelGroupChanged(LabelGroup labelGroup)
         {
+            this.Logger.LogInformation("SelectedLabelGroupChanged: {}", labelGroup?.LabelName ?? "Null");
             if (labelGroup != null)
             {
                 this.SelectedLabelGroup = labelGroup;
+                this.UpdateLabelGroups();
             }
         }
 
@@ -330,6 +348,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="sourceDataSet">The new source data set to be selected.</param>
         private void SelectedSourceChanged(SourceDataSet sourceDataSet)
         {
+            this.Logger.LogInformation("SelectedSourceChanged: {}", sourceDataSet?.SourceDataSetName ?? "Null");
             if (sourceDataSet != null)
             {
                 this.SelectedSource = sourceDataSet;
@@ -342,6 +361,17 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </summary>
         private void SourcesAdded(List<SourceDataSet> sources)
         {
+            // Create a comma separated list of labelGroups.LabelNames to be added
+            var sourceNames = string.Join(
+                ", ",
+                sources?.Select(source=> source.SourceDataSetName) ?? new List<string>());
+            this.Logger.LogInformation("SourcesAdded: {}", sourceNames);
+
+            if (sources == null)
+            {
+                return;
+            }
+
             this.SelectedCompendium.SourceDataSets.AddRange(sources);
             this.SelectedCompendium.SourceDataSets = this.SelectedCompendium.SourceDataSets.OrderBy(source => source.SourceDataSetName).ToList();
             this.UpdateLabelGroups();
@@ -353,6 +383,17 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <param name="sources">The list of SourceDataSet objects to be removed.</param>
         private void SourcesRemoved(List<SourceDataSet> sources)
         {
+            // Create a comma separated list of labelGroups.LabelNames to be added
+            var sourceNames = string.Join(
+                ", ",
+                sources?.Select(source => source.SourceDataSetName) ?? new List<string>());
+            this.Logger.LogInformation("SourcesRemoved: {}", sourceNames);
+
+            if (sources == null)
+            {
+                return;
+            }
+
             this.SelectedCompendium.SourceDataSets.RemoveAll(source => sources.Contains(source));
             this.UpdateLabelGroups();
         }
@@ -362,16 +403,19 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </summary>
         private void UpdateLabelGroups()
         {
+            this.Logger.LogInformation("Updating Label Groups");
+
             // Create a variable to hold label groups with no SourceDataSets
             var emptyLabelGroups = this.LabelGroups?.Where(labelGroup => !labelGroup.SourceDataSets.Any()).ToList()
                 ?? new List<LabelGroup>();
+            this.Logger.LogDebug("Empty label groups: {}", string.Join(", ", emptyLabelGroups));
 
             // Create LabelGroups for Labels in use by Sources
             this.LabelGroups = this.SelectedCompendium.SourceDataSets
                 .SelectMany(
                     ds => ds.Labels.Any()
                         ? ds.Labels.Select(label => new { Label = label, DataSet = ds })
-                        : new[] { new { Label = "*No Label", DataSet = ds } })
+                        : new[] { new { Label = LabelGroup.LabelEmpty, DataSet = ds } })
                 .GroupBy(pair => pair.Label)
                 .Select(group => new LabelGroup
                 {
@@ -381,6 +425,9 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 .Concat(emptyLabelGroups)
                 .OrderBy(group => group.LabelName)
                 .ToList();
+
+            // Create a List<string> that contains an entry for each of this.LabelGroup and is of the format "LabelName (SourceDataSets.Count)"
+            this.Logger.LogDebug("Updated label groups: {}", string.Join(", ", this.LabelGroups.Select(labelGroup => labelGroup.LabelName)));
         }
 
         /// <summary>
@@ -389,5 +436,5 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <returns>
         /// A task representing the asynchronous operation.
         /// </returns>
-        private async Task UpdatePageTitle()        {            var title = string.IsNullOrEmpty(this.SelectedCompendium?.Title) ? "Compendium Helper" : this.SelectedCompendium.Title;            await this.BrowserService.SetTitle(this.JsRuntime, title);        }
+        private async Task UpdatePageTitle()        {            this.Logger.LogInformation("Updating browser page title: {}", this.SelectedCompendium?.Title ?? "Compendium Helper");            var title = string.IsNullOrEmpty(this.SelectedCompendium?.Title) ? "Compendium Helper" : this.SelectedCompendium.Title;            await this.BrowserService.SetTitle(this.JsRuntime, title);        }
     }}

@@ -41,16 +41,6 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
         [Inject]        private DialogService DialogService { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether the Labels property is not null or empty.
-        /// </summary>
-        /// <returns>
-        /// True if the Labels property is not null or empty, otherwise false.
-        /// </returns>
-        private bool IsValid        {            get            {
-                // return true if SelectedLabelGroups is not null or empty.
-                return this.Labels != null && this.Labels.Split(',', StringSplitOptions.RemoveEmptyEntries).Any();            }        }
-
-        /// <summary>
         /// Gets or sets the labels for a specific object.
         /// </summary>
         /// <value>The labels.</value>
@@ -80,7 +70,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs{
                 labels.RemoveAll(label => this.LabelGroups.Any(group => group.LabelName.Equals(label)));
 
                 // Remove any labels that match "*No Label"
-                labels.RemoveAll(label => label.Equals("*No Label"));                
+                labels.RemoveAll(label => label.Equals("*No Label"));               
 
                 // Create the required label groups
                 var labelGroups = labels.Select(label => new LabelGroup
