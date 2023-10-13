@@ -33,7 +33,13 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         /// <returns>The SelectedLabelGroup object.</returns>
         [Parameter]
-        public SourceDataSet SelectedSource { get; set; } = new ();
+        public SourceDataSet SelectedSource { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the EventCallback for source selection.
+        /// </summary>
+        [Parameter]
+        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the TooltipService.
@@ -42,10 +48,21 @@ namespace CampaignKit.Compendium.Helper.Pages
         public TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Gets or sets the EventCallback for source selection.
+        /// Gets or sets the Labels property.
         /// </summary>
-        [Parameter]
-        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
+        private string Labels { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Overrides the OnParametersSet method to set the Labels property by joining the labels
+        /// from the SelectedSource property with a comma separator.
+        /// </summary>
+        protected override void OnParametersSet()
+        {
+            if (this.SelectedSource != null)
+            {
+                this.Labels = string.Join(", ", this.SelectedSource.Labels);
+            }
+        }
 
         /// <summary>
         /// Method that is called when the selected source is changed.
@@ -55,7 +72,11 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </returns>
         private async Task OnSelectedSourceChanged()
         {
-            // Invoke callback
+            // Convert the comma separated labels to a list.
+            this.SelectedSource.Labels = this.Labels.Split(',')
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToList();
             await this.SelectedSourceChanged.InvokeAsync(this.SelectedSource);
         }
 

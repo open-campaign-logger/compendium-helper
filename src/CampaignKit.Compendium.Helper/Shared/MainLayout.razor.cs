@@ -18,7 +18,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
     using CampaignKit.Compendium.Helper.Dialogs;
-    using CampaignKit.Compendium.Helper.Pages;
     using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
@@ -69,11 +68,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private ICompendium SelectedCompendium { get; set; }
 
         /// <summary>
-        /// Gets or sets the property to store the selected label.
-        /// </summary>
-        private LabelGroup SelectedLabelGroup { get; set; }
-
-        /// <summary>
         /// Gets or sets the selected source data set.
         /// </summary>
         private SourceDataSet SelectedSource { get; set; }
@@ -85,7 +79,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task CompendiumLoaded(ICompendium compendium)        {            this.Logger.LogInformation("Compendium load complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
             this.SelectedSource = null;
-            this.SelectedLabelGroup = null;
             this.UpdateLabelGroups();        }
 
         /// <summary>
@@ -96,66 +89,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
             this.Logger.LogInformation("Creating default compendium.");
             this.SelectedCompendium = new Configuration.Compendium();
             this.SelectedSource = null;
-            this.SelectedLabelGroup = null;
-            this.UpdateLabelGroups();
-        }
-
-        /// <summary>
-        /// Adds the given list of label groups to the LabelGroups collection and sorts them alphabetically.
-        /// </summary>
-        /// <param name="labelGroups">The list of label groups to be added.</param>
-        private void LabelGroupsAdded(List<LabelGroup> labelGroups)
-        {
-            // Create a comma separated list of labelGroups.LabelNames to be added
-            var labelNames = string.Join(
-                ", ",
-                labelGroups?.Select(labelGroup => labelGroup.LabelName) ?? new List<string>());
-            this.Logger.LogInformation("Adding label groups: {}", labelNames);
-
-            // If labelGroups is null or empty, return
-            if (labelGroups == null || !labelGroups.Any())
-            {
-                return;
-            }
-
-            // Add the required label groups
-            this.LabelGroups.AddRange(labelGroups);
-
-            // Update the label groups
-            this.UpdateLabelGroups();
-        }
-
-        /// <summary>
-        /// Removes the given list of label groups to the LabelGroups collection.
-        /// </summary>
-        /// <param name="labelGroups">The list of label groups to be removed.</param>
-        private void LabelGroupsRemoved(List<LabelGroup> labelGroups)
-        {
-            // Create a comma separated list of labelGroups.LabelNames to be added
-            var labelNames = string.Join(
-                ", ",
-                labelGroups?.Select(labelGroup => labelGroup.LabelName) ?? new List<string>());
-            this.Logger.LogInformation("Removing label groups: {}", labelNames);
-
-            // If there are labelGroups to be removed, process them.
-            if (labelGroups == null || !labelGroups.Any())
-            {
-                return;
-            }
-
-            // For each labelGroupToBeRemoved, remove the label from all associated SourceDataSets
-            labelGroups.ForEach(labelGroup =>
-            {
-                labelGroup.SourceDataSets.ForEach(source =>
-                {
-                    source.Labels.Remove(labelGroup.LabelName);
-                });
-            });
-
-            // Remove the label groups from the LabelGroups collection.
-            this.LabelGroups.RemoveAll(labelGroups.Contains);
-
-            // Update the label groups
             this.UpdateLabelGroups();
         }
 
@@ -291,20 +224,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
         }
 
         /// <summary>
-        /// Updates the selected label group if it is different from the current selected label group.
-        /// </summary>
-        /// <param name="labelGroup">The new label group to be selected.</param>
-        private void SelectedLabelGroupChanged(LabelGroup labelGroup)
-        {
-            this.Logger.LogInformation("SelectedLabelGroupChanged: {}", labelGroup?.LabelName ?? "Null");
-            if (labelGroup != null)
-            {
-                this.SelectedLabelGroup = labelGroup;
-                this.UpdateLabelGroups();
-            }
-        }
-
-        /// <summary>
         /// Updates the selected source data set if it is different from the current selected source.
         /// </summary>
         /// <param name="sourceDataSet">The new source data set to be selected.</param>
@@ -314,6 +233,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
             if (sourceDataSet != null)
             {
                 this.SelectedSource = sourceDataSet;
+                this.UpdateLabelGroups();
             }
         }
 
@@ -357,6 +277,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
             }
 
             this.SelectedCompendium.SourceDataSets.RemoveAll(source => sources.Contains(source));
+            this.SelectedSource = null;
             this.UpdateLabelGroups();
         }
 
@@ -366,11 +287,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private void UpdateLabelGroups()
         {
             this.Logger.LogInformation("Updating Label Groups");
-
-            // Create a variable to hold label groups with no SourceDataSets
-            var emptyLabelGroups = this.LabelGroups?.Where(labelGroup => !labelGroup.SourceDataSets.Any()).ToList()
-                ?? new List<LabelGroup>();
-            this.Logger.LogDebug("Empty label groups: {}", string.Join(", ", emptyLabelGroups));
 
             // Create LabelGroups for Labels in use by Sources
             this.LabelGroups = this.SelectedCompendium.SourceDataSets
@@ -384,7 +300,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
                     LabelName = group.Key,
                     SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
                 })
-                .Concat(emptyLabelGroups)
                 .OrderBy(group => group.LabelName)
                 .ToList();
 
