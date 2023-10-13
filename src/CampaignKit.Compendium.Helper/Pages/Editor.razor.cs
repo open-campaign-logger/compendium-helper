@@ -41,7 +41,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the event callback for when the selected source is changed.
         /// </summary>
         [Parameter]
-        public EventCallback<(SourceDataSet, LabelGroup)> SelectedSourceChanged { get; set; }
+        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the DialogService dependency.
@@ -87,7 +87,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         [JSInvokable]
         public void OnContentChanged(string content)
         {
-            this.Logger.LogInformation("SelectedLabelGroupChanged with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
+            this.Logger.LogInformation("OnContentChanged: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
             this.SelectedSource.Markdown = content;
         }
 

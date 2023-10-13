@@ -5,7 +5,6 @@
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Navigation</RadzenText>
                 <Navigator LabelGroups="LabelGroups"
                            Sources="SelectedCompendium.SourceDataSets"
-                           SelectedLabelGroupChanged="OnSelectedLabelGroupChanged"
                            SelectedSourceChanged="OnSelectedSourceChanged" />
             </RadzenCard>
         </RadzenStack>
@@ -17,12 +16,6 @@
                 <RadzenTabsItem Text="Compendium" Visible="SelectedCompendium !=null">
                     <Compendium SelectedCompendium="SelectedCompendium"
                                 SelectedCompendiumChanged="OnSelectedCompendiumChanged" />
-                </RadzenTabsItem>
-
-                <RadzenTabsItem Text="Label" Visible="SelectedLabelGroup !=null">
-                    <Label SelectedLabelGroup="SelectedLabelGroup"
-                           Sources="SelectedCompendium.SourceDataSets"
-                           SelectedLabelGroupChanged="OnSelectedLabelGroupChanged"></Label>
                 </RadzenTabsItem>
 
                 <RadzenTabsItem Text="Source" Visible="SelectedSource != null">

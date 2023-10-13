@@ -208,25 +208,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("Creating a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
 
         /// <summary>
-        /// Method to handle the event when the user selects to add labelGroups.
-        /// </summary>
-        /// <returns>
-        /// Task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnShowAddLabelsDialog()
-        {
-            this.Logger.LogInformation("Showing Add Label Dialog...");
-
-            await this.DialogService.OpenAsync<AddLabelsDialog>(
-                "Add Labels to Compendium",
-                new Dictionary<string, object>
-                {
-                    { "LabelGroups", this.LabelGroups },
-                    { "LabelGroupsAdded", EventCallback.Factory.Create<List<LabelGroup>>(this, this.LabelGroupsAdded) },
-                });
-        }
-
-        /// <summary>
         /// Method to handle the event when the user selects to add sources.
         /// </summary>
         /// <returns>
@@ -270,25 +251,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 new Dictionary<string, object>
                 {                    { "Prompt", "Replace the current compendium configuration?" },                    { "OnSelection", EventCallback.Factory.Create<bool>(this, this.OnNewCompendiumSelection) },
                 });        }
-
-        /// <summary>
-        /// Method to handle the event when the user selects to remove labelGroups.
-        /// </summary>
-        /// <returns>
-        /// Task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnShowRemoveLabelsDialog()
-        {
-            this.Logger.LogInformation("Showing Remove Labels Dialog...");
-
-            await this.DialogService.OpenAsync<RemoveLabelsDialog>(
-                "Remove Labels from Compendium",
-                new Dictionary<string, object>
-                {
-                    { "LabelGroups", this.LabelGroups },
-                    { "LabelGroupsRemoved", EventCallback.Factory.Create<List<LabelGroup>>(this, this.LabelGroupsRemoved) },
-                });
-        }
 
         /// <summary>
         /// Method to handle the event when the user selects to remove sources.
@@ -364,7 +326,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
             // Create a comma separated list of labelGroups.LabelNames to be added
             var sourceNames = string.Join(
                 ", ",
-                sources?.Select(source=> source.SourceDataSetName) ?? new List<string>());
+                sources?.Select(source => source.SourceDataSetName) ?? new List<string>());
             this.Logger.LogInformation("SourcesAdded: {}", sourceNames);
 
             if (sources == null)

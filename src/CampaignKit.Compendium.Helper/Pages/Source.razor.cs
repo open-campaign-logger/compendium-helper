@@ -1,4 +1,4 @@
-﻿// <copyright file="SelectedSource.razor.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="Source.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +45,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the EventCallback for source selection.
         /// </summary>
         [Parameter]
-        public EventCallback<(SourceDataSet, LabelGroup)> SelectedSourceChanged { get; set; }
+        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
 
         /// <summary>
         /// Method that is called when the selected source is changed.
@@ -56,7 +56,7 @@ namespace CampaignKit.Compendium.Helper.Pages
         private async Task OnSelectedSourceChanged()
         {
             // Invoke callback
-            await this.SelectedSourceChanged.InvokeAsync((this.SelectedSource, null));
+            await this.SelectedSourceChanged.InvokeAsync(this.SelectedSource);
         }
 
         /// <summary>

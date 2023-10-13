@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium.Helper.Configuration;    using CampaignKit.Compendium.Helper.Data;    using CampaignKit.Compendium.Helper.Services;    using Microsoft.AspNetCore.Components;    using Microsoft.JSInterop;
+namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium.Helper.Configuration;    using CampaignKit.Compendium.Helper.Data;    using Microsoft.AspNetCore.Components;
 
     /// <summary>
     /// Represents the body of a class or struct.
@@ -38,18 +38,6 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         /// </summary>
         /// <value>The event callback for when the selected compendium changes.</value>
         [Parameter]        public EventCallback<ICompendium> SelectedCompendiumChanged { get; set; }
-
-        /// <summary>
-        /// Gets or sets the selected label group.
-        /// </summary>
-        /// <value>The selected label group.</value>
-        [Parameter]        public LabelGroup SelectedLabelGroup { get; set; }
-
-        /// <summary>
-        /// Gets or sets the event callback for when the selected label group changes.
-        /// </summary>
-        /// <value>The event callback for the selected label group change.</value>
-        [Parameter]        public EventCallback<LabelGroup> SelectedLabelGroupChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the selected source data set.
@@ -82,17 +70,8 @@ namespace CampaignKit.Compendium.Helper.Pages{    using CampaignKit.Compendium
         private async Task OnSelectedCompendiumChanged(ICompendium compendium)        {            this.Logger.LogInformation("Selected compendium changed: {CompendiumName}", compendium.Title);            await this.SelectedCompendiumChanged.InvokeAsync(compendium);            this.SelectedIndex = 0;        }
 
         /// <summary>
-        /// Event handler for when the selected label group is changed.
-        /// </summary>
-        /// <param name="labelGroup">The new selected label group.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSelectedLabelGroupChanged(LabelGroup labelGroup)        {            this.Logger.LogInformation("Selected label changed: {LabelName}", labelGroup.LabelName);            await this.SelectedLabelGroupChanged.InvokeAsync(labelGroup);            this.SelectedIndex = 1;        }
-
-        /// <summary>
         /// Event handler for when the selected source is changed.
         /// </summary>
-        /// <param name="values">A tuple containing the new source dataset and label group.</param>
+        /// <param name="sourceDataSet">The new selected source data set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSelectedSourceChanged((SourceDataSet sourceDataSet, LabelGroup labelGroup) values)        {            this.Logger.LogInformation("Selected source changed: {SourceDataSetName}", values.sourceDataSet.SourceDataSetName);            if (values.labelGroup != null)
-            {                await this.SelectedLabelGroupChanged.InvokeAsync(values.labelGroup);
-            }            await this.SelectedSourceChanged.InvokeAsync(values.sourceDataSet);            this.SelectedIndex = 2;        }    }}
+        private async Task OnSelectedSourceChanged(SourceDataSet sourceDataSet)        {            this.Logger.LogInformation("Selected source changed: {SourceDataSetName}", sourceDataSet.SourceDataSetName);            await this.SelectedSourceChanged.InvokeAsync(sourceDataSet);            this.SelectedIndex = 1;        }    }}

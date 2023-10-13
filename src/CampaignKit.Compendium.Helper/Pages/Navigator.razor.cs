@@ -37,17 +37,10 @@ namespace CampaignKit.Compendium.Helper.Pages
         public List<LabelGroup> LabelGroups { get; set; }
 
         /// <summary>
-        /// Gets or sets the event callback for when a label group is changed.
-        /// </summary>
-        /// <value>The event callback for when a label group is changed.</value>
-        [Parameter]
-        public EventCallback<LabelGroup> SelectedLabelGroupChanged { get; set; }
-
-        /// <summary>
         /// Gets or sets the EventCallback for source selection.
         /// </summary>
         [Parameter]
-        public EventCallback<(SourceDataSet, LabelGroup)> SelectedSourceChanged { get; set; }
+        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the Sources parameter.
@@ -93,26 +86,14 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
-        /// Event handler for when the expanded state of a label changes.
-        /// </summary>
-        /// <param name="labelGroup">The label group that contains the label.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSelectedLabelGroupChanged(LabelGroup labelGroup)
-        {
-            var unfilteredLabelGroup = this.LabelGroups.FirstOrDefault(lg => lg.LabelName.Equals(labelGroup.LabelName));
-            await this.SelectedLabelGroupChanged.InvokeAsync(unfilteredLabelGroup);
-        }
-
-        /// <summary>
         /// Handles the event when a source data set is selected from a menu item.
         /// </summary>
         /// <param name="args">The event arguments containing the selected menu item.</param>
-        /// <param name="labelGroup">The label group associated with the selected source data set.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSelectedSourceChanged(MenuItemEventArgs args, LabelGroup labelGroup)
+        private async Task OnSelectedSourceChanged(MenuItemEventArgs args)
         {
             var source = this.Sources.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));
-            await this.SelectedSourceChanged.InvokeAsync((source, labelGroup));
+            await this.SelectedSourceChanged.InvokeAsync(source);
         }
     }
 }
