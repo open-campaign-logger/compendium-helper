@@ -47,21 +47,18 @@ classDiagram
         +LabelGroup SelectedLabelGroup        
         +SourceDataSet SelectedSource
         +EventCallback<ICompendium> SelectedCompendiumChanged
-        +EventCallback<LabelGroup> SelectedLabelGroupChanged
         +EventCallback<SourceDataSet> SelectedSourceChanged
         -OnSelectedCompendiumChanged(ICompendium)
-        -OnSelectedLabelGroupChanged(LabelGroup)
-        -OnSelectedSourceChanged((SourceDataSet, LabelGroup))
+        -OnSelectedSourceChanged(SourceDataSet)
     }
     MainLayout --> "1" Body : Contains
 
     class Navigation{
         +List<LabelGroup> LabelGroups
         +List<SourceDataSet> Sources
-        +EventCallback<LabelGroup> SelectedLabelGroupChanged
-        +EventCallback<(SourceDataSet, LabelGroup> SelectedSourceChanged
+        +EventCallback<SourceDataSet> SelectedSourceChanged
         -OnSelectedLabelGroupChanged(LabelGroup)
-        -OnSelectedSourceChanged((SourceDataSet, LabelGroup))
+        -OnSelectedSourceChanged(SourceDataSet)
     }
     Body "1" --> "0..1" Navigation : Contains
 
@@ -71,14 +68,6 @@ classDiagram
         -OnSelectedCompendiumChanged()
 	}
     Body "1" --> "0..1" Compendium : Contains
-
-    class Label{
-        +LabelGroup SelectedLabelGroup
-        +List<SourceDataSet> Sources
-        +EventCallback<LabelGroup> SelectedLabelGroupChanged     
-        -OnSelectedLabelGroupChanged()
-    }
-    Body "1" --> "0..1" Label : Contains
 
     class Source{
         +SourceDataSet SelectedSource
@@ -108,19 +97,6 @@ classDiagram
 	}
     MainLayout "1" --> "0..1" RemoveSourceDialog : Opens
 
-    class AddLabelsDialog{
-        +List<LabelGroup> LabelGroups
-        +EventCallback<List<LabelGroup>> LabelGroupsAdded
-        -OnLabelGroupsAdded()
-    }
-    MainLayout "1" --> "0..1" AddLabelsDialog : Opens    
-
-    class RemoveLabelsDialog{
-        +List<LabelGroup> LabelGroups
-		+EventCallback<List<LabelGroup>> LabelGroupsRemoved
-		-OnLabelGroupsRemoved()
-    }
-    MainLayout "1" --> "0..1" RemoveLabelsDialog : Opens
 ```
 
 ## Getting Started
@@ -197,13 +173,6 @@ content more quickly.
 - ***Description:*** A description of the compendium.
 - ***Game System:*** The game system that the compendium is for.
 - ***Image URL:*** The URL of an image that represents the compendium.
-
-### Label
-
-![Label Properties](doc/label-properties.png)
-
-- ***Name:*** The name of the label.  Must be unique in the compendium.
-- ***Sources:*** Sources that are associated with the label.
 
 ### Source
 
