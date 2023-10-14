@@ -11,7 +11,7 @@
     </RadzenRow>
     <RadzenRow>
             <RadzenPanelMenu>
-                @foreach (var grouping in LabelGroups)
+                @foreach (var grouping in FilteredLabelGroups)
                 {
                     <RadzenPanelMenuItem Text="@grouping.DisplayLabel" Icon="bookmark">
                         @foreach (var dataSet in grouping.SourceDataSets)

@@ -62,6 +62,14 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
+        /// Gets or sets the filtered label groups.
+        /// </summary>
+        /// <value>
+        /// The filtered label groups.
+        /// </value>
+        private List<LabelGroup> FilteredLabelGroups { get; set; } = new List<LabelGroup>();
+
+        /// <summary>
         /// Gets or sets the search term.
         /// </summary>
         private string SearchTerm { get; set; } = string.Empty;
@@ -79,10 +87,58 @@ namespace CampaignKit.Compendium.Helper.Pages
         }
 
         /// <summary>
+        /// This method is called when the component's parameters are set. It calls the FilterLabelGroups method.
+        /// </summary>
+        protected override void OnParametersSet()
+        {
+            this.FilterLabelGroups();
+        }
+
+        /// <summary>
+        /// This method is called when the parameters of the component are set. It clears the
+        /// existing filtered label groups and then cycles through each label group. For each label
+        /// group, it creates a new filtered label group and adds it to the filtered label groups
+        /// list. If the search criteria is empty, it adds all the source data sets of the label
+        /// group to the filtered label group. If the search criteria is not empty, it adds only the
+        /// source data sets that have a SourceDataSetName matching the search criteria to the
+        /// filtered label group.
+        /// </summary>
+        private void FilterLabelGroups()
+        {
+            // Clear the existing filtered label groups.
+            this.FilteredLabelGroups.Clear();
+
+            // Cycle through each label group and add the label group and its source data sets to the filtered label groups.
+            foreach (var labelGroup in this.LabelGroups)
+            {
+                // Create a new label group.
+                var filteredLabelGroup = new LabelGroup
+                {
+                    LabelName = labelGroup.LabelName,
+                    SourceDataSets = new List<SourceDataSet>(),
+                };
+                this.FilteredLabelGroups.Add(filteredLabelGroup);
+
+                // If search criteria is empty, add the label group and its source data sets to the filtered label groups.
+                if (string.IsNullOrEmpty(this.SearchTerm))
+                {
+                    filteredLabelGroup.SourceDataSets.AddRange(labelGroup.SourceDataSets);
+                    continue;
+                }
+                else
+                {
+                    // Add source data sets to the filteredLabelGroup that have a SourceDataSetName matching the search criteria.
+                    filteredLabelGroup.SourceDataSets.AddRange(labelGroup.SourceDataSets.Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)));
+                }
+            }
+        }
+
+        /// <summary>
         /// Handles the search input change event and filters the tree accordingly.
         /// </summary>
         private void OnSearchChanged(object value)
         {
+            this.FilterLabelGroups();
         }
 
         /// <summary>
