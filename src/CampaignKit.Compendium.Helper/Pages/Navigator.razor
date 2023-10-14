@@ -1,21 +1,25 @@
-﻿@if(SelectedCompendium != null)
+﻿@if (LabelGroups != null)
 {
     <RadzenRow>
-        <RadzenAutoComplete @bind-Value="SearchTerm" Data="AutoCompleteData" Placeholder="Search..." Change="OnSearchChanged" />
+        <RadzenAutoComplete
+            @bind-Value="SearchTerm"
+            Data="AutoCompleteData"
+            Placeholder="Search..."
+            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+            FilterOperator="StringFilterOperator.Contains"
+            Change="OnSearchChanged" />
     </RadzenRow>
     <RadzenRow>
             <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="@SelectedCompendium.Title" Expanded="true" Icon="book" ExpandedChanged="@((isExpanded) => OnCompendiumExpandedChanged(isExpanded, SelectedCompendium.Title))">
-                @foreach (var grouping in SelectedCompendium.SourceDataSetGroupings)
+                @foreach (var grouping in FilteredLabelGroups)
                 {
-                    <RadzenPanelMenuItem Text="@grouping.LabelName" Icon="bookmark" ExpandedChanged="@((isExpanded) => OnLabelExpandedChanged(isExpanded, grouping.LabelName))">
+                    <RadzenPanelMenuItem Text="@grouping.DisplayLabel" Icon="bookmark">
                         @foreach (var dataSet in grouping.SourceDataSets)
                         {
-                            <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="args => OnSourceDataSetSelected(args, grouping.LabelName)" />
+                            <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="OnSelectedSourceChanged" />
                         }
                     </RadzenPanelMenuItem>
                 }
-            </RadzenPanelMenuItem>
         </RadzenPanelMenu>
     </RadzenRow>
 }

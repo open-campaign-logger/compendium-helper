@@ -19,6 +19,7 @@ namespace CampaignKit.Compendium.Helper.Pages
     using System;
 
     using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     using Microsoft.AspNetCore.Components;
 
@@ -30,40 +31,22 @@ namespace CampaignKit.Compendium.Helper.Pages
     public partial class Navigator
     {
         /// <summary>
-        /// Gets or sets the EventCallback for the compendium collapsed event.
+        /// Gets or sets the LabelGroups parameter.
         /// </summary>
         [Parameter]
-        public EventCallback<string> CompendiumCollapsed { get; set; }
-
-        /// <summary>
-        /// Gets or sets the EventCallback for the compendium expansion event.
-        /// </summary>
-        [Parameter]
-        public EventCallback<string> CompendiumExpanded { get; set; }
-
-        /// <summary>
-        /// Gets or sets the EventCallback for the label collapsed event.
-        /// </summary>
-        [Parameter]
-        public EventCallback<string> LabelCollapsed { get; set; }
-
-        /// <summary>
-        /// Gets or sets the EventCallback for the label expansion event.
-        /// </summary>
-        [Parameter]
-        public EventCallback<string> LabelExpanded { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ICompendium object.
-        /// </summary>
-        [Parameter]
-        public ICompendium SelectedCompendium { get; set; }
+        public List<LabelGroup> LabelGroups { get; set; }
 
         /// <summary>
         /// Gets or sets the EventCallback for source selection.
         /// </summary>
         [Parameter]
-        public EventCallback<(string, string)> SourceSelected { get; set; }
+        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Sources parameter.
+        /// </summary>
+        [Parameter]
+        public List<SourceDataSet> Sources { get; set; }
 
         /// <summary>
         /// Gets a list of distinct source data set names from the compendium.
@@ -73,20 +56,18 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             get
             {
-                return this.SelectedCompendium.SourceDataSetGroupings
-                        .SelectMany(s => s.SourceDataSets)
-                        .Select(ds => ds.SourceDataSetName)
-                        .Distinct();
+                // Return a list of distinct source data set names from the compendium ordered alphabetically.
+                return this.Sources.Select(sds => sds.SourceDataSetName).Distinct().OrderBy(sds => sds);
             }
         }
 
         /// <summary>
-        /// Gets or sets the filtered compendium.
+        /// Gets or sets the filtered label groups.
         /// </summary>
         /// <value>
-        /// The filtered compendium.
+        /// The filtered label groups.
         /// </value>
-        private ICompendium FilteredCompendium { get; set; }
+        private List<LabelGroup> FilteredLabelGroups { get; set; } = new List<LabelGroup>();
 
         /// <summary>
         /// Gets or sets the search term.
@@ -94,68 +75,61 @@ namespace CampaignKit.Compendium.Helper.Pages
         private string SearchTerm { get; set; } = string.Empty;
 
         /// <summary>
-        /// This method is called when the component receives new parameters. Any initialization or
-        /// data fetching logic should be placed here. The StateHasChanged() method is called to
-        /// cause the Navigator to re-render.
+        /// Initializes the component asynchronously.
+        /// </summary>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// </returns>
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            this.SearchTerm = string.Empty;
+        }
+
+        /// <summary>
+        /// This method is called when the component's parameters are set. It calls the FilterLabelGroups method.
         /// </summary>
         protected override void OnParametersSet()
         {
-            this.SearchTerm = string.Empty;
-            this.FilterTree();
+            this.FilterLabelGroups();
         }
 
         /// <summary>
-        /// Filters the tree based on the search term.
+        /// This method is called when the parameters of the component are set. It clears the
+        /// existing filtered label groups and then cycles through each label group. For each label
+        /// group, it creates a new filtered label group and adds it to the filtered label groups
+        /// list. If the search criteria is empty, it adds all the source data sets of the label
+        /// group to the filtered label group. If the search criteria is not empty, it adds only the
+        /// source data sets that have a SourceDataSetName matching the search criteria to the
+        /// filtered label group.
         /// </summary>
-        private void FilterTree()
+        private void FilterLabelGroups()
         {
-            if (string.IsNullOrWhiteSpace(this.SearchTerm))
-            {
-                this.FilteredCompendium = this.SelectedCompendium;
-            }
-            else
-            {
-                this.FilteredCompendium.SourceDataSets =
-                    this.SelectedCompendium.SourceDataSets
-                    .Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
-            }
+            // Clear the existing filtered label groups.
+            this.FilteredLabelGroups.Clear();
 
-            this.StateHasChanged();
-        }
+            // Cycle through each label group and add the label group and its source data sets to the filtered label groups.
+            foreach (var labelGroup in this.LabelGroups)
+            {
+                // Create a new label group.
+                var filteredLabelGroup = new LabelGroup
+                {
+                    LabelName = labelGroup.LabelName,
+                    SourceDataSets = new List<SourceDataSet>(),
+                };
+                this.FilteredLabelGroups.Add(filteredLabelGroup);
 
-        /// <summary>
-        /// Invokes the CompendiumExpanded event when the compendium is expanded or collapsed.
-        /// </summary>
-        /// <param name="isExpanded">A boolean value indicating whether the compendium is expanded or collapsed.</param>
-        /// <param name="compendiumName">The name of the compendium.</param>
-        /// <returns>A Task that represents the asynchronous operation.</returns>
-        private async Task OnCompendiumExpandedChanged(bool isExpanded, string compendiumName)
-        {
-            if (isExpanded)
-            {
-                await this.CompendiumExpanded.InvokeAsync(compendiumName);
-            }
-            else
-            {
-                await this.CompendiumCollapsed.InvokeAsync(compendiumName);
-            }
-        }
-
-        /// <summary>
-        /// Invokes the LabelExpanded event when the label is expanded or collapsed.
-        /// </summary>
-        /// <param name="isExpanded">A boolean value indicating whether the label is expanded or collapsed.</param>
-        /// <param name="labelName">The name of the label.</param>
-        /// <returns>A Task that represents the asynchronous operation.</returns>
-        private async Task OnLabelExpandedChanged(bool isExpanded, string labelName)
-        {
-            if (isExpanded)
-            {
-                await this.LabelExpanded.InvokeAsync(labelName);
-            }
-            else
-            {
-                await this.LabelCollapsed.InvokeAsync(labelName);
+                // If search criteria is empty, add the label group and its source data sets to the filtered label groups.
+                if (string.IsNullOrEmpty(this.SearchTerm))
+                {
+                    filteredLabelGroup.SourceDataSets.AddRange(labelGroup.SourceDataSets);
+                    continue;
+                }
+                else
+                {
+                    // Add source data sets to the filteredLabelGroup that have a SourceDataSetName matching the search criteria.
+                    filteredLabelGroup.SourceDataSets.AddRange(labelGroup.SourceDataSets.Where(sds => sds.SourceDataSetName.Contains(this.SearchTerm, StringComparison.OrdinalIgnoreCase)));
+                }
             }
         }
 
@@ -164,18 +138,18 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// </summary>
         private void OnSearchChanged(object value)
         {
-            this.FilterTree();
+            this.FilterLabelGroups();
         }
 
         /// <summary>
-        /// Event handler for when a data set is selected in the menu.
+        /// Handles the event when a source data set is selected from a menu item.
         /// </summary>
-        /// <param name="args">The menu item event arguments.</param>
-        /// <param name="label">The label name.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        private async Task OnSourceDataSetSelected(MenuItemEventArgs args, string label)
+        /// <param name="args">The event arguments containing the selected menu item.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        private async Task OnSelectedSourceChanged(MenuItemEventArgs args)
         {
-            await this.SourceSelected.InvokeAsync((args.Text, label));
+            var source = this.Sources.FirstOrDefault(sds => sds.SourceDataSetName.Equals(args.Text, StringComparison.OrdinalIgnoreCase));
+            await this.SelectedSourceChanged.InvokeAsync(source);
         }
     }
 }

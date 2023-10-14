@@ -10,6 +10,95 @@ websites.
 At is core, **Compendium Helper** is a web scraper; you provide the configuration and 
 it will scrape and format the content for import into the Campaign Logger application.
 
+```mermaid
+---
+title: UX Component Diagram
+---
+classDiagram
+    class MainLayout{
+        -List<LabelGroup> LabelGroups
+        -ICompendium SelectedCompendium
+        -LabelGroup SelectedLabelGroup
+        -SourceDataSet SelectedSource
+        -CompendiumLoaded(ICompendium)
+        -SelectedCompendiumChanged(ICompendium)
+        -SelectedLabelGroupChanged(LabelGroup)
+        -SelectedSourceChanged(SourceDataSet)
+        -LabelGroupsAdded(List<LabelGroup>)
+        -LabelGroupsRemoved(List<LabelGroup>)
+        -SourcesAdded(List<SourceDataSet>)
+        -SourcesRemoved(List<SourceDataSet>)
+    }
+
+    class LoadCompendiumDialog{
+        +string CompendiumUrl
+	    +EventCallback<ICompendium> CompendiumLoaded
+	}
+    MainLayout "1" --> "0..1" LoadCompendiumDialog : Opens
+
+    class UploadCompendiumDialog{
+	    +EventCallback<ICompendium> CompendiumLoaded
+    }
+    MainLayout "1" --> "0..1" UploadCompendiumDialog : Opens
+
+    class Body{
+        +List<LabelGroup> LabelGroups
+        +ICompendium SelectedCompendium        
+        +LabelGroup SelectedLabelGroup        
+        +SourceDataSet SelectedSource
+        +EventCallback<ICompendium> SelectedCompendiumChanged
+        +EventCallback<SourceDataSet> SelectedSourceChanged
+        -OnSelectedCompendiumChanged(ICompendium)
+        -OnSelectedSourceChanged(SourceDataSet)
+    }
+    MainLayout --> "1" Body : Contains
+
+    class Navigation{
+        +List<LabelGroup> LabelGroups
+        +List<SourceDataSet> Sources
+        +EventCallback<SourceDataSet> SelectedSourceChanged
+        -OnSelectedLabelGroupChanged(LabelGroup)
+        -OnSelectedSourceChanged(SourceDataSet)
+    }
+    Body "1" --> "0..1" Navigation : Contains
+
+    class Compendium{
+		+ICompendium SelectedCompendium
+        +EventCallback<ICompendium> SelectedCompendiumChanged
+        -OnSelectedCompendiumChanged()
+	}
+    Body "1" --> "0..1" Compendium : Contains
+
+    class Source{
+        +SourceDataSet SelectedSource
+		+EventCallback<SourceDataSet> SelectedSourceChanged
+        -OnSelectedSourceChanged()
+	}
+    Body "1" --> "0..1" Source : Contains
+
+    class Editor{
+		+SourceDataSet SelectedSource
+		+EventCallback<SourceDataSet> SelectedSourceChanged
+		-OnSelectedSourceChanged(object)
+	}
+    Body "1" --> "0..1" Editor : Contains
+
+    class AddSourceDialog{
+		+List<SourceDatatSet> Sources
+		+EventCallback<List<SourceDataSet>> SourcesAdded
+		-OnSourcesAdded()
+	}
+    MainLayout "1" --> "0..1" AddSourceDialog : Opens
+
+    class RemoveSourceDialog{
+        +List<SourceDataSet> Sources
+        +EventCallback<List<SourceDataSet>> SourcesRemoved
+        -OnSourcesRemoved()
+	}
+    MainLayout "1" --> "0..1" RemoveSourceDialog : Opens
+
+```
+
 ## Getting Started
 
 ### Prerequisites
@@ -85,13 +174,6 @@ content more quickly.
 - ***Game System:*** The game system that the compendium is for.
 - ***Image URL:*** The URL of an image that represents the compendium.
 
-### Label
-
-![Label Properties](doc/label-properties.png)
-
-- ***Name:*** The name of the label.  Must be unique in the compendium.
-- ***Sources:*** Sources that are associated with the label.
-
 ### Source
 
 ![Source Properties](doc/source-properties.png)
@@ -102,6 +184,14 @@ content more quickly.
 - ***Starting XPath:*** The XPath of the element that contains the content that you want to scrape.
 - ***Tag Symbol:*** The tag symbol to use when creating the entry for the Campaign Logger file.
 - ***Is Public:*** Indicates whether or not the content should be in the GM view (unchecked) or the player view (checked).
+
+### Editor
+
+- TODO
+
+### Menu Functions
+
+- TODO
 
 ## Dependencies
 

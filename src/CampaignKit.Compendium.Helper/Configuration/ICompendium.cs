@@ -16,10 +16,6 @@
 
 namespace CampaignKit.Compendium.Helper.Configuration
 {
-    using System.Text.Json.Serialization;
-
-    using CampaignKit.Compendium.Helper.Data;
-
     /// <summary>
     /// Represents the configuration of a compendium within the application.
     /// These should be defined and shared in the appsettings.json and secrets.json files.
@@ -62,35 +58,21 @@ namespace CampaignKit.Compendium.Helper.Configuration
         bool OverwriteExisting { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of source data sets associated with the SelectedCompendium.
-        /// Each item in this list represents a set of data that is used in the SelectedCompendium.
-        /// </summary>
-        List<SourceDataSet> SourceDataSets { get; set; }
-
-        /// <summary>
         /// Gets or sets the list of chat prompts to use for generating the SelectedCompendium.
         /// Each item in this list represents a prompt that will be used to generate a campaign entry.
         /// </summary>
         List<Prompt> Prompts { get; set; }
 
         /// <summary>
+        /// Gets or sets the list of source data sets associated with the SelectedCompendium.
+        /// Each item in this list represents a set of data that is used in the SelectedCompendium.
+        /// </summary>
+        List<SourceDataSet> SourceDataSets { get; set; }
+
+        /// <summary>
         /// Gets or sets the title of the SelectedCompendium.
         /// This property is typically used to provide a succinct name for the SelectedCompendium.
         /// </summary>
         string Title { get; set; }
-
-        /// <summary>
-        /// Gets a list of unique labels from all source datasets.
-        /// </summary>
-        /// <returns>A list of unique labels.</returns>
-        [JsonIgnore]
-        public List<string> UniqueLabels { get; }
-
-        /// <summary>
-        /// Gets a list of SourceDataSetGroupings from the SourceDataSets.
-        /// </summary>
-        /// <returns>A list of SourceDataSetGroupings.</returns>
-        [JsonIgnore]
-        public List<LabelGroup> SourceDataSetGroupings { get; }
     }
 }

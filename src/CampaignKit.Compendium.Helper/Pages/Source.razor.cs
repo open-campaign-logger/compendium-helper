@@ -17,22 +17,29 @@
 namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     using Microsoft.AspNetCore.Components;
 
     using Radzen;
 
     /// <summary>
-    /// Code behind for the Source component.
+    /// Code behind for the SelectedSource component.
     /// </summary>
     public partial class Source
     {
         /// <summary>
-        /// Gets or sets the LabelGroup property.
+        /// Gets or sets the SelectedLabelGroup property.
         /// </summary>
-        /// <returns>The LabelGroup object.</returns>
+        /// <returns>The SelectedLabelGroup object.</returns>
         [Parameter]
-        public SourceDataSet SelectedSource { get; set; } = new ();
+        public SourceDataSet SelectedSource { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the EventCallback for source selection.
+        /// </summary>
+        [Parameter]
+        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the TooltipService.
@@ -41,20 +48,36 @@ namespace CampaignKit.Compendium.Helper.Pages
         public TooltipService TooltipService { get; set; }
 
         /// <summary>
-        /// Gets or sets the EventCallback for the source data set title change event.
+        /// Gets or sets the Labels property.
         /// </summary>
-        [Parameter]
-        public EventCallback<string> SourceDataSetTitleChanged { get; set; }
+        private string Labels { get; set; } = string.Empty;
 
         /// <summary>
-        /// Event handler for when the source data set title is changed.
+        /// Overrides the OnParametersSet method to set the Labels property by joining the labels
+        /// from the SelectedSource property with a comma separator.
         /// </summary>
-        /// <param name="title">The new title of the source data set.</param>
-        /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task OnSourceDataSetTitleChanged(string title)
+        protected override void OnParametersSet()
         {
-            // Invoke callback
-            await this.SourceDataSetTitleChanged.InvokeAsync(title);
+            if (this.SelectedSource != null)
+            {
+                this.Labels = string.Join(", ", this.SelectedSource.Labels);
+            }
+        }
+
+        /// <summary>
+        /// Method that is called when the selected source is changed.
+        /// </summary>
+        /// <returns>
+        /// A task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnSelectedSourceChanged()
+        {
+            // Convert the comma separated labels to a list.
+            this.SelectedSource.Labels = this.Labels.Split(',')
+                .Select(s => s.Trim())
+                .Where(s => !string.IsNullOrEmpty(s))
+                .ToList();
+            await this.SelectedSourceChanged.InvokeAsync(this.SelectedSource);
         }
 
         /// <summary>

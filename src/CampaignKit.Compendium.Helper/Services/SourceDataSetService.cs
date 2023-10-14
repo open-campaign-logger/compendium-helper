@@ -72,10 +72,10 @@ namespace CampaignKit.Compendium.Helper.Services
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task LoadSourceDataSetAsync(SourceDataSet source, bool forceReload = false)
         {
-            this.Logger.LogInformation("Loading source data set: {Source}, Force reload: {Force}", source, forceReload);
+            this.Logger.LogInformation("Loading source data set: {SelectedSource}, Force reload: {Force}", source, forceReload);
 
             // If the source data set already has a Markdown property, then it has already been loaded.
-            if (!string.IsNullOrEmpty(source.Markdown) && !forceReload)
+            if (source == null || (!string.IsNullOrEmpty(source.Markdown) && !forceReload))
             {
                 return;
             }
@@ -97,7 +97,7 @@ namespace CampaignKit.Compendium.Helper.Services
                         var node = doc.DocumentNode.SelectSingleNode(source.XPath);
                         response = node.OuterHtml;
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         response = $"Unable to find node corresponding to XPath: {source.XPath}";
                     }

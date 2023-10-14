@@ -1,4 +1,4 @@
-﻿// <copyright file="UploadDialog.razor.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="UploadConfigurationDialog.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,19 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendium.Helper.Configuration;    using CampaignKit.Compendium.Helper.Services;    using Microsoft.AspNetCore.Components;
+namespace CampaignKit.Compendium.Helper.Dialogs{    using CampaignKit.Compendium.Helper.Configuration;    using CampaignKit.Compendium.Helper.Services;    using Microsoft.AspNetCore.Components;
 
     using Radzen;
 
     /// <summary>
     /// Represents a dialog for uploading files.
     /// </summary>
-    public partial class UploadDialog    {
+    public partial class UploadConfigurationDialog    {
         /// <summary>
         /// Gets or sets the event callback for when the upload is complete.
         /// The event callback takes an ICompendium parameter.
         /// </summary>
-        [Parameter]        public EventCallback<ICompendium> OnUploadComplete { get; set; }
+        [Parameter]        public EventCallback<ICompendium> CompendiumLoaded { get; set; }
 
         /// <summary>
         /// Gets or sets the prompt for the parameter.
@@ -47,7 +47,7 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// <summary>
         /// Gets or sets injects an ILogger dependency into the Logger property.
         /// </summary>
-        [Inject]        private ILogger<UploadDialog> Logger { get; set; }
+        [Inject]        private ILogger<UploadConfigurationDialog> Logger { get; set; }
 
         /// <summary>
         /// Gets or sets the progress of the download.
@@ -64,4 +64,4 @@ namespace CampaignKit.Compendium.Helper.Shared{    using CampaignKit.Compendiu
         /// </summary>
         /// <param name="args">The event arguments containing the raw response.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private async Task UploadComplete(UploadCompleteEventArgs args)        {            this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);            this.UploadProgress = 50;            var json = args.RawResponse;            var compendium = this.CompendiumService.LoadCompendium(json);            this.UploadProgress = 75;            await this.OnUploadComplete.InvokeAsync(compendium);            this.UploadProgress = 100;            this.DialogService.Close();        }    }}
+        private async Task OnCompendiumLoaded(UploadCompleteEventArgs args)        {            this.Logger.LogInformation("Upload complete and converted to string of length {Length}.", args.RawResponse.Length);            var json = args.RawResponse;            var compendium = this.CompendiumService.LoadCompendium(json);            await this.CompendiumLoaded.InvokeAsync(compendium);            this.DialogService.Close();        }    }}

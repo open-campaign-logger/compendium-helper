@@ -17,6 +17,7 @@
         </RadzenFormField>
     </RadzenStack>
 
+    <!--
     <RadzenStack Orientation="Orientation.Horizontal">
         <RadzenFormField Text="@_labels["labels"]" Variant="@_variant" Style="width: 100%">
             <End>
@@ -27,6 +28,7 @@
             </ChildContent>
         </RadzenFormField>
     </RadzenStack>
+    -->
 
     <RadzenStack Orientation="Orientation.Horizontal">
         <RadzenFormField Text="@_labels["tag"]" Variant="@_variant" Style="width: 100%">
@@ -39,8 +41,7 @@
         </RadzenFormField>
     </RadzenStack>
 
-    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="@OnAdd" Disabled="!IsValid"></RadzenButton>
-    <RadzenButton ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Click="@OnCancel"></RadzenButton>
+    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Add" Click="@OnSourcesAdded" Disabled="!IsValid"></RadzenButton>
 </RadzenStack>
 
 
