@@ -125,7 +125,7 @@ namespace CampaignKit.Compendium.Helper.Dialogs
             try
             {
                 var json = await this.CampaignLoggerService.ConvertToCampaignJson(this.SelectedCompendium, this.CancellationTokenSource.Token);
-                await this.BrowserService.DownloadTextFile(this.JsRuntime, json, "compendium-helper.json");
+                await this.BrowserService.DownloadTextFile(this.JsRuntime, json, "campaign-logger.json");
                 this.DialogService.Close();
             }
             catch (OperationCanceledException oce)
