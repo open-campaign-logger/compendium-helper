@@ -17,7 +17,7 @@
 namespace CampaignKit.Compendium.Helper.Services
 {
     using CampaignKit.Compendium.Helper.Data;
-    using CampaignKit.Compendium.Helper.Shared;
+    using CampaignKit.Compendium.Helper.Dialogs;
 
     using Markdig.Helpers;
 

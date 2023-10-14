@@ -1,4 +1,4 @@
-﻿// <copyright file="PackageDialog.razor.cs" company="Jochen Linnemann - IT-Service">
+﻿// <copyright file="LoadCompendiumDialog.razor.cs" company="Jochen Linnemann - IT-Service">
 // Copyright (c) 2017-2023 Jochen Linnemann, Cory Gill.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Shared
+namespace CampaignKit.Compendium.Helper.Dialogs
 {
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Services;
@@ -24,22 +24,22 @@ namespace CampaignKit.Compendium.Helper.Shared
     using Radzen;
 
     /// <summary>
-    /// Code behind class for PackageDialog.
+    /// Code behind class for LoadCompendiumDialog.
     /// </summary>
-    public partial class PackageDialog
+    public partial class LoadCompendiumDialog
     {
         /// <summary>
         /// Gets or sets the event callback for when the upload is complete.
         /// The event callback takes an ICompendium parameter.
         /// </summary>
         [Parameter]
-        public EventCallback<ICompendium> OnUploadComplete { get; set; }
+        public EventCallback<ICompendium> CompendiumLoaded { get; set; }
 
         /// <summary>
-        /// Gets or sets the package filename.
+        /// Gets or sets the compendium URL.
         /// </summary>
         [Parameter]
-        public string PackageFileName { get; set; }
+        public string CompendiumUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the prompt for the parameter.
@@ -70,19 +70,7 @@ namespace CampaignKit.Compendium.Helper.Shared
         /// Gets or sets injects an ILogger dependency into the Logger property.
         /// </summary>
         [Inject]
-        private ILogger<PackageDialog> Logger { get; set; }
-
-        /// <summary>
-        /// Handles the event when the "No" option is selected.
-        /// </summary>
-        /// <returns>
-        /// A task representing the asynchronous operation.
-        /// </returns>
-        private async Task OnNo()
-        {
-            this.Logger.LogInformation("User selected No.");
-            this.DialogService.Close();
-        }
+        private ILogger<LoadCompendiumDialog> Logger { get; set; }
 
         /// <summary>
         /// Handles the event when the "Yes" option is selected.
@@ -93,9 +81,9 @@ namespace CampaignKit.Compendium.Helper.Shared
         private async Task OnYes()
         {
             this.Logger.LogInformation("User selected Yes.");
-            var json = await this.FileService.ReadPackageFileAsync(this.PackageFileName);
+            var json = await this.FileService.ReadPackageFileAsync(this.CompendiumUrl);
             var compendium = this.CompendiumService.LoadCompendium(json);
-            await this.OnUploadComplete.InvokeAsync(compendium);
+            await this.CompendiumLoaded.InvokeAsync(compendium);
             this.DialogService.Close();
         }
     }

@@ -14,8 +14,9 @@
 // limitations under the License.
 // </copyright>
 
-namespace CampaignKit.Compendium.Helper.Shared{
+namespace CampaignKit.Compendium.Helper.Dialogs{
     using CampaignKit.Compendium.Helper.Configuration;
+    using CampaignKit.Compendium.Helper.Data;
 
     using Microsoft.AspNetCore.Components;
 
@@ -25,12 +26,17 @@ namespace CampaignKit.Compendium.Helper.Shared{
     /// Represents a dialog for adding sources.
     /// </summary>
     public partial class AddSourcesDialog    {
+        /// <summary>
+        /// Gets or sets the list of all available SourceDataSet objects.
+        /// </summary>
+        [Parameter]        public List<SourceDataSet> Sources { get; set; }
 
         /// <summary>
-        /// Gets or sets the Compendium parameter.
+        /// Gets or sets the event callback for when sources are removed.
         /// </summary>
-        /// <value>The Compendium parameter.</value>
-        [Parameter]        public ICompendium Compendium { get; set; }
+        /// <value>The event callback for when sources are removed.</value>
+        [Parameter]
+        public EventCallback<List<SourceDataSet>> SourcesAdded { get; set; }
 
         /// <summary>
         /// Gets or sets the DialogService used for opening dialogs.
@@ -76,39 +82,42 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private string URLs { get; set; }
 
         /// <summary>
-        /// Method to handle the "OnAdd" event. 
-        /// Splits the "Labels" and "URLs" properties into arrays.
-        /// Creates a list to store instances of the "SourceDataSet" class.
-        /// Iterates through each URL and creates a new instance of "SourceDataSet" with trimmed URL and labels.
-        /// Adds the "SourceDataSet" instance to the list.
-        /// Performs further operations with the "sourceDataSets" list.
+        /// Method to handle the event when adding sources.
         /// </summary>
-        public void OnAdd()        {
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        public async Task OnSourcesAdded()        {
             // Assemble the label list from the provided values.
-            var labelList = this.Labels?.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>();
-            labelList.Add("*New");
+            var labelList = this.Labels?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList() ?? new List<string>();
 
             // the urls property will have carriage returns in it, so we need to split on that
-            var urls = this.URLs.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);            var sourceNumber = 0;
+            var urls = this.URLs.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);            var sources = new List<SourceDataSet>();
 
+            // We need to generate unique source data set names, so we'll start with a number and increment it for each source.
+            var sourceDataSetNumber = 1;
             foreach (var url in urls)            {
-                sourceNumber++;                var source = new SourceDataSet()                {
-                    SourceDataSetName = $"Source {sourceNumber}",
+                // Determine the next available source dataset name.
+                var sourceDataSetName = "Compendium Source";                while (this.Sources.Any(sds => sds.SourceDataSetName.Equals($"{sourceDataSetName} {sourceDataSetNumber}")))
+                {
+                    sourceDataSetNumber++;
+                }
+
+                // Add the new source to the collection.
+                sources.Add(new SourceDataSet()                {
+                    SourceDataSetName = $"{sourceDataSetName} {sourceDataSetNumber}",
                     SourceDataSetUri = url.Trim(), // Trim the URL to remove any leading or trailing whitespace
-                    Labels = labelList,                    TagSymbol = this.Tag,                };                this.Compendium.SourceDataSets.Add(source); // Add the SourceDataSet instance to the list
+                    Labels = labelList,                    TagSymbol = this.Tag,                });
+
+                // Increment the source data set number.
+                sourceDataSetNumber++;
             }
+
+            await this.SourcesAdded.InvokeAsync(sources);
 
             // Close the dialog.
             this.DialogService.Close();
-
         }
-
-        /// <summary>
-        /// Closes the dialog.
-        /// </summary>
-        public void OnCancel()        {
-            // Close the dialog.
-            this.DialogService.Close();        }
 
         /// <summary>
         /// Shows a tooltip for the specified element reference with the given tooltip text and optional tooltip options.

@@ -16,8 +16,6 @@
 
 namespace CampaignKit.Compendium.Helper.Configuration
 {
-    using System.Data;
-    using CampaignKit.Compendium.Helper.Data;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -52,53 +50,5 @@ namespace CampaignKit.Compendium.Helper.Configuration
 
         /// <inheritdoc/>
         public string Title { get; set; } = string.Empty;
-
-        /// <inheritdoc/>
-        [JsonIgnore]
-        public List<string> UniqueLabels
-        {
-            get
-            {
-                return this.SourceDataSets
-                    .SelectMany(ds => ds.Labels)
-                    .Distinct()
-                    .OrderBy(label => label)
-                    .ToList();
-            }
-        }
-
-        /// <inheritdoc/>
-        [JsonIgnore]
-        public List<LabelGroup> SourceDataSetGroupings
-        {
-            get
-            {
-                // LabelGroup for SourceDataSets with labels
-                var labeledGroupings = this.SourceDataSets
-                    .SelectMany(ds => ds.Labels.Any() ? ds.Labels.Select(label => new { Label = label, DataSet = ds }) : new[] { new { Label = (string)null, DataSet = ds } })
-                    .GroupBy(pair => pair.Label)
-                    .Where(group => !string.IsNullOrEmpty(group.Key))
-                    .Select(group => new LabelGroup
-                    {
-                        LabelName = group.Key,
-                        SourceDataSets = group.Select(pair => pair.DataSet).OrderBy(sds => sds.SourceDataSetName).ToList(),
-                    });
-
-                // LabelGroup for SourceDataSets without labels
-                var noLabelGrouping = new LabelGroup
-                {
-                    LabelName = "No Label",
-                    SourceDataSets = this.SourceDataSets
-                        .Where(ds => !ds.Labels.Any())
-                        .OrderBy(sds => sds.SourceDataSetName)
-                        .ToList(),
-                };
-
-                // Merge the two groupings and order them by LabelName
-                return labeledGroupings.Concat(new[] { noLabelGrouping })
-                    .OrderBy(group => group.LabelName)
-                    .ToList();
-            }
-        }
     }
 }

@@ -13,7 +13,7 @@
                             <RadzenIcon Icon="help" MouseEnter="@(args => ShowTooltip(args, _tooltips["title"]))" />
                         </End>
                         <ChildContent>
-                            <RadzenTextBox @bind-Value="@SelectedCompendium.Title" Change="OnCompendiumTitleChanged" />
+                            <RadzenTextBox @bind-Value="@SelectedCompendium.Title" Change="OnSelectedCompendiumChanged" />
                         </ChildContent>
                     </RadzenFormField>
                 </RadzenStack>

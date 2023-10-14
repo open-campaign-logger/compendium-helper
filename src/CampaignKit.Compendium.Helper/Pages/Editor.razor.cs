@@ -18,8 +18,8 @@ namespace CampaignKit.Compendium.Helper.Pages
 {
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
+    using CampaignKit.Compendium.Helper.Dialogs;
     using CampaignKit.Compendium.Helper.Services;
-    using CampaignKit.Compendium.Helper.Shared;
 
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
@@ -35,7 +35,13 @@ namespace CampaignKit.Compendium.Helper.Pages
         /// Gets or sets the selected source data set.
         /// </summary>
         [Parameter]
-        public SourceDataSet Source { get; set; }
+        public SourceDataSet SelectedSource { get; set; }
+
+        /// <summary>
+        /// Gets or sets the event callback for when the selected source is changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<SourceDataSet> SelectedSourceChanged { get; set; }
 
         /// <summary>
         /// Gets or sets the DialogService dependency.
@@ -81,10 +87,8 @@ namespace CampaignKit.Compendium.Helper.Pages
         [JSInvokable]
         public void OnContentChanged(string content)
         {
-            this.Logger.LogInformation("OnChange with value parameter value: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
-
-            // Update the markdown property of the source data set
-            this.Source.Markdown = content;
+            this.Logger.LogInformation("OnContentChanged: {Value}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(content));
+            this.SelectedSource.Markdown = content;
         }
 
         /// <summary>
@@ -114,24 +118,13 @@ namespace CampaignKit.Compendium.Helper.Pages
             try
             {
                 this.ObjectReference = DotNetObjectReference.Create(this);
-                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.Source.Markdown, this.ObjectReference);
+                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.SelectedSource.Markdown, this.ObjectReference);
                 await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor"); // Start in preview mode.
             }
             catch (JSException jsEx)
             {
                 this.Logger.LogError(jsEx, "Unable to set markdown content in editor.");
             }
-        }
-
-        /// <summary>
-        /// Initializes the component, retrieves the HTML for ths source, and converts it to Markdown.
-        /// </summary>
-        /// <returns>
-        /// The HTML and Markdown content from the editor.
-        /// </returns>
-        protected override async Task OnInitializedAsync()
-        {
-            this.Logger.LogInformation("OnInitializedAsync");
         }
 
         /// <summary>
@@ -143,7 +136,6 @@ namespace CampaignKit.Compendium.Helper.Pages
         protected override async Task OnParametersSetAsync()
         {
             this.Logger.LogInformation("OnParametersSetAsync");
-            await base.OnParametersSetAsync();
             await this.LoadContent();
         }
 
@@ -158,14 +150,14 @@ namespace CampaignKit.Compendium.Helper.Pages
         {
             try
             {
-                // Download the web page source data
-                if (this.Source != null)
+                if (this.SelectedSource != null)
                 {
-                    // Load the source data set
-                    await this.SourceDataSetService.LoadSourceDataSetAsync(this.Source, forceReload);
+                    await this.SourceDataSetService.LoadSourceDataSetAsync(this.SelectedSource, forceReload);
+                }
 
-                    // Log the markdown
-                    this.Logger.LogInformation("Source data loaded and converted to markdown: {Markdown}", RegexHelper.RemoveUnwantedCharactersFromLogMessage(this.Source.Markdown));
+                if (forceReload)
+                {
+                    await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.SelectedSource.Markdown, this.ObjectReference);
                 }
             }
             catch (FetchException fe)

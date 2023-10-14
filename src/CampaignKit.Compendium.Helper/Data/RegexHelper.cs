@@ -29,7 +29,7 @@ namespace CampaignKit.Compendium.Helper.Data
         /// <returns>
         /// A Regex to select characters that are not alphanumeric, curly brackets, or square brackets.
         /// </returns>
-        [GeneratedRegex("[^a-zA-Z0-9{\\[\\]}<>]")]
+        [GeneratedRegex("[^a-zA-Z0-9{\\[\\]}<> ]")]
         public static partial Regex SelectWantedCharacters();
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace CampaignKit.Compendium.Helper.Data
         /// <param name="message">The log message to be processed.</param>
         /// <param name="maxLength">The maximum length of the log message.</param>
         /// <returns>The log message with unwanted characters removed.</returns>
-        public static string RemoveUnwantedCharactersFromLogMessage(string message, int maxLength = 100)
+        public static string RemoveUnwantedCharactersFromLogMessage(string message, int maxLength = 50)
         {
             return SelectWantedCharacters().Replace(message[..Math.Min(maxLength, message.Length)], string.Empty);
         }
