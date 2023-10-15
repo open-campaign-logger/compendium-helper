@@ -13,7 +13,7 @@
             <RadzenPanelMenu>
                 @foreach (var grouping in FilteredLabelGroups)
                 {
-                    <RadzenPanelMenuItem Text="@grouping.DisplayLabel" Icon="bookmark">
+                    <RadzenPanelMenuItem Text="@grouping.DisplayLabel" Icon="bookmark" Visible="grouping.SourceDataSets.Any()">
                         @foreach (var dataSet in grouping.SourceDataSets)
                         {
                             <RadzenPanelMenuItem Text="@dataSet.SourceDataSetName" Click="OnSelectedSourceChanged" />
