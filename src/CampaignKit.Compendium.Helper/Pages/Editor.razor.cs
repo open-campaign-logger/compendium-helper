@@ -119,7 +119,6 @@ namespace CampaignKit.Compendium.Helper.Pages
             {
                 this.ObjectReference = DotNetObjectReference.Create(this);
                 await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.SelectedSource.Markdown, this.ObjectReference);
-                await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.disableEditor"); // Start in preview mode.
             }
             catch (JSException jsEx)
             {
