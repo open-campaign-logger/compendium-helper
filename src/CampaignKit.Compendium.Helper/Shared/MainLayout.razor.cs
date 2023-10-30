@@ -18,6 +18,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
     using CampaignKit.Compendium.Helper.Configuration;
     using CampaignKit.Compendium.Helper.Data;
     using CampaignKit.Compendium.Helper.Dialogs;
+    using CampaignKit.Compendium.Helper.Pages;
     using CampaignKit.Compendium.Helper.Services;
 
     using Microsoft.AspNetCore.Components;
@@ -148,14 +149,31 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// </returns>
         private async Task OnShowAddSourcesDialog()
         {
-            this.Logger.LogInformation("Showing Add Sources Dialog...");
+            this.Logger.LogInformation("Adding Source...");
 
-            await this.DialogService.OpenAsync<AddSourcesDialog>(
-                "Add Sources to Compendium",
-                new Dictionary<string, object>                {
-                    { "Sources", this.SelectedCompendium.SourceDataSets },
-                    { "SourcesAdded", EventCallback.Factory.Create<List<SourceDataSet>>(this, this.SourcesAdded) },
-                });
+            // Determine the next available SourceDataSet name.
+            var sourceDataSetNumber = 1;
+
+            var sourceDataSetName = "Compendium Source";
+            while (this.SelectedCompendium.SourceDataSets.Any(sds => sds.SourceDataSetName.Equals($"{sourceDataSetName} {sourceDataSetNumber}")))
+            {
+                sourceDataSetNumber++;
+            }
+
+            // Create a SourceDataSet object.
+            this.SelectedSource = new SourceDataSet()
+            {
+                SourceDataSetName = $"{sourceDataSetName} {sourceDataSetNumber}",
+                SourceDataSetUri = string.Empty,
+                Labels = new List<string>(),
+                TagSymbol = "~",
+            };
+
+            // Add the new source to the collection.
+            this.SelectedCompendium.SourceDataSets.Add(this.SelectedSource);
+
+            this.SelectedCompendium.SourceDataSets = this.SelectedCompendium.SourceDataSets.OrderBy(source => source.SourceDataSetName).ToList();
+            this.UpdateLabelGroups();
         }
 
         /// <summary>
@@ -235,28 +253,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 this.SelectedSource = sourceDataSet;
                 this.UpdateLabelGroups();
             }
-        }
-
-        /// <summary>
-        /// Adds a list of SourceDataSet objects to the SelectedCompendium's SourceDataSets collection,
-        /// orders the collection by SourceDataSetName, and updates the label groups.
-        /// </summary>
-        private void SourcesAdded(List<SourceDataSet> sources)
-        {
-            // Create a comma separated list of labelGroups.LabelNames to be added
-            var sourceNames = string.Join(
-                ", ",
-                sources?.Select(source => source.SourceDataSetName) ?? new List<string>());
-            this.Logger.LogInformation("SourcesAdded: {}", sourceNames);
-
-            if (sources == null)
-            {
-                return;
-            }
-
-            this.SelectedCompendium.SourceDataSets.AddRange(sources);
-            this.SelectedCompendium.SourceDataSets = this.SelectedCompendium.SourceDataSets.OrderBy(source => source.SourceDataSetName).ToList();
-            this.UpdateLabelGroups();
         }
 
         /// <summary>

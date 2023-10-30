@@ -17,9 +17,10 @@
                     <hr class="separator mx-2 text-dark">
                     <RadzenMenuItem Text="W.O.I.N." Icon="folder" Click="@(args => OnShowLoadDialog(_packages["woin"][0], _packages["woin"][1]))" />
                 </RadzenMenuItem>
-                <RadzenMenuItem Text="Compendium" Icon="library_books" Visible="(SelectedCompendium != null)">
-                    <RadzenMenuItem Text="Add Sources..." Icon="add_link" Click="OnShowAddSourcesDialog"/>
-                    <RadzenMenuItem Text="Remove Sources..." Icon="link_off" Click="OnShowRemoveSourcesDialog"/>
+                <RadzenMenuItem Text="Compendium" Icon="library_books" Visible="SelectedCompendium != null">
+                    <RadzenMenuItem Text="Add Source" Icon="add_link" Click="OnShowAddSourcesDialog" />
+                    <RadzenMenuItem Text="Clone Source" Icon="link" Click="OnShowAddSourcesDialog" Visible="SelectedSource != null" />
+                    <RadzenMenuItem Text="Remove Source" Icon="link_off" Click="OnShowRemoveSourcesDialog" Visible="SelectedSource != null" />
                     <hr class="separator mx-2 text-dark">
                     <RadzenMenuItem Text="Generate" Icon="loop" Click="OnGenerate" />
                 </RadzenMenuItem>                
