@@ -125,8 +125,6 @@ classDiagram
         -CompendiumLoaded(ICompendium)
         -SelectedCompendiumChanged(ICompendium)
         -SelectedSourceChanged(SourceDataSet)
-        -SourcesAdded(List<SourceDataSet>)
-        -SourcesRemoved(List<SourceDataSet>)
     }
 
     class LoadCompendiumDialog{
@@ -179,20 +177,6 @@ classDiagram
 		-OnSelectedSourceChanged(object)
 	}
     Body "1" --> "0..1" Editor : Contains
-
-    class AddSourceDialog{
-		+List<SourceDatatSet> Sources
-		+EventCallback<List<SourceDataSet>> SourcesAdded
-		-OnSourcesAdded()
-	}
-    MainLayout "1" --> "0..1" AddSourceDialog : Opens
-
-    class RemoveSourceDialog{
-        +List<SourceDataSet> Sources
-        +EventCallback<List<SourceDataSet>> SourcesRemoved
-        -OnSourcesRemoved()
-	}
-    MainLayout "1" --> "0..1" RemoveSourceDialog : Opens
 
 ```
 

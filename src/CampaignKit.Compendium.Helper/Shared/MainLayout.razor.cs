@@ -142,12 +142,12 @@ namespace CampaignKit.Compendium.Helper.Shared{
         private async Task OnNewCompendiumSelection(bool selection)        {            this.Logger.LogInformation("Creating a new compendium.");            if (selection)            {                this.CreateDefaultCompendium();            }        }
 
         /// <summary>
-        /// Method to handle the event when the user selects to add sources.
+        /// Method to handle the event when the user adds a source.
         /// </summary>
         /// <returns>
         /// Task representing the asynchronous operation.
         /// </returns>
-        private async Task OnShowAddSourcesDialog()
+        private async Task OnAddSource()
         {
             this.Logger.LogInformation("Adding Source...");
 
@@ -167,6 +167,50 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 SourceDataSetUri = string.Empty,
                 Labels = new List<string>(),
                 TagSymbol = "~",
+                IsPublic = true,
+            };
+
+            // Add the new source to the collection.
+            this.SelectedCompendium.SourceDataSets.Add(this.SelectedSource);
+
+            this.SelectedCompendium.SourceDataSets = this.SelectedCompendium.SourceDataSets.OrderBy(source => source.SourceDataSetName).ToList();
+            this.UpdateLabelGroups();
+        }
+
+        /// <summary>
+        /// Method to handle the event when the user clones a source.
+        /// </summary>
+        /// <returns>
+        /// Task representing the asynchronous operation.
+        /// </returns>
+        private async Task OnCloneSource()
+        {
+            this.Logger.LogInformation("Cloning Source...");
+
+            if (this.SelectedSource == null)
+            {
+                return;
+            }
+
+            // Determine the next available SourceDataSet name.
+            var sourceDataSetNumber = 1;
+
+            var sourceDataSetName = this.SelectedSource.SourceDataSetName;
+            while (this.SelectedCompendium.SourceDataSets.Any(sds => sds.SourceDataSetName.Equals($"{sourceDataSetName} {sourceDataSetNumber}")))
+            {
+                sourceDataSetNumber++;
+            }
+
+            // Create a SourceDataSet object.
+            this.SelectedSource = new SourceDataSet()
+            {
+                SourceDataSetName = $"{sourceDataSetName} {sourceDataSetNumber}",
+                SourceDataSetUri = this.SelectedSource.SourceDataSetUri,
+                Labels = this.SelectedSource.Labels,
+                TagSymbol = this.SelectedSource.TagSymbol,
+                IsPublic = this.SelectedSource.IsPublic,
+                XPath = this.SelectedSource.XPath,
+                Markdown = this.SelectedSource.Markdown,
             };
 
             // Add the new source to the collection.
@@ -204,22 +248,21 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 });        }
 
         /// <summary>
-        /// Method to handle the event when the user selects to remove sources.
+        /// Method to handle the event when the user selects to remove a source.
         /// </summary>
         /// <returns>
         /// Task representing the asynchronous operation.
         /// </returns>
-        private async Task OnShowRemoveSourcesDialog()
+        private async Task OnRemoveSource()
         {
-            this.Logger.LogInformation("Showing Remove Sources Dialog...");
+            this.Logger.LogInformation("Removing Source...");
 
-            await this.DialogService.OpenAsync<RemoveSourcesDialog>(
-                "Remove Sources from Compendium",
-                new Dictionary<string, object>
-                {
-                    { "Sources", this.SelectedCompendium.SourceDataSets },
-                    { "SourcesRemoved", EventCallback.Factory.Create<List<SourceDataSet>>(this, this.SourcesRemoved) },
-                });
+            if (this.SelectedSource != null)
+            {
+                this.SelectedCompendium.SourceDataSets.Remove(this.SelectedSource);
+                this.SelectedSource = null;
+                this.UpdateLabelGroups();
+            }
         }
 
         /// <summary>
@@ -253,28 +296,6 @@ namespace CampaignKit.Compendium.Helper.Shared{
                 this.SelectedSource = sourceDataSet;
                 this.UpdateLabelGroups();
             }
-        }
-
-        /// <summary>
-        /// Removes the specified sources from the SelectedCompendium's SourceDataSets list and updates the label groups.
-        /// </summary>
-        /// <param name="sources">The list of SourceDataSet objects to be removed.</param>
-        private void SourcesRemoved(List<SourceDataSet> sources)
-        {
-            // Create a comma separated list of labelGroups.LabelNames to be added
-            var sourceNames = string.Join(
-                ", ",
-                sources?.Select(source => source.SourceDataSetName) ?? new List<string>());
-            this.Logger.LogInformation("SourcesRemoved: {}", sourceNames);
-
-            if (sources == null)
-            {
-                return;
-            }
-
-            this.SelectedCompendium.SourceDataSets.RemoveAll(source => sources.Contains(source));
-            this.SelectedSource = null;
-            this.UpdateLabelGroups();
         }
 
         /// <summary>
