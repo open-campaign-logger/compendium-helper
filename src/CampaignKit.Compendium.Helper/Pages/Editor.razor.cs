@@ -154,7 +154,7 @@ namespace CampaignKit.Compendium.Helper.Pages
                     await this.SourceDataSetService.LoadSourceDataSetAsync(this.SelectedSource, forceReload);
                 }
 
-                if (forceReload)
+                if (forceReload && this.SelectedSource != null)
                 {
                     await this.JsRuntime.InvokeVoidAsync("window.simpleMDEInterop.setMarkdown", this.SelectedSource.Markdown, this.ObjectReference);
                 }
