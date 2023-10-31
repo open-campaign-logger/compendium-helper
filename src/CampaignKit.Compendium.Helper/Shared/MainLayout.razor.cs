@@ -80,7 +80,7 @@ namespace CampaignKit.Compendium.Helper.Shared{
         /// <returns>A task representing the asynchronous operation.</returns>
         private async Task CompendiumLoaded(ICompendium compendium)        {            this.Logger.LogInformation("Compendium load complete: {}", compendium.Title);            this.SelectedCompendium = compendium;
             this.SelectedSource = null;
-            this.UpdateLabelGroups();        }
+            this.UpdateLabelGroups();            this.UpdatePageTitle();        }
 
         /// <summary>
         /// Instantiates a new, blank compendium and assigns it to the SelectedCompendium property.
